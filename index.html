@@ -66,6 +66,20 @@
 
             <!-- Inventory Tab -->
             <section id="tab-inventory" class="tab-content">
+                <div class="inventory-controls">
+                    <label for="weapon-class-filter">Filter våben klasse:</label>
+                    <select id="weapon-class-filter" class="filter-select">
+                        <option value="all">🔄 Alle</option>
+                        <option value="Nærkamp">⚔️ Nærkamp</option>
+                        <option value="Pistol">🔫 Pistol</option>
+                        <option value="Haglgevær">💥 Haglgevær</option>
+                        <option value="Riffel">🎯 Riffel</option>
+                        <option value="Sniper">🎯 Sniper</option>
+                        <option value="Automatisk">🔥 Automatisk</option>
+                        <option value="Energi">⚡ Energi</option>
+                        <option value="Eksplosiv">💣 Eksplosiv</option>
+                    </select>
+                </div>
                 <div id="weapon-list" class="weapon-grid">
                     <p class="empty-state">Ingen våben endnu. Generer noget loot!</p>
                 </div>

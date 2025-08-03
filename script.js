@@ -868,14 +868,28 @@ class CharacterManager {
 
     updateWeaponDisplay() {
         const weaponList = document.getElementById('weapon-list');
+        const filterSelect = document.getElementById('weapon-class-filter');
+        const selectedClass = filterSelect ? filterSelect.value : 'all';
         
         if (this.weapons.length === 0) {
             weaponList.innerHTML = '<p class="empty-state">Ingen våben endnu. Generer noget loot!</p>';
             return;
         }
 
+        // Filter weapons by class
+        let filteredWeapons = this.weapons;
+        if (selectedClass !== 'all') {
+            filteredWeapons = this.weapons.filter(weapon => weapon.weaponClass === selectedClass);
+        }
+
+        // Check if filtered result is empty
+        if (filteredWeapons.length === 0) {
+            weaponList.innerHTML = `<p class="empty-state">Ingen ${selectedClass} våben fundet.</p>`;
+            return;
+        }
+
         // Sort weapons: equipped first, then by ID (newest first)
-        const sortedWeapons = [...this.weapons].sort((a, b) => {
+        const sortedWeapons = [...filteredWeapons].sort((a, b) => {
             if (a.equipped && !b.equipped) return -1;
             if (!a.equipped && b.equipped) return 1;
             return b.id - a.id;
@@ -1019,6 +1033,12 @@ class CharacterManager {
         
         // Dice rolling
         document.getElementById('roll-dice').addEventListener('click', () => this.rollDice());
+        
+        // Weapon class filter
+        const filterSelect = document.getElementById('weapon-class-filter');
+        if (filterSelect) {
+            filterSelect.addEventListener('change', () => this.updateWeaponDisplay());
+        }
     }
 
     loadActiveTab(tabButtons, tabContents) {

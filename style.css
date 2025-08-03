@@ -259,6 +259,33 @@ main {
 }
 
 /* Inventory Styling */
+.inventory-controls {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inventory-controls label {
+    font-weight: bold;
+    color: #1e3c72;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.filter-select:focus {
+    border-color: #2a5298;
+    outline: none;
+}
+
 .weapon-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
