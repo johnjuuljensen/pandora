@@ -61,6 +61,11 @@ class CharacterManager {
         return 100 + (level - 1) * 20;
     }
 
+    calculateMaxSlotsForLevel(level) {
+        // Base slots: 1, +1 slot for every 2 levels (level 3, 5, 7, etc.)
+        return 1 + Math.floor((level - 1) / 2);
+    }
+
 
     saveCharacter() {
         const character = {
@@ -137,10 +142,44 @@ class CharacterManager {
         
         this.updateHealthBar();
         
+        // Check inventory slots
+        const newMaxSlots = this.calculateMaxSlotsForLevel(level);
+        const oldMaxSlots = this.calculateMaxSlotsForLevel(level - (hpIncrease > 0 ? 1 : -1));
+        const slotsIncrease = newMaxSlots - oldMaxSlots;
+        
+        let message = '';
         if (hpIncrease > 0) {
-            this.showMessage(`Level ${level}: +${hpIncrease} HP! Nu ${newCurrentHP}/${newMaxHP} HP 💪`);
+            message = `Level ${level}: +${hpIncrease} HP! Nu ${newCurrentHP}/${newMaxHP} HP 💪`;
         } else if (hpIncrease < 0) {
-            this.showMessage(`Level ${level}: ${hpIncrease} HP. Nu ${newCurrentHP}/${newMaxHP} HP`);
+            message = `Level ${level}: ${hpIncrease} HP. Nu ${newCurrentHP}/${newMaxHP} HP`;
+        }
+        
+        if (slotsIncrease > 0) {
+            message += ` +${slotsIncrease} inventory slot${slotsIncrease > 1 ? 's' : ''}! 📦`;
+        }
+        
+        if (message) {
+            this.showMessage(message);
+        }
+    }
+
+    updateSlotCounter() {
+        const slotCounter = document.getElementById('slot-counter');
+        if (slotCounter) {
+            const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+            const maxSlots = this.calculateMaxSlotsForLevel(currentLevel);
+            const usedSlots = this.weapons.length;
+            
+            slotCounter.textContent = `📦 Slots: ${usedSlots}/${maxSlots}`;
+            
+            // Change color based on fullness
+            if (usedSlots >= maxSlots) {
+                slotCounter.style.color = '#dc3545'; // Red when full
+            } else if (usedSlots >= maxSlots * 0.8) {
+                slotCounter.style.color = '#ffc107'; // Yellow when nearly full
+            } else {
+                slotCounter.style.color = '#28a745'; // Green when plenty of space
+            }
         }
     }
 
@@ -846,6 +885,15 @@ class CharacterManager {
     }
 
     addWeaponToInventory(weaponId) {
+        // Check inventory slot limit
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        const maxSlots = this.calculateMaxSlotsForLevel(currentLevel);
+        
+        if (this.weapons.length >= maxSlots) {
+            this.showMessage(`Inventory fuldt! Level ${currentLevel} tillader ${maxSlots} våben. Level op for flere slots! 📦`);
+            return;
+        }
+
         // Find weapon in temporary storage or create from current display
         const weaponDisplay = document.getElementById('new-weapon-display');
         if (weaponDisplay.style.display !== 'none') {
@@ -853,7 +901,7 @@ class CharacterManager {
             const weaponData = this.currentGeneratedWeapon;
             if (weaponData && weaponData.id === weaponId) {
                 this.weapons.push(weaponData);
-                this.showMessage(`${weaponData.name} tilføjet til inventory! ⚔️`);
+                this.showMessage(`${weaponData.name} tilføjet til inventory! ⚔️ (${this.weapons.length}/${maxSlots} slots)`);
                 this.updateWeaponDisplay();
                 weaponDisplay.style.display = 'none';
             }
@@ -870,6 +918,9 @@ class CharacterManager {
         const weaponList = document.getElementById('weapon-list');
         const filterSelect = document.getElementById('weapon-class-filter');
         const selectedClass = filterSelect ? filterSelect.value : 'all';
+        
+        // Update slot counter
+        this.updateSlotCounter();
         
         if (this.weapons.length === 0) {
             weaponList.innerHTML = '<p class="empty-state">Ingen våben endnu. Generer noget loot!</p>';

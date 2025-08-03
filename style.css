@@ -262,11 +262,34 @@ main {
 .inventory-controls {
     margin-bottom: 20px;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.inventory-slots-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.inventory-slots-info span {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.inventory-slots-info small {
+    color: #666;
+    font-style: italic;
+}
+
+.filter-controls {
+    display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.inventory-controls label {
+.filter-controls label {
     font-weight: bold;
     color: #1e3c72;
 }
