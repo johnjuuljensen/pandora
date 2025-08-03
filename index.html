@@ -17,6 +17,7 @@
             <button class="tab-btn active" data-tab="character">👤 Karakter</button>
             <button class="tab-btn" data-tab="inventory">🎒 Inventory</button>
             <button class="tab-btn" data-tab="loot">🎲 Loot</button>
+            <button class="tab-btn" data-tab="debug">🐛 Debug</button>
         </nav>
 
         <main class="tab-container">
@@ -124,6 +125,19 @@
                     <button id="stop-scanner" class="action-btn">❌ Stop Scanning</button>
                 </div>
             </section>
+            
+            <!-- Debug Tab -->
+            <section id="tab-debug" class="tab-content">
+                <div class="debug-controls">
+                    <button id="clear-debug-log" class="action-btn">🗑️ Ryd Log</button>
+                    <button id="export-debug-log" class="action-btn">📋 Kopier Log</button>
+                    <span class="debug-counter">Entries: <span id="debug-count">0</span></span>
+                </div>
+                
+                <div id="debug-log" class="debug-log">
+                    <p class="debug-entry info">🐛 Debug log startet</p>
+                </div>
+            </section>
         </main>
         
         <!-- Version Info -->
@@ -136,6 +150,13 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
     
-    <script src="script.js"></script>
+    <!-- Application Modules -->
+    <script src="js/debug-manager.js"></script>
+    <script src="js/weapon-generator.js"></script>
+    <script src="js/qr-system.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <script src="js/storage-manager.js"></script>
+    <script src="js/character-manager.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,76 @@
+{
+  "Nærkamp": {
+    "types": ["Sværd", "Kniv", "Økse", "Hammer", "Stav"],
+    "color": "#e74c3c",
+    "emoji": "⚔️",
+    "statModifiers": { "damage": 1.5, "accuracy": 1.0, "range": 0.1 },
+    "baseRange": 2,
+    "description": "Høj skade, ingen rækkevidde"
+  },
+  "Pistol": {
+    "types": ["Pistol", "Revolver", "Plasma Pistol"],
+    "color": "#3498db", 
+    "emoji": "🔫",
+    "statModifiers": { "damage": 0.9, "accuracy": 1.1, "range": 1.0 },
+    "baseRange": 25,
+    "description": "God præcision, moderat range"
+  },
+  "Haglgevær": {
+    "types": ["Haglgevær", "Combat Shotgun", "Double Barrel"],
+    "color": "#e67e22",
+    "emoji": "💥",
+    "statModifiers": { "damage": 1.8, "accuracy": 0.6, "range": 0.4 },
+    "baseRange": 15,
+    "damageDropoff": true,
+    "description": "Meget høj skade, lav præcision og range"
+  },
+  "Riffel": {
+    "types": ["Riffel", "Assault Rifle", "Battle Rifle"],
+    "color": "#27ae60",
+    "emoji": "🎯",
+    "statModifiers": { "damage": 1.0, "accuracy": 1.0, "range": 1.0 },
+    "baseRange": 40,
+    "description": "Balanceret baseline"
+  },
+  "Sniper": {
+    "types": ["Snigskytteriffel", "Anti-Material Rifle", "Precision Rifle"],
+    "color": "#9b59b6",
+    "emoji": "🎯",
+    "statModifiers": { "damage": 1.7, "accuracy": 1.4, "range": 2.2 },
+    "baseRange": 80,
+    "description": "Højeste stats across the board"
+  },
+  "Automatisk": {
+    "types": ["Maskingevær", "Minigun", "Chain Gun"],
+    "color": "#f39c12",
+    "emoji": "🔥",
+    "statModifiers": { "damage": 1.2, "accuracy": 0.7, "range": 1.1 },
+    "baseRange": 50,
+    "description": "Høj skade, lav præcision"
+  },
+  "Energi": {
+    "types": ["Laser Rifle", "Plasma Cannon", "Ion Blaster"],
+    "color": "#1abc9c",
+    "emoji": "⚡",
+    "statModifiers": { "damage": 1.1, "accuracy": 1.3, "range": 1.2 },
+    "baseRange": 60,
+    "description": "Høj præcision, moderat rækkevidde"
+  },
+  "Eksplosiv": {
+    "types": ["Raket Launcher", "Granat Launcher", "Missile Pod"],
+    "color": "#e74c3c",
+    "emoji": "💣",
+    "statModifiers": { "damage": 2.2, "accuracy": 0.5, "range": 1.0 },
+    "baseRange": 100,
+    "description": "Ekstrem skade, meget lav præcision"
+  },
+  "Shield": {
+    "types": ["Energi Shield", "Plasma Barrier", "Force Field", "Deflector Shield", "Riot Shield"],
+    "color": "#17a2b8",
+    "emoji": "🛡️",
+    "statModifiers": { "damage": 0.1, "accuracy": 1.0, "range": 0.1 },
+    "baseRange": 1,
+    "isShield": true,
+    "description": "Minimal skade, kun shield points"
+  }
+}

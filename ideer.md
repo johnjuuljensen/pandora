@@ -2,6 +2,9 @@
 # Brugergrænseflade
 - [x] Mindre scroll, måske faner ✅ **FÆRDIG**
 - [x] ved genindlæs skal den loade seneste karakter
+- [ ] Tilføj en reset hp knap. Den skal stå på samme linie som reset skjold knappen.
+- [ ] Understøt flere karakterer. Der skal kun være en synlig ad gangen, men man skal kunne gemme under flere navne og vælge et navn. Det kunne evt. være sådan at Navn feltet var et dropdown som listede alle gemte karakterer. Der kunne så være en "Opret karakter" knap et sted (måske et + ved siden af Navn).
+- [ ] Lav auto-save, ved ændring af hp, skjold, equipped, inventory, så gem. 
 
 # Stats og regler
 - [x] max hp skal følge level ✅ **FÆRDIG**
@@ -18,10 +21,10 @@
 - [x] man skal ikke kunne slette equippede våben 
 
 # Next next level
-- [ ] Man skal måske kunne dele våben. Måske med en kode eller et QR kode. Koden skal indeholde stats, men ikke billede. Koden skal ikke være mere end 8-10 karakterer lang.
+- [x] Man skal måske kunne dele våben. Måske med en kode eller et QR kode. Koden skal indeholde stats, men ikke billede. Koden skal ikke være mere end 8-10 karakterer lang.
 
 # Karakter
 - [ ] billed af karakter
 
 # Inventory
-- [ ] Der skal være et max antal våbenslots i inventory. Antal slots skal følge level, en slot for hvert andet level.
+- [x] Der skal være et max antal våbenslots i inventory. Antal slots skal følge level, en slot for hvert andet level.

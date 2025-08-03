@@ -1,0 +1,7 @@
+[
+  { "name": "Almindelig", "color": "#6c757d", "statBonus": 1 },
+  { "name": "Ualmindelig", "color": "#28a745", "statBonus": 1.2 },
+  { "name": "Sjælden", "color": "#007bff", "statBonus": 1.5 },
+  { "name": "Episk", "color": "#6f42c1", "statBonus": 2 },
+  { "name": "Legendarisk", "color": "#fd7e14", "statBonus": 3 }
+]

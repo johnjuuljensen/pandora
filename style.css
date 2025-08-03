@@ -181,11 +181,10 @@ main {
 
 .health-visual {
     height: 20px;
-    background: #dc3545;
+    background: #28a745; /* Default green */
     border-radius: 10px;
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, background-color 0.3s ease;
     position: relative;
-    background: linear-gradient(90deg, #28a745 0%, #ffc107 70%, #dc3545 90%);
 }
 
 /* Help Tooltips */
@@ -688,6 +687,61 @@ main {
     padding: 8px;
     margin: 10px 0;
     color: #004085;
+}
+
+/* Debug Tab Styling */
+.debug-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.debug-counter {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+}
+
+.debug-log {
+    background: #000;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8em;
+    padding: 15px;
+    border-radius: 8px;
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #333;
+}
+
+.debug-entry {
+    margin: 0 0 5px 0;
+    padding: 2px 0;
+    word-wrap: break-word;
+}
+
+.debug-entry.error {
+    color: #ff4444;
+}
+
+.debug-entry.warning {
+    color: #ffaa00;
+}
+
+.debug-entry.info {
+    color: #00ffff;
+}
+
+.debug-entry.success {
+    color: #44ff44;
+}
+
+.debug-entry .timestamp {
+    color: #888;
+    font-size: 0.9em;
 }
 
 /* Version Info */
