@@ -21,41 +21,36 @@ body {
 header {
     text-align: center;
     background: rgba(255, 255, 255, 0.95);
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
     box-shadow: 0 4px 16px rgba(31, 38, 135, 0.2);
 }
 
 header h1 {
-    font-size: 1.5em;
+    font-size: 1.3em;
     color: #1e3c72;
-    margin-bottom: 5px;
-}
-
-header p {
-    font-size: 0.9em;
-    color: #666;
+    margin: 0;
 }
 
 /* Tab Navigation */
 .tab-nav {
     display: flex;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    padding: 10px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 15px;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-    gap: 5px;
+    gap: 4px;
 }
 
 .tab-btn {
     flex: 1;
     background: transparent;
     border: none;
-    padding: 15px 20px;
-    border-radius: 10px;
-    font-size: 1.1em;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 1em;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -279,6 +274,16 @@ main {
     transition: transform 0.2s;
 }
 
+/* Compact Weapon Cards */
+.weapon-card.compact {
+    padding: 12px;
+    margin-bottom: 10px;
+    display: inline-block;
+    width: calc(33.333% - 10px);
+    margin-right: 15px;
+    vertical-align: top;
+}
+
 .weapon-card:hover {
     transform: scale(1.05);
     border-color: #6f42c1;
@@ -333,6 +338,12 @@ main {
     border: 1px solid #dee2e6;
 }
 
+.weapon-image.compact {
+    height: 60px;
+    margin-bottom: 8px;
+    font-size: 1.5em;
+}
+
 .weapon-image svg,
 .weapon-image .cartoon-weapon {
     max-width: 90%;
@@ -356,6 +367,49 @@ main {
     font-weight: bold;
     color: #1e3c72;
     margin-bottom: 5px;
+}
+
+.weapon-name.compact {
+    font-size: 0.9em;
+    margin-bottom: 3px;
+}
+
+.weapon-class.compact {
+    font-size: 0.7em;
+    margin: 3px 0 !important;
+    text-align: center;
+}
+
+.weapon-stats.compact {
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.weapon-stats.compact span {
+    font-size: 0.7em;
+    background: rgba(0,0,0,0.1);
+    padding: 2px 4px;
+    border-radius: 8px;
+    cursor: help;
+    transition: background 0.2s ease;
+}
+
+.weapon-stats.compact span:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+.weapon-actions.compact {
+    gap: 3px;
+    margin-top: 5px;
+}
+
+.weapon-actions .action-btn.compact {
+    padding: 4px 6px;
+    font-size: 0.7em;
+    min-width: 24px;
 }
 
 /* Loot Generator Styling */
@@ -438,5 +492,26 @@ main {
     
     header {
         padding: 10px 15px;
+    }
+    
+    .weapon-card.compact {
+        width: calc(50% - 7px);
+        margin-right: 10px;
+    }
+    
+    .weapon-card.compact:nth-child(2n) {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .weapon-card.compact {
+        width: 100%;
+        margin-right: 0;
+        display: block;
+    }
+    
+    .weapon-stats.compact {
+        justify-content: center;
     }
 }

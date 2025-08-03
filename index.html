@@ -10,20 +10,18 @@
     <div class="container">
         <header>
             <h1>🎲 Pandora RPG</h1>
-            <p>Karakter Manager & Loot Generator</p>
         </header>
 
         <!-- Tab Navigation -->
         <nav class="tab-nav">
             <button class="tab-btn active" data-tab="character">👤 Karakter</button>
             <button class="tab-btn" data-tab="inventory">🎒 Inventory</button>
-            <button class="tab-btn" data-tab="loot">🎲 Loot Generator</button>
+            <button class="tab-btn" data-tab="loot">🎲 Loot</button>
         </nav>
 
         <main class="tab-container">
             <!-- Character Tab -->
             <section id="tab-character" class="tab-content active">
-                <h2>Min Karakter</h2>
                 <div class="character-info">
                     <div class="basic-stats">
                         <label>
@@ -68,7 +66,6 @@
 
             <!-- Inventory Tab -->
             <section id="tab-inventory" class="tab-content">
-                <h2>Inventory</h2>
                 <div id="weapon-list" class="weapon-grid">
                     <p class="empty-state">Ingen våben endnu. Generer noget loot!</p>
                 </div>
@@ -76,7 +73,6 @@
 
             <!-- Loot Generator Tab -->
             <section id="tab-loot" class="tab-content">
-                <h2>Loot Generator</h2>
                 <div class="generator-controls">
                     <button id="generate-weapon" class="generator-btn">⚔️ Generer Våben</button>
                     <button id="roll-dice" class="generator-btn">🎲 Kast Terning</button>

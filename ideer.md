@@ -18,10 +18,10 @@
 - [ ] man skal ikke kunne slette equippede våben 
 
 # Next next level
-- [ ] Man skal måske kunne dele våben. Måske med en kode eller et QR kode.
+- [ ] Man skal måske kunne dele våben. Måske med en kode eller et QR kode. Koden skal indeholde stats, men ikke billede. Koden skal ikke være mere end 8-10 karakterer lang.
 
 # Karakter
 - [ ] billed af karakter
 
 # Inventory
-- [ ] Vært 2 level skal man kunne havde et våben mere i sit inventory
+- [ ] Hvert 2. level skal man kunne have en ekstra våbenslot i sit inventory

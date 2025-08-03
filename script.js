@@ -820,24 +820,26 @@ class CharacterManager {
         const display = document.getElementById('new-weapon-display');
         display.innerHTML = `
             <h3>Nyt Våben Genereret!</h3>
-            <div class="weapon-card">
+            <div class="weapon-card compact">
                 <div class="weapon-image">${weapon.image}</div>
                 <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
                 <div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0;">
                     ${weapon.classEmoji} ${weapon.weaponClass}
                 </div>
-                <div class="weapon-stats">
-                    <div>⭐ Level: ${weapon.level}</div>
-                    <div>💥 Skade: ${weapon.damage}</div>
-                    <div>🎯 Præcision: ${weapon.accuracy}%</div>
-                    <div>📏 Rækkevidde: ${weapon.range}m</div>
+                <div class="weapon-stats compact">
+                    <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
+                    <span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>
+                    <span title="Præcision: ${weapon.accuracy}%">🎯${weapon.accuracy}%</span>
+                    <span title="Rækkevidde: ${weapon.range}m">📏${weapon.range}m</span>
                 </div>
-                <button onclick="characterManager.addWeaponToInventory(${weapon.id})" class="action-btn">
-                    Tilføj til Inventory
-                </button>
-                <button onclick="characterManager.discardWeapon()" class="action-btn" style="background: #dc3545;">
-                    Afvis Våben
-                </button>
+                <div class="weapon-actions">
+                    <button onclick="characterManager.addWeaponToInventory(${weapon.id})" class="action-btn compact">
+                        Tilføj
+                    </button>
+                    <button onclick="characterManager.discardWeapon()" class="action-btn compact" style="background: #dc3545;">
+                        Afvis
+                    </button>
+                </div>
             </div>
         `;
         display.style.display = 'block';
@@ -885,31 +887,31 @@ class CharacterManager {
             const isEquipped = weapon.equipped;
             
             return `
-            <div class="weapon-card ${canUse ? '' : 'weapon-too-high-level'} ${isEquipped ? 'weapon-equipped' : ''}">
-                <div class="weapon-image">${weapon.image}</div>
-                <div class="weapon-name" style="color: ${weapon.rarity.color}">
+            <div class="weapon-card compact ${canUse ? '' : 'weapon-too-high-level'} ${isEquipped ? 'weapon-equipped' : ''}">
+                <div class="weapon-image compact">${weapon.image}</div>
+                <div class="weapon-name compact" style="color: ${weapon.rarity.color}">
                     ${weapon.name} ${isEquipped ? '⚔️' : ''}
                 </div>
-                ${weapon.weaponClass ? `<div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0; font-size: 0.9em;">
+                ${weapon.weaponClass ? `<div class="weapon-class compact" style="color: ${weapon.classColor}; font-weight: bold;">
                     ${weapon.classEmoji} ${weapon.weaponClass}
                 </div>` : ''}
-                <div class="weapon-stats">
-                    <div>⭐ Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}</div>
-                    <div>💥 Skade: ${weapon.damage}</div>
-                    <div>🎯 Præcision: ${weapon.accuracy}%</div>
-                    <div>📏 Rækkevidde: ${weapon.range}m</div>
+                <div class="weapon-stats compact">
+                    <span title="Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}">⭐${weapon.level}${canUse ? '' : '❌'}</span>
+                    <span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>
+                    <span title="Præcision: ${weapon.accuracy}%">🎯${weapon.accuracy}%</span>
+                    <span title="Rækkevidde: ${weapon.range}m">📏${weapon.range}m</span>
                 </div>
-                <div class="weapon-actions">
+                <div class="weapon-actions compact">
                     ${canUse ? (isEquipped ? 
-                        `<button onclick="characterManager.unequipWeapon(${weapon.id})" class="action-btn" style="background: #6c757d;">
-                            Unequip
+                        `<button onclick="characterManager.unequipWeapon(${weapon.id})" class="action-btn compact" style="background: #6c757d;" title="Unequip våben">
+                            📤
                         </button>` :
-                        `<button onclick="characterManager.equipWeapon(${weapon.id})" class="action-btn" style="background: #28a745;">
-                            Equip
+                        `<button onclick="characterManager.equipWeapon(${weapon.id})" class="action-btn compact" style="background: #28a745;" title="Equip våben">
+                            📥
                         </button>`
                     ) : ''}
-                    <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn" style="background: ${isEquipped ? '#6c757d' : '#dc3545'};" ${isEquipped ? 'disabled' : ''}>
-                        Fjern
+                    <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn compact" style="background: ${isEquipped ? '#6c757d' : '#dc3545'};" ${isEquipped ? 'disabled' : ''} title="Fjern våben">
+                        🗑️
                     </button>
                 </div>
             </div>
