@@ -10,12 +10,28 @@ class CharacterManager {
     // Character data management
     loadCharacter() {
         const saved = localStorage.getItem('pandora-character');
-        return saved ? JSON.parse(saved) : {
+        const defaultChar = {
             name: '',
             level: 1,
             currentHp: 100,
             maxHp: 100
         };
+        
+        if (saved) {
+            const character = JSON.parse(saved);
+            // Ensure max HP matches level when loading
+            character.maxHp = this.calculateMaxHPForLevel(character.level);
+            // Ensure current HP doesn't exceed new max HP
+            character.currentHp = Math.min(character.currentHp, character.maxHp);
+            return character;
+        }
+        
+        return defaultChar;
+    }
+
+    calculateMaxHPForLevel(level) {
+        // Base HP: 100, +20 HP per level
+        return 100 + (level - 1) * 20;
     }
 
     saveCharacter() {
@@ -51,9 +67,40 @@ class CharacterManager {
     updateDisplay() {
         document.getElementById('character-name').value = this.character.name;
         document.getElementById('character-level').value = this.character.level;
+        
+        // Ensure max HP matches current level
+        const correctMaxHP = this.calculateMaxHPForLevel(this.character.level);
+        this.character.maxHp = correctMaxHP;
+        this.character.currentHp = Math.min(this.character.currentHp, correctMaxHP);
+        
         document.getElementById('current-hp').value = this.character.currentHp;
         document.getElementById('max-hp').value = this.character.maxHp;
         this.updateHealthBar();
+    }
+
+    updateMaxHPForLevel() {
+        const level = parseInt(document.getElementById('character-level').value) || 1;
+        const oldMaxHP = parseInt(document.getElementById('max-hp').value) || 100;
+        const newMaxHP = this.calculateMaxHPForLevel(level);
+        const currentHP = parseInt(document.getElementById('current-hp').value) || oldMaxHP;
+        
+        // Calculate HP increase
+        const hpIncrease = newMaxHP - oldMaxHP;
+        
+        // Update max HP field
+        document.getElementById('max-hp').value = newMaxHP;
+        
+        // Increase current HP by the same amount, but cap at new max
+        const newCurrentHP = Math.min(currentHP + hpIncrease, newMaxHP);
+        document.getElementById('current-hp').value = Math.max(0, newCurrentHP);
+        
+        this.updateHealthBar();
+        
+        if (hpIncrease > 0) {
+            this.showMessage(`Level ${level}: +${hpIncrease} HP! Nu ${newCurrentHP}/${newMaxHP} HP 💪`);
+        } else if (hpIncrease < 0) {
+            this.showMessage(`Level ${level}: ${hpIncrease} HP. Nu ${newCurrentHP}/${newMaxHP} HP`);
+        }
     }
 
     updateHealthBar() {
@@ -304,7 +351,10 @@ class CharacterManager {
         document.getElementById('max-hp').addEventListener('input', () => this.updateHealthBar());
         
         // Level updates
-        document.getElementById('character-level').addEventListener('input', () => this.updateWeaponDisplay());
+        document.getElementById('character-level').addEventListener('input', () => {
+            this.updateMaxHPForLevel();
+            this.updateWeaponDisplay();
+        });
         
         // Weapon generation
         document.getElementById('generate-weapon').addEventListener('click', () => this.generateWeapon());

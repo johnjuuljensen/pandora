@@ -183,6 +183,14 @@ main {
     background: linear-gradient(90deg, #28a745 0%, #ffc107 70%, #dc3545 90%);
 }
 
+.hp-formula {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+}
+
 .character-actions {
     display: flex;
     gap: 10px;
