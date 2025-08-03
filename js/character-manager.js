@@ -341,6 +341,10 @@ class CharacterManager {
                 this.storageManager.saveCharacterByName(character.name, character, weapons);
                 this.populateCharacterDropdown();
                 this.loadCharacterByName(character.name);
+            } else {
+                // No existing character - create default avatar
+                this.currentAvatar = this.avatarGenerator.generateRandomAvatar();
+                this.updateAvatarDisplay(this.currentAvatar);
             }
         }
     }
@@ -465,8 +469,10 @@ class CharacterManager {
 
     // Avatar system functionality
     setupAvatarSystem() {
-        // Load default avatar for new characters
-        this.currentAvatar = null;
+        // Initialize avatar if not already set
+        if (!this.currentAvatar) {
+            this.currentAvatar = this.avatarGenerator.generateRandomAvatar();
+        }
         
         // Setup avatar display
         this.updateAvatarDisplay();
@@ -658,6 +664,10 @@ class CharacterManager {
             // Save new character
             if (this.storageManager.saveCharacterByName(sanitizedName, defaultCharacter, [])) {
                 this.populateCharacterDropdown();
+                
+                // Set the new avatar as current before loading
+                this.currentAvatar = defaultCharacter.avatar;
+                
                 this.loadCharacterByName(sanitizedName);
                 this.uiManager.showMessage(`Ny karakter "${sanitizedName}" oprettet! 🎭`);
             } else {

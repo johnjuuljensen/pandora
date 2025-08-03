@@ -257,6 +257,7 @@ class StorageManager {
                 maxHP: characterData.maxHP || 100,
                 currentShield: characterData.currentShield || 0,
                 maxShield: characterData.maxShield || 50,
+                avatar: characterData.avatar || null,
                 weapons: weapons || [],
                 savedAt: new Date().toISOString()
             };
