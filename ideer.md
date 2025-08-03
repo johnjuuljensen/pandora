@@ -2,9 +2,9 @@
 # Brugergrænseflade
 - [x] Mindre scroll, måske faner ✅ **FÆRDIG**
 - [x] ved genindlæs skal den loade seneste karakter
-- [ ] Tilføj en reset hp knap. Den skal stå på samme linie som reset skjold knappen.
+- [x] Tilføj en reset hp knap. Den skal stå på samme linie som reset skjold knappen.
 - [ ] Understøt flere karakterer. Der skal kun være en synlig ad gangen, men man skal kunne gemme under flere navne og vælge et navn. Det kunne evt. være sådan at Navn feltet var et dropdown som listede alle gemte karakterer. Der kunne så være en "Opret karakter" knap et sted (måske et + ved siden af Navn).
-- [ ] Lav auto-save, ved ændring af hp, skjold, equipped, inventory, så gem. 
+- [x] Lav auto-save, ved ændring af hp, skjold, equipped, inventory, så gem. 
 
 # Stats og regler
 - [x] max hp skal følge level ✅ **FÆRDIG**
