@@ -16,17 +16,18 @@ class QRSystem {
             return;
         }
 
-        // Create ultra-compact weapon data for QR code
-        const weaponData = {
-            n: weapon.name,
-            c: this.weaponGenerator.getClassCode(weapon.weaponClass),
-            d: weapon.damage,
-            a: weapon.accuracy,
-            r: weapon.range,
-            l: weapon.level,
-            s: weapon.shieldPoints || 0,
-            t: this.weaponGenerator.getRarityCode(weapon.rarity.name)
-        };
+        // Create ultra-compact weapon data for QR code (Version 3 format)
+        // Array format: [version, typeCode, rarityCode, damage, accuracy, range, level, shieldPoints]
+        const weaponData = [
+            3,  // Version 3
+            this.weaponGenerator.getWeaponTypeCode(weapon.type),
+            this.weaponGenerator.getRarityCode(weapon.rarity.name),
+            weapon.damage,
+            weapon.accuracy,
+            weapon.range,
+            weapon.level,
+            weapon.shieldPoints || 0
+        ];
 
         try {
             // Create QR code with lower error correction for more data capacity
@@ -88,10 +89,24 @@ class QRSystem {
         const scanner = new QrScanner(video, (result) => {
             try {
                 const weaponData = JSON.parse(result.data);
-                this.receiveWeapon(weaponData);
+                
+                // Check if it's the new array format (version 3)
+                if (Array.isArray(weaponData)) {
+                    if (weaponData[0] !== 3) {
+                        this.showMessage(`Unsupported QR version: ${weaponData[0]}. This app only supports version 3.`);
+                        return;
+                    }
+                    this.receiveWeaponV3(weaponData);
+                } else {
+                    // Legacy object format - show deprecation message
+                    this.showMessage('Legacy QR format detected. Please generate a new QR code.');
+                    return;
+                }
+                
                 this.stopQRScanner();
             } catch (error) {
-                console.error('QR decode error:', error);
+                console.error(`QR decode error: ${result.data}`);
+                console.error('QR decode error:', result, error);
                 this.showMessage('Ugyldig QR kode. Prøv igen.');
             }
         }, {
@@ -120,6 +135,55 @@ class QRSystem {
         this.showMessage('Scanner stoppet');
     }
 
+    receiveWeaponV3(weaponData) {
+        try {
+            // Destructure array format: [version, typeCode, rarityCode, damage, accuracy, range, level, shieldPoints]
+            const [version, typeCode, rarityCode, damage, accuracy, range, level, shieldPoints] = weaponData;
+            
+            // Reconstruct weapon from compact data
+            const weaponType = this.weaponGenerator.getWeaponTypeFromCode(typeCode);
+            const weaponClass = this.weaponGenerator.getWeaponClassFromTypeCode(typeCode);
+            const rarityName = this.weaponGenerator.getRarityFromCode(rarityCode);
+            
+            // Reconstruct weapon name from rarity + type
+            const weaponName = `${rarityName} ${weaponType}`;
+            
+            const weapon = {
+                id: Date.now(),
+                name: weaponName,
+                type: weaponType,
+                weaponClass: weaponClass,
+                damage: damage,
+                accuracy: accuracy,
+                range: range,
+                level: level,
+                shieldPoints: shieldPoints || 0,
+                rarity: this.weaponGenerator.getRarityByName(rarityName),
+                image: this.weaponGenerator.getWeaponImageByClass(weaponClass),
+                classEmoji: this.weaponGenerator.getClassEmojiByClass(weaponClass),
+                classColor: this.weaponGenerator.getClassColorByClass(weaponClass),
+                isReceived: true // Mark as received weapon (cannot be shared again)
+            };
+
+            // Set as current generated weapon so it can be added to inventory
+            if (window.characterManager) {
+                window.characterManager.currentGeneratedWeapon = weapon;
+            }
+
+            // Show received weapon using UI manager
+            this.uiManager.displayReceivedWeapon(weapon);
+            this.showMessage(`Våben modtaget! ${weapon.name} er nu tilgængeligt 📦`);
+
+            return weapon;
+
+        } catch (error) {
+            console.error('Weapon reconstruction error:', error);
+            this.showMessage(`Våben modtagelse fejl: ${error.message || error}`);
+            return null;
+        }
+    }
+
+    // Legacy method for backwards compatibility (deprecated)
     receiveWeapon(weaponData) {
         try {
             // Reconstruct weapon from QR data

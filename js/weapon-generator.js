@@ -61,7 +61,7 @@ class WeaponGenerator {
 
         const weapon = {
             id: Date.now(),
-            name: `${randomWeapon}`,
+            name: `${randomRarity.name} ${randomWeapon}`,
             type: randomWeapon,
             weaponClass: randomClassName,
             classColor: selectedClass.color,
@@ -768,14 +768,75 @@ class WeaponGenerator {
 
     getRarityCode(rarityName) {
         const codes = {
-            'Almindelig': '1', 'Ualmindelig': '2', 'Sjælden': '3', 'Episk': '4', 'Legendarisk': '5'
+            'Almindelig': 1, 'Ualmindelig': 2, 'Sjælden': 3, 'Episk': 4, 'Legendarisk': 5
         };
-        return codes[rarityName] || '1';
+        return codes[rarityName] || 1;
+    }
+
+    getWeaponTypeCode(weaponType) {
+        const codes = {
+            // Nærkamp weapons (10-14)
+            'Sværd': 10, 'Kniv': 11, 'Økse': 12, 'Hammer': 13, 'Stav': 14,
+            // Pistol weapons (20-22)
+            'Pistol': 20, 'Revolver': 21, 'Plasma Pistol': 22,
+            // Haglgevær weapons (30-32)
+            'Haglgevær': 30, 'Combat Shotgun': 31, 'Double Barrel': 32,
+            // Riffel weapons (40-42)
+            'Riffel': 40, 'Assault Rifle': 41, 'Battle Rifle': 42,
+            // Sniper weapons (50-52)
+            'Snigskytteriffel': 50, 'Anti-Material Rifle': 51, 'Precision Rifle': 52,
+            // Automatisk weapons (60-62)
+            'Maskingevær': 60, 'Minigun': 61, 'Chain Gun': 62,
+            // Energi weapons (70-72)
+            'Laser Rifle': 70, 'Plasma Cannon': 71, 'Ion Blaster': 72,
+            // Eksplosiv weapons (80-82)
+            'Raket Launcher': 80, 'Granat Launcher': 81, 'Missile Pod': 82,
+            // Shield weapons (90-94)
+            'Energi Shield': 90, 'Plasma Barrier': 91, 'Force Field': 92, 'Deflector Shield': 93, 'Riot Shield': 94
+        };
+        return codes[weaponType] || 10;
+    }
+
+    getWeaponTypeFromCode(code) {
+        const types = {
+            // Nærkamp weapons (10-14)
+            10: 'Sværd', 11: 'Kniv', 12: 'Økse', 13: 'Hammer', 14: 'Stav',
+            // Pistol weapons (20-22)
+            20: 'Pistol', 21: 'Revolver', 22: 'Plasma Pistol',
+            // Haglgevær weapons (30-32)
+            30: 'Haglgevær', 31: 'Combat Shotgun', 32: 'Double Barrel',
+            // Riffel weapons (40-42)
+            40: 'Riffel', 41: 'Assault Rifle', 42: 'Battle Rifle',
+            // Sniper weapons (50-52)
+            50: 'Snigskytteriffel', 51: 'Anti-Material Rifle', 52: 'Precision Rifle',
+            // Automatisk weapons (60-62)
+            60: 'Maskingevær', 61: 'Minigun', 62: 'Chain Gun',
+            // Energi weapons (70-72)
+            70: 'Laser Rifle', 71: 'Plasma Cannon', 72: 'Ion Blaster',
+            // Eksplosiv weapons (80-82)
+            80: 'Raket Launcher', 81: 'Granat Launcher', 82: 'Missile Pod',
+            // Shield weapons (90-94)
+            90: 'Energi Shield', 91: 'Plasma Barrier', 92: 'Force Field', 93: 'Deflector Shield', 94: 'Riot Shield'
+        };
+        return types[code] || 'Sværd';
+    }
+
+    getWeaponClassFromTypeCode(typeCode) {
+        if (typeCode >= 10 && typeCode <= 14) return 'Nærkamp';
+        if (typeCode >= 20 && typeCode <= 22) return 'Pistol';
+        if (typeCode >= 30 && typeCode <= 32) return 'Haglgevær';
+        if (typeCode >= 40 && typeCode <= 42) return 'Riffel';
+        if (typeCode >= 50 && typeCode <= 52) return 'Sniper';
+        if (typeCode >= 60 && typeCode <= 62) return 'Automatisk';
+        if (typeCode >= 70 && typeCode <= 72) return 'Energi';
+        if (typeCode >= 80 && typeCode <= 82) return 'Eksplosiv';
+        if (typeCode >= 90 && typeCode <= 94) return 'Shield';
+        return 'Nærkamp';
     }
 
     getRarityFromCode(code) {
         const rarities = {
-            '1': 'Almindelig', '2': 'Ualmindelig', '3': 'Sjælden', '4': 'Episk', '5': 'Legendarisk'
+            1: 'Almindelig', 2: 'Ualmindelig', 3: 'Sjælden', 4: 'Episk', 5: 'Legendarisk'
         };
         return rarities[code] || 'Almindelig';
     }
