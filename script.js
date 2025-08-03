@@ -292,6 +292,9 @@ class CharacterManager {
     }
 
     initializeEventListeners() {
+        // Tab navigation
+        this.initializeTabs();
+        
         // Character management
         document.getElementById('save-character').addEventListener('click', () => this.saveCharacter());
         document.getElementById('load-character').addEventListener('click', () => this.loadSavedCharacter());
@@ -308,6 +311,25 @@ class CharacterManager {
         
         // Dice rolling
         document.getElementById('roll-dice').addEventListener('click', () => this.rollDice());
+    }
+
+    initializeTabs() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                document.getElementById(`tab-${targetTab}`).classList.add('active');
+            });
+        });
     }
 }
 

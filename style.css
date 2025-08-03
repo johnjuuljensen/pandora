@@ -21,38 +21,90 @@ body {
 header {
     text-align: center;
     background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.2);
 }
 
 header h1 {
-    font-size: 2.5em;
+    font-size: 1.5em;
     color: #1e3c72;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 header p {
-    font-size: 1.2em;
+    font-size: 0.9em;
     color: #666;
 }
 
+/* Tab Navigation */
+.tab-nav {
+    display: flex;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    gap: 5px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.tab-btn:hover {
+    background: rgba(42, 82, 152, 0.1);
+    color: #1e3c72;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+}
+
+/* Tab Container */
+.tab-container {
+    position: relative;
+    min-height: 70vh;
+}
+
+.tab-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    min-height: 60vh;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Adjust main layout */
 main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
     margin-bottom: 30px;
 }
 
-section {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-}
-
-section h2 {
+/* Tab content headers */
+.tab-content h2 {
     color: #1e3c72;
     margin-bottom: 20px;
     font-size: 1.5em;
@@ -129,6 +181,13 @@ section h2 {
     transition: width 0.3s ease;
     position: relative;
     background: linear-gradient(90deg, #28a745 0%, #ffc107 70%, #dc3545 90%);
+}
+
+.character-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 /* Button Styling */
@@ -254,15 +313,42 @@ section h2 {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    main {
-        grid-template-columns: 1fr;
+    .container {
+        padding: 10px;
+    }
+    
+    .tab-nav {
+        padding: 5px;
+        gap: 2px;
+    }
+    
+    .tab-btn {
+        padding: 12px 10px;
+        font-size: 1em;
+    }
+    
+    .tab-content {
+        padding: 20px;
+        min-height: 50vh;
     }
     
     .basic-stats {
         grid-template-columns: 1fr;
     }
     
+    .character-actions {
+        flex-direction: column;
+    }
+    
+    .weapon-grid {
+        grid-template-columns: 1fr;
+    }
+    
     header h1 {
-        font-size: 2em;
+        font-size: 1.3em;
+    }
+    
+    header {
+        padding: 10px 15px;
     }
 }
