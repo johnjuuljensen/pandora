@@ -1148,7 +1148,7 @@ class CharacterManager {
             const rarityName = this.getRarityFromCode(weaponData.t);
             
             const weapon = {
-                id: this.generateWeaponId(),
+                id: Date.now(),
                 name: weaponData.n,
                 weaponClass: weaponClass,
                 damage: weaponData.d,
@@ -1157,9 +1157,9 @@ class CharacterManager {
                 level: weaponData.l,
                 shieldPoints: weaponData.s || 0,
                 rarity: this.getRarityByName(rarityName),
-                image: this.getWeaponImage(weaponClass),
-                classEmoji: this.getClassEmoji(weaponClass),
-                classColor: this.getClassColor(weaponClass)
+                image: this.getWeaponImageByClass(weaponClass),
+                classEmoji: this.getClassEmojiByClass(weaponClass),
+                classColor: this.getClassColorByClass(weaponClass)
             };
 
             // Mark as received weapon (cannot be shared again)
@@ -1237,6 +1237,51 @@ class CharacterManager {
             '5': 'Legendarisk'
         };
         return rarities[code] || 'Almindelig';
+    }
+
+    getWeaponImageByClass(weaponClass) {
+        const classImages = {
+            'Nærkamp': '⚔️',
+            'Pistol': '🔫',
+            'Haglgevær': '💥',
+            'Riffel': '🔫',
+            'Sniper': '🎯',
+            'Automatisk': '🔥',
+            'Energi': '⚡',
+            'Eksplosiv': '💣',
+            'Shield': '🛡️'
+        };
+        return classImages[weaponClass] || '⚔️';
+    }
+
+    getClassEmojiByClass(weaponClass) {
+        const classEmojis = {
+            'Nærkamp': '⚔️',
+            'Pistol': '🔫',
+            'Haglgevær': '💥',
+            'Riffel': '🔫',
+            'Sniper': '🎯',
+            'Automatisk': '🔥',
+            'Energi': '⚡',
+            'Eksplosiv': '💣',
+            'Shield': '🛡️'
+        };
+        return classEmojis[weaponClass] || '⚔️';
+    }
+
+    getClassColorByClass(weaponClass) {
+        const classColors = {
+            'Nærkamp': '#e74c3c',
+            'Pistol': '#3498db',
+            'Haglgevær': '#f39c12',
+            'Riffel': '#27ae60',
+            'Sniper': '#9b59b6',
+            'Automatisk': '#e67e22',
+            'Energi': '#1abc9c',
+            'Eksplosiv': '#c0392b',
+            'Shield': '#17a2b8'
+        };
+        return classColors[weaponClass] || '#e74c3c';
     }
 
     displayReceivedWeapon(weapon) {
