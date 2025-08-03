@@ -26,8 +26,13 @@
                 <div class="character-info">
                     <div class="basic-stats">
                         <div class="stat-row">
-                            <label for="character-name">Navn:</label>
-                            <input type="text" id="character-name" placeholder="Indtast karakternavn">
+                            <label for="character-select">Karakter:</label>
+                            <div class="character-selector">
+                                <select id="character-select" class="character-dropdown">
+                                    <option value="">Vælg karakter...</option>
+                                </select>
+                                <button id="new-character" class="new-character-btn" title="Opret ny karakter">+</button>
+                            </div>
                         </div>
                         <div class="stat-row">
                             <label for="character-level">Level:</label>
@@ -73,7 +78,7 @@
                 </div>
                 
                 <div class="character-actions">
-                    <button id="load-character" class="action-btn">📁 Indlæs Karakter</button>
+                    <!-- Character management is now handled by the dropdown -->
                 </div>
             </section>
 

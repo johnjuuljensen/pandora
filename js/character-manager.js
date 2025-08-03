@@ -31,6 +31,9 @@ class CharacterManager {
             // Setup UI components
             this.uiManager.setupHelpTooltips();
             
+            // Setup character selector
+            this.setupCharacterSelector();
+            
             // Load saved data
             this.loadSavedCharacter();
             this.loadSavedWeapons();
@@ -313,26 +316,33 @@ class CharacterManager {
     // Storage operations (manual load only - auto-save handles saving)
 
     loadSavedCharacter() {
-        const character = this.storageManager.loadCharacter();
-        if (character) {
-            // Restore character data
-            if (character.name) document.getElementById('character-name').value = character.name;
-            if (character.level) document.getElementById('character-level').value = character.level;
-            if (character.currentHP !== undefined) document.getElementById('current-hp').value = character.currentHP;
-            if (character.maxHP !== undefined) document.getElementById('max-hp').value = character.maxHP;
-            if (character.currentShield !== undefined) document.getElementById('current-shield').value = character.currentShield;
-            if (character.maxShield !== undefined) document.getElementById('max-shield').value = character.maxShield;
+        // Try to load the active character
+        const activeCharacterName = this.storageManager.getActiveCharacter();
+        if (activeCharacterName) {
+            // Set the dropdown to the active character
+            const characterSelect = document.getElementById('character-select');
+            if (characterSelect) {
+                characterSelect.value = activeCharacterName;
+            }
             
-            this.updateHealthBar();
-            this.updateShieldBar();
-            this.updateMaxHPForLevel();
-            
-            this.uiManager.showMessage('Seneste gemte karakter indlæst! 📁');
+            // Load the character data
+            this.loadCharacterByName(activeCharacterName);
+        } else {
+            // Fallback to old system for migration
+            const character = this.storageManager.loadCharacter();
+            if (character && character.name) {
+                // Migrate old character to new system
+                const weapons = this.storageManager.loadWeapons();
+                this.storageManager.saveCharacterByName(character.name, character, weapons);
+                this.populateCharacterDropdown();
+                this.loadCharacterByName(character.name);
+            }
         }
     }
 
     loadSavedWeapons() {
-        this.weapons = this.storageManager.loadWeapons();
+        // Weapons are now loaded as part of character data
+        // This method is kept for compatibility but may not be needed
         this.updateWeaponDisplay();
         this.updateSlotCounter();
         this.updateShieldUIState();
@@ -390,8 +400,7 @@ class CharacterManager {
 
     // Event listeners setup
     setupEventListeners() {
-        // Character management
-        document.getElementById('load-character')?.addEventListener('click', () => this.loadSavedCharacter());
+        // Character management - load character is now handled by dropdown
         document.getElementById('restore-shield')?.addEventListener('click', () => this.restoreShield());
         document.getElementById('restore-hp')?.addEventListener('click', () => this.restoreHP());
         document.getElementById('take-damage')?.addEventListener('click', () => this.takeDamage());
@@ -447,6 +456,149 @@ class CharacterManager {
         });
         
         this.loadActiveTab(tabButtons, tabContents);
+    }
+
+    // Character selector functionality
+    setupCharacterSelector() {
+        this.populateCharacterDropdown();
+        
+        // Character selection event
+        const characterSelect = document.getElementById('character-select');
+        if (characterSelect) {
+            characterSelect.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    this.loadCharacterByName(e.target.value);
+                }
+            });
+        }
+        
+        // New character button event
+        const newCharacterBtn = document.getElementById('new-character');
+        if (newCharacterBtn) {
+            newCharacterBtn.addEventListener('click', () => {
+                this.createNewCharacter();
+            });
+        }
+    }
+
+    populateCharacterDropdown() {
+        const characterSelect = document.getElementById('character-select');
+        if (!characterSelect) return;
+        
+        // Clear existing options except the first one
+        characterSelect.innerHTML = '<option value="">Vælg karakter...</option>';
+        
+        // Get all saved characters
+        const characterList = this.storageManager.getCharacterList();
+        const activeCharacter = this.storageManager.getActiveCharacter();
+        
+        // Add each character as an option
+        characterList.forEach(characterName => {
+            const option = document.createElement('option');
+            option.value = characterName;
+            option.textContent = characterName;
+            if (characterName === activeCharacter) {
+                option.selected = true;
+            }
+            characterSelect.appendChild(option);
+        });
+    }
+
+    createNewCharacter() {
+        const characterName = prompt('Indtast karakterens navn:');
+        if (characterName && characterName.trim()) {
+            const sanitizedName = characterName.trim();
+            
+            // Check if character already exists
+            const existingCharacters = this.storageManager.getCharacterList();
+            if (existingCharacters.includes(sanitizedName)) {
+                this.uiManager.showMessage('En karakter med det navn eksisterer allerede!');
+                return;
+            }
+            
+            // Create new character with default values
+            const defaultCharacter = {
+                name: sanitizedName,
+                level: 1,
+                currentHP: 100,
+                maxHP: 100,  
+                currentShield: 0,
+                maxShield: 0
+            };
+            
+            // Save new character
+            if (this.storageManager.saveCharacterByName(sanitizedName, defaultCharacter, [])) {
+                this.populateCharacterDropdown();
+                this.loadCharacterByName(sanitizedName);
+                this.uiManager.showMessage(`Ny karakter "${sanitizedName}" oprettet! 🎭`);
+            } else {
+                this.uiManager.showMessage('Fejl ved oprettelse af karakter');
+            }
+        }
+    }
+
+    loadCharacterByName(characterName) {
+        const characterData = this.storageManager.loadCharacterByName(characterName);
+        if (characterData) {
+            // Update UI with character data
+            document.getElementById('character-level').value = characterData.level;
+            document.getElementById('current-hp').value = characterData.currentHP;
+            document.getElementById('max-hp').value = characterData.maxHP;
+            document.getElementById('current-shield').value = characterData.currentShield;
+            document.getElementById('max-shield').value = characterData.maxShield;
+            
+            // Load weapons
+            this.weapons = characterData.weapons || [];
+            
+            // Update UI
+            this.updateHealthBar();
+            this.updateShieldBar();
+            this.updateMaxHPForLevel();
+            this.updateWeaponDisplay();
+            this.updateSlotCounter();
+            this.updateShieldUIState();
+            
+            // Set as active character
+            this.storageManager.setActiveCharacter(characterName);
+            
+            this.uiManager.showMessage(`Karakter "${characterName}" indlæst! 🎭`);
+        } else {
+            this.uiManager.showMessage('Kunne ikke indlæse karakter');
+        }
+    }
+
+    getCurrentCharacterName() {
+        const characterSelect = document.getElementById('character-select');
+        return characterSelect?.value || '';
+    }
+
+    // Override auto-save methods to use character names
+    autoSaveCharacter() {
+        const characterName = this.getCurrentCharacterName();
+        if (!characterName) return;
+        
+        // Debounce auto-save to avoid too frequent saves
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+        }
+
+        this.autoSaveTimeout = setTimeout(() => {
+            const character = this.getCharacterData();
+            if (this.storageManager.saveCharacterByName(characterName, character, this.weapons)) {
+                this.debugManager.log(`Character "${characterName}" auto-saved`, 'success');
+            }
+        }, 1000); // Save 1 second after last change
+    }
+
+    autoSaveWeapons() {
+        const characterName = this.getCurrentCharacterName();
+        if (!characterName) return;
+        
+        // Immediate save for weapon changes
+        const character = this.getCharacterData();
+        if (this.storageManager.saveCharacterByName(characterName, character, this.weapons)) {
+            this.debugManager.log(`Weapons for "${characterName}" auto-saved`, 'success');
+        }
     }
 
     loadActiveTab(tabButtons, tabContents) {

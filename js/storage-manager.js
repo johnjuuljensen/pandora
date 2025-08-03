@@ -9,7 +9,9 @@ class StorageManager {
             character: 'pandora_character',
             weapons: 'pandora_weapons',
             activeTab: 'pandora_active_tab',
-            settings: 'pandora_settings'
+            settings: 'pandora_settings',
+            characterList: 'pandora_character_list',
+            activeCharacter: 'pandora_active_character'
         };
     }
 
@@ -235,6 +237,139 @@ class StorageManager {
         if (this.autoSaveInterval) {
             clearInterval(this.autoSaveInterval);
             this.autoSaveInterval = null;
+        }
+    }
+
+    // Multiple character support
+    saveCharacterByName(characterName, characterData, weapons) {
+        try {
+            if (!characterName || characterName.trim() === '') {
+                throw new Error('Character name cannot be empty');
+            }
+
+            const sanitizedName = characterName.trim();
+            
+            // Create character data with weapons
+            const fullCharacterData = {
+                name: sanitizedName,
+                level: characterData.level || 1,
+                currentHP: characterData.currentHP || 100,
+                maxHP: characterData.maxHP || 100,
+                currentShield: characterData.currentShield || 0,
+                maxShield: characterData.maxShield || 50,
+                weapons: weapons || [],
+                savedAt: new Date().toISOString()
+            };
+
+            // Save to character-specific key
+            const characterKey = `pandora_character_${sanitizedName}`;
+            localStorage.setItem(characterKey, JSON.stringify(fullCharacterData));
+
+            // Update character list
+            this.addToCharacterList(sanitizedName);
+
+            // Set as active character
+            this.setActiveCharacter(sanitizedName);
+
+            return true;
+        } catch (error) {
+            console.error('Failed to save character by name:', error);
+            return false;
+        }
+    }
+
+    loadCharacterByName(characterName) {
+        try {
+            if (!characterName || characterName.trim() === '') {
+                return null;
+            }
+
+            const sanitizedName = characterName.trim();
+            const characterKey = `pandora_character_${sanitizedName}`;
+            const data = localStorage.getItem(characterKey);
+            
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        } catch (error) {
+            console.error('Failed to load character by name:', error);
+            return null;
+        }
+    }
+
+    addToCharacterList(characterName) {
+        try {
+            const characterList = this.getCharacterList();
+            if (!characterList.includes(characterName)) {
+                characterList.push(characterName);
+                localStorage.setItem(this.keys.characterList, JSON.stringify(characterList));
+            }
+            return true;
+        } catch (error) {
+            console.error('Failed to add to character list:', error);
+            return false;
+        }
+    }
+
+    getCharacterList() {
+        try {
+            const data = localStorage.getItem(this.keys.characterList);
+            if (data) {
+                return JSON.parse(data);
+            }
+            return [];
+        } catch (error) {
+            console.error('Failed to get character list:', error);
+            return [];
+        }
+    }
+
+    deleteCharacter(characterName) {
+        try {
+            if (!characterName || characterName.trim() === '') {
+                return false;
+            }
+
+            const sanitizedName = characterName.trim();
+            const characterKey = `pandora_character_${sanitizedName}`;
+            
+            // Remove character data
+            localStorage.removeItem(characterKey);
+
+            // Remove from character list
+            const characterList = this.getCharacterList();
+            const updatedList = characterList.filter(name => name !== sanitizedName);
+            localStorage.setItem(this.keys.characterList, JSON.stringify(updatedList));
+
+            // If this was the active character, clear active character
+            if (this.getActiveCharacter() === sanitizedName) {
+                localStorage.removeItem(this.keys.activeCharacter);
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Failed to delete character:', error);
+            return false;
+        }
+    }
+
+    setActiveCharacter(characterName) {
+        try {
+            localStorage.setItem(this.keys.activeCharacter, characterName || '');
+            return true;
+        } catch (error) {
+            console.error('Failed to set active character:', error);
+            return false;
+        }
+    }
+
+    getActiveCharacter() {
+        try {
+            return localStorage.getItem(this.keys.activeCharacter) || '';
+        } catch (error) {
+            console.error('Failed to get active character:', error);
+            return '';
         }
     }
 }

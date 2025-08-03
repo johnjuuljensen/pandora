@@ -144,6 +144,50 @@ main {
     outline: none;
 }
 
+/* Character Selector Styling */
+.character-selector {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    align-items: center;
+}
+
+.character-dropdown {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    background: white;
+    cursor: pointer;
+}
+
+.character-dropdown:focus {
+    border-color: #2a5298;
+    outline: none;
+}
+
+.new-character-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-character-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
 .health-section {
     background: #f8f9fa;
     padding: 15px;
