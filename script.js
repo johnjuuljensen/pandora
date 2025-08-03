@@ -296,13 +296,13 @@ class CharacterManager {
 
     // Dice rolling
     rollDice() {
-        const result = Math.floor(Math.random() * 20) + 1;
+        const result = Math.floor(Math.random() * 6) + 1;
         const diceDisplay = document.getElementById('dice-result');
         
         diceDisplay.innerHTML = `
             <h3>🎲 Terningkast Resultat</h3>
             <div style="font-size: 2em; color: #1e3c72; margin: 10px 0;">${result}</div>
-            <p>Du kastede en D20 og fik: <strong>${result}</strong></p>
+            <p>Du kastede en D6 og fik: <strong>${result}</strong></p>
         `;
         diceDisplay.style.display = 'block';
         
