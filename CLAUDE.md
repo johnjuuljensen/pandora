@@ -92,6 +92,23 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Udviklings Noter
 
+### Version 1.5.0 - Ultra-Kompakt QR Format (2025-08-03)
+**Major QR System Overhaul:**
+- ✅ Implementeret QR format v3 med 70% størrelse reduktion
+- ✅ Array-baseret encoding i stedet for JSON objekt
+- ✅ Numeriske koder for våben typer og raritet
+- ✅ Våben navn rekonstruktion fra raritet + type
+- ✅ Version kontrol system (kun v3 understøttes)
+- ✅ QR test knap med detaljeret console output
+- ✅ Automatisk scanner stop ved fane/funktion skift
+- ✅ Bagudkompatibilitet med legacy format (deprecated)
+
+**Technical improvements:**
+- Weapon type codes: 10-94 range grouped by class
+- Size reduction: `[3,70,5,45,92,68,3,0]` vs old JSON format
+- Error correction level optimization
+- Better mobile scanning performance
+
 ### Version 1.4.1 - QR Våben Fix (2025-08-03)
 **Bugfixes:**
 - ✅ Rettede QR våben modtagelse - modtagne våben kan nu tilføjes til inventory
