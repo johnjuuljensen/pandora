@@ -38,8 +38,11 @@ class CharacterManager {
             // Setup tab system
             this.setupTabSystem();
             
-            // Enable auto-save
+                    // Enable storage auto-save (30 second intervals)
             this.storageManager.enableAutoSave(this);
+            
+            // Enable immediate auto-save on changes
+            this.enableAutoSave();
             
             console.log('Character Manager initialized successfully');
         } catch (error) {
@@ -120,7 +123,16 @@ class CharacterManager {
         const maxShield = parseInt(document.getElementById('max-shield').value) || 0;
         document.getElementById('current-shield').value = maxShield;
         this.updateShieldBar();
+        this.autoSaveCharacter(); // Trigger auto-save
         this.uiManager.showMessage('Shield genoprettet! 🛡️');
+    }
+
+    restoreHP() {
+        const maxHP = parseInt(document.getElementById('max-hp').value) || 100;
+        document.getElementById('current-hp').value = maxHP;
+        this.updateHealthBar();
+        this.autoSaveCharacter(); // Trigger auto-save
+        this.uiManager.showMessage('HP genoprettet! ❤️');
     }
 
     takeDamage() {
@@ -166,6 +178,9 @@ class CharacterManager {
             this.uiManager.showMessage('Du er død! 💀');
         }
 
+        // Trigger auto-save since we changed HP/Shield programmatically
+        this.autoSaveCharacter();
+
         // Clear damage input
         damageInput.value = '';
     }
@@ -201,6 +216,7 @@ class CharacterManager {
             this.uiManager.showMessage(`${weaponData.name} tilføjet til inventory! ⚔️ (${this.weapons.length}/${maxSlots} slots)`);
             this.updateWeaponDisplay();
             this.updateSlotCounter();
+            this.autoSaveWeapons(); // Auto-save weapons
             this.discardWeapon();
         }
     }
@@ -216,6 +232,7 @@ class CharacterManager {
         this.updateWeaponDisplay();
         this.updateSlotCounter();
         this.updateShieldUIState();
+        this.autoSaveWeapons(); // Auto-save weapons
         this.uiManager.showMessage('Våben fjernet fra inventory');
     }
 
@@ -242,6 +259,7 @@ class CharacterManager {
         weapon.equipped = true;
         this.updateWeaponDisplay();
         this.updateShieldUIState();
+        this.autoSaveWeapons(); // Auto-save weapons
         this.uiManager.showMessage(`${weapon.name} equipped! ⚔️`);
     }
 
@@ -251,6 +269,7 @@ class CharacterManager {
             weapon.equipped = false;
             this.updateWeaponDisplay();
             this.updateShieldUIState();
+            this.autoSaveWeapons(); // Auto-save weapons
             this.uiManager.showMessage(`${weapon.name} unequipped`);
         }
     }
@@ -291,15 +310,7 @@ class CharacterManager {
         this.uiManager.displayDiceResult(result);
     }
 
-    // Storage operations
-    saveCharacter() {
-        const character = this.getCharacterData();
-        if (this.storageManager.saveCharacter(character) && this.storageManager.saveWeapons(this.weapons)) {
-            this.uiManager.showMessage('Karakter gemt! 💾');
-        } else {
-            this.uiManager.showMessage('Fejl ved gemning');
-        }
-    }
+    // Storage operations (manual load only - auto-save handles saving)
 
     loadSavedCharacter() {
         const character = this.storageManager.loadCharacter();
@@ -316,7 +327,7 @@ class CharacterManager {
             this.updateShieldBar();
             this.updateMaxHPForLevel();
             
-            this.uiManager.showMessage('Karakter indlæst! 📁');
+            this.uiManager.showMessage('Seneste gemte karakter indlæst! 📁');
         }
     }
 
@@ -332,12 +343,57 @@ class CharacterManager {
         this.uiManager.showMessage(message);
     }
 
+    // Auto-save functionality
+    enableAutoSave() {
+        // Auto-save character data on HP/Shield changes
+        const hpInput = document.getElementById('current-hp');
+        const shieldInput = document.getElementById('current-shield');
+        const levelInput = document.getElementById('character-level');
+        const nameInput = document.getElementById('character-name');
+
+        if (hpInput) {
+            hpInput.addEventListener('input', () => this.autoSaveCharacter());
+        }
+        if (shieldInput) {
+            shieldInput.addEventListener('input', () => this.autoSaveCharacter());
+        }
+        if (levelInput) {
+            levelInput.addEventListener('change', () => this.autoSaveCharacter());
+        }
+        if (nameInput) {
+            nameInput.addEventListener('input', () => this.autoSaveCharacter());
+        }
+
+        this.debugManager.log('Auto-save enabled for character data', 'info');
+    }
+
+    autoSaveCharacter() {
+        // Debounce auto-save to avoid too frequent saves
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+        }
+
+        this.autoSaveTimeout = setTimeout(() => {
+            const character = this.getCharacterData();
+            if (this.storageManager.saveCharacter(character)) {
+                this.debugManager.log('Character auto-saved', 'success');
+            }
+        }, 1000); // Save 1 second after last change
+    }
+
+    autoSaveWeapons() {
+        // Immediate save for weapon changes (equip/unequip/inventory changes)
+        if (this.storageManager.saveWeapons(this.weapons)) {
+            this.debugManager.log('Weapons auto-saved', 'success');
+        }
+    }
+
     // Event listeners setup
     setupEventListeners() {
         // Character management
-        document.getElementById('save-character')?.addEventListener('click', () => this.saveCharacter());
         document.getElementById('load-character')?.addEventListener('click', () => this.loadSavedCharacter());
         document.getElementById('restore-shield')?.addEventListener('click', () => this.restoreShield());
+        document.getElementById('restore-hp')?.addEventListener('click', () => this.restoreHP());
         document.getElementById('take-damage')?.addEventListener('click', () => this.takeDamage());
         
         // Health bar updates

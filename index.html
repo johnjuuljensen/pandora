@@ -43,6 +43,7 @@
                                 <span>/</span>
                                 <input type="number" id="max-hp" value="100" min="1" readonly>
                             </div>
+                            <button id="restore-hp" class="restore-btn" title="Genopret HP til max">⬆️</button>
                             <span class="help-tooltip" data-tooltip="Max HP = 100 + (Level - 1) × 20">❓</span>
                         </div>
                         <div class="health-visual" id="health-bar-visual"></div>
@@ -56,6 +57,7 @@
                                 <span>/</span>
                                 <input type="number" id="max-shield" value="50" min="0">
                             </div>
+                            <button id="restore-shield" class="restore-btn" title="Genopret Shield til max">⬆️</button>
                             <span class="help-tooltip" data-tooltip="Skjolde absorberer skade før HP">❓</span>
                         </div>
                         <div class="shield-visual" id="shield-bar-visual"></div>
@@ -71,9 +73,10 @@
                 </div>
                 
                 <div class="character-actions">
-                    <button id="restore-shield" class="action-btn">🛡️ Genopret Skjold</button>
-                    <button id="save-character" class="action-btn">💾 Gem Karakter</button>
                     <button id="load-character" class="action-btn">📁 Indlæs Karakter</button>
+                    <div class="auto-save-status">
+                        <small>💾 Auto-save aktivt</small>
+                    </div>
                 </div>
             </section>
 
