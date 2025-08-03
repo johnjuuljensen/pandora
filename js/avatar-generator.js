@@ -7,7 +7,6 @@ class AvatarGenerator {
     constructor() {
         this.avatarParts = {
             faces: ['😀', '😃', '😄', '😊', '😎', '🤖', '👽', '🤠', '👨‍🚀', '👩‍🚀'],
-            hair: ['', '👨‍🦰', '👨‍🦱', '👨‍🦲', '👨‍🦳', '👩‍🦰', '👩‍🦱', '👩‍🦲', '👩‍🦳'],
             accessories: ['', '🕶️', '👓', '🎩', '👑', '🧢', '⚡', '🔥', '✨', '💫'],
             backgrounds: ['#1e3c72', '#2a5298', '#9b59b6', '#8e44ad', '#e74c3c', '#c0392b', '#f39c12', '#d68910', '#27ae60', '#239b56']
         };
@@ -16,7 +15,6 @@ class AvatarGenerator {
     generateRandomAvatar() {
         return {
             face: this.getRandomElement(this.avatarParts.faces),
-            hair: this.getRandomElement(this.avatarParts.hair),
             accessory: this.getRandomElement(this.avatarParts.accessories),
             background: this.getRandomElement(this.avatarParts.backgrounds)
         };
@@ -28,6 +26,11 @@ class AvatarGenerator {
 
     createAvatarHTML(avatarData) {
         const avatar = avatarData || this.generateRandomAvatar();
+        
+        // Clean up legacy hair data for backwards compatibility
+        if (avatar.hair) {
+            delete avatar.hair;
+        }
         
         return `
         <div class="character-avatar" style="
@@ -61,18 +64,6 @@ class AvatarGenerator {
                 filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
             ">${avatar.face}</div>
             
-            <!-- Hair Overlay -->
-            ${avatar.hair ? `
-            <div style="
-                position: absolute;
-                top: -5px;
-                left: 50%;
-                transform: translateX(-50%);
-                font-size: 25px;
-                z-index: 3;
-                filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
-            ">${avatar.hair}</div>
-            ` : ''}
             
             <!-- Accessory Overlay -->
             ${avatar.accessory ? `
