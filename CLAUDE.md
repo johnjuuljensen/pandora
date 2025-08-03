@@ -92,6 +92,11 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Udviklings Noter
 
+### Version 1.4.1 - QR Våben Fix (2025-08-03)
+**Bugfixes:**
+- ✅ Rettede QR våben modtagelse - modtagne våben kan nu tilføjes til inventory
+- ✅ Løste problem hvor delte våben ikke kunne bruges efter scanning
+
 ### Version 1.4.0 - Multiple Karakterer (2025-08-03)
 **Implementerede features:**
 - ✅ Multiple karakter system med dropdown selector
