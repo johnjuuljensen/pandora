@@ -116,5 +116,21 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 - localStorage integration komplet
 - Modulær kode struktur for nem udvidelse
 
+## Næste funktion
+1. Åbne features fra CLAUDE.md:
+   - Multiple karakterer
+   - Export/import funktioner
+   - Våben customization
+   - Bedre våben grafik (SVG)
+   - Flere våben typer
+   - Experience point system
+
+2. Åbne features fra ideer.md:
+   - (Kræver læsning af ideer.md)
+
+## Memories
+- On "Det er fint" commit current work and present "Næste funktion" list
+- On startup present "Næste funktion" list and a short description in danish, på dansk, on which "Commands" we've established.
+
 ---
 *Denne fil vedligeholdes automatisk af Claude AI*
