@@ -39,27 +39,36 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 ## Funktionalitet (Prioriteret)
 
 ### Core Features
-- [ ] Karakterskema (navn, level, health, stats)
-- [ ] Inventory system (våben, items)
-- [ ] Terningkast generator
-- [ ] Gem/load karakter data (localStorage)
+- [x] Karakterskema (navn, level, health, stats)
+- [x] Inventory system (våben, items)
+- [x] Terningkast generator
+- [x] Gem/load karakter data (localStorage)
 
 ### Loot System
-- [ ] Våben generator (sci-fi tegneserie stil)
-- [ ] Våben stats generation (damage, accuracy, etc.)
-- [ ] Våben billede creation (SVG/Canvas)
-- [ ] Loot tabeller og raritet system
+- [x] Våben generator (sci-fi tegneserie stil)
+- [x] Våben stats generation (damage, accuracy, etc.)
+- [ ] Våben billede creation (SVG/Canvas) - Bruger emoji indtil videre
+- [x] Loot tabeller og raritet system
 
-### Avanceret
+### Næste Features
 - [ ] Multiple karakterer
 - [ ] Export/import funktioner
 - [ ] Våben customization
+- [ ] Bedre våben grafik (SVG)
+- [ ] Flere våben typer
+- [ ] Experience point system
 
 ## Udvikling Principper
 1. **Simpel kode** - børnene skal kunne forstå det
 2. **Trin-for-trin** - en feature ad gangen
 3. **Visuel feedback** - ændringer skal ses med det samme
 4. **Fejlhåndtering** - venlige fejlbeskeder
+
+## Sprog Konventioner
+- **Kode/markup:** Engelsk (variable names, function names, comments)
+- **UI tekst:** Dansk (knapper, labels, beskeder til brugeren)
+- **Fejlbeskeder:** Dansk
+- **Instruktioner:** Dansk
 
 ## UI Beskrivelse Guidelines
 - Tegn skitser på papir først
@@ -82,7 +91,30 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 5. Deploy til GitHub Pages
 
 ## Udviklings Noter
-*Claude skal tilføje noter her når der laves ændringer*
+
+### Version 0.1 - Første Udkast (2025-08-03)
+**Implementerede features:**
+- ✅ Basic karakter skema (navn, level, health bar)
+- ✅ Inventory system med våben kort
+- ✅ Våben generator med raritet system (5 niveauer)
+- ✅ Terningkast funktionalitet (D20)
+- ✅ localStorage til data gemning
+- ✅ Responsive design med sci-fi æstetik
+
+**Våben system:**
+- 5 våben typer: Laser Pistol, Plasma Rifle, Ion Cannon, Quantum Blaster, Photon Sword
+- Raritet: Almindelig → Legendarisk
+- Stats: Skade, Præcision, Rækkevidde
+- Preview før tilføjelse til inventory
+
+**Bugfixes:**
+- Rettet element ID konflikt (new-weapon vs new-weapon-display)
+- Fjernet automatisk inventory tilføjelse - nu via preview system
+
+**Teknisk status:**
+- Alle core filer oprettet og fungerer
+- localStorage integration komplet
+- Modulær kode struktur for nem udvidelse
 
 ---
 *Denne fil vedligeholdes automatisk af Claude AI*

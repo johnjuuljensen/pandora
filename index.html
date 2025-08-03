@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pandora RPG - Karakter Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎲 Pandora RPG</h1>
+            <p>Karakter Manager & Loot Generator</p>
+        </header>
+
+        <main>
+            <!-- Character Sheet Section -->
+            <section class="character-sheet">
+                <h2>Min Karakter</h2>
+                <div class="character-info">
+                    <div class="basic-stats">
+                        <label>
+                            Navn:
+                            <input type="text" id="character-name" placeholder="Indtast karakternavn">
+                        </label>
+                        <label>
+                            Level:
+                            <input type="number" id="character-level" min="1" max="20" value="1">
+                        </label>
+                    </div>
+                    
+                    <div class="health-section">
+                        <label>Health Points:</label>
+                        <div class="health-bar">
+                            <input type="number" id="current-hp" value="100" min="0">
+                            <span>/</span>
+                            <input type="number" id="max-hp" value="100" min="1">
+                        </div>
+                        <div class="health-visual" id="health-bar-visual"></div>
+                    </div>
+                </div>
+                
+                <button id="save-character" class="action-btn">💾 Gem Karakter</button>
+                <button id="load-character" class="action-btn">📁 Indlæs Karakter</button>
+            </section>
+
+            <!-- Inventory Section -->
+            <section class="inventory">
+                <h2>Inventory</h2>
+                <div id="weapon-list" class="weapon-grid">
+                    <p class="empty-state">Ingen våben endnu. Generer noget loot!</p>
+                </div>
+            </section>
+
+            <!-- Loot Generator Section -->
+            <section class="loot-generator">
+                <h2>Loot Generator</h2>
+                <div class="generator-controls">
+                    <button id="generate-weapon" class="generator-btn">⚔️ Generer Våben</button>
+                    <button id="roll-dice" class="generator-btn">🎲 Kast Terning</button>
+                </div>
+                
+                <div id="dice-result" class="dice-result"></div>
+                
+                <div id="new-weapon-display" class="new-weapon-display">
+                    <!-- Generated weapon will appear here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

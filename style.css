@@ -1,0 +1,257 @@
+/* Pandora RPG Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #333;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #1e3c72;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.2em;
+    color: #666;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+}
+
+section h2 {
+    color: #1e3c72;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #2a5298;
+    padding-bottom: 10px;
+}
+
+/* Character Sheet Styling */
+.character-info {
+    margin-bottom: 20px;
+}
+
+.basic-stats {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.basic-stats label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    color: #333;
+}
+
+.basic-stats input {
+    margin-top: 5px;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.basic-stats input:focus {
+    border-color: #2a5298;
+    outline: none;
+}
+
+.health-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+}
+
+.health-section label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.health-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.health-bar input {
+    width: 80px;
+    padding: 8px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.health-visual {
+    height: 20px;
+    background: #dc3545;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    position: relative;
+    background: linear-gradient(90deg, #28a745 0%, #ffc107 70%, #dc3545 90%);
+}
+
+/* Button Styling */
+.action-btn, .generator-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-btn:hover, .generator-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.generator-btn {
+    background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+    font-size: 1.1em;
+    padding: 15px 25px;
+}
+
+/* Inventory Styling */
+.weapon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.weapon-card {
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.weapon-card:hover {
+    transform: scale(1.05);
+    border-color: #6f42c1;
+}
+
+.weapon-image {
+    width: 100%;
+    height: 100px;
+    background: #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+}
+
+.weapon-stats {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.weapon-name {
+    font-weight: bold;
+    color: #1e3c72;
+    margin-bottom: 5px;
+}
+
+/* Loot Generator Styling */
+.loot-generator {
+    grid-column: 1 / -1;
+}
+
+.generator-controls {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dice-result {
+    background: #fff3cd;
+    border: 2px solid #ffeaa7;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.new-weapon-display {
+    background: #d1ecf1;
+    border: 2px solid #bee5eb;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    display: none;
+}
+
+.empty-state {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px dashed #dee2e6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+    
+    .basic-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+}

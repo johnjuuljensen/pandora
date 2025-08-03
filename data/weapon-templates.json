@@ -1,0 +1,105 @@
+{
+  "weaponTypes": [
+    {
+      "name": "Laser Pistol",
+      "emoji": "🔫",
+      "baseStats": {
+        "damage": 25,
+        "accuracy": 85,
+        "range": 40
+      }
+    },
+    {
+      "name": "Plasma Rifle",
+      "emoji": "🔫",
+      "baseStats": {
+        "damage": 45,
+        "accuracy": 75,
+        "range": 60
+      }
+    },
+    {
+      "name": "Ion Cannon",
+      "emoji": "💥",
+      "baseStats": {
+        "damage": 70,
+        "accuracy": 60,
+        "range": 80
+      }
+    },
+    {
+      "name": "Quantum Blaster",
+      "emoji": "⚡",
+      "baseStats": {
+        "damage": 55,
+        "accuracy": 70,
+        "range": 50
+      }
+    },
+    {
+      "name": "Photon Sword",
+      "emoji": "⚔️",
+      "baseStats": {
+        "damage": 65,
+        "accuracy": 90,
+        "range": 5
+      }
+    }
+  ],
+  "rarities": [
+    {
+      "name": "Almindelig",
+      "color": "#6c757d",
+      "statMultiplier": 1.0,
+      "chance": 50
+    },
+    {
+      "name": "Ualmindelig", 
+      "color": "#28a745",
+      "statMultiplier": 1.2,
+      "chance": 30
+    },
+    {
+      "name": "Sjælden",
+      "color": "#007bff", 
+      "statMultiplier": 1.5,
+      "chance": 15
+    },
+    {
+      "name": "Episk",
+      "color": "#6f42c1",
+      "statMultiplier": 2.0,
+      "chance": 4
+    },
+    {
+      "name": "Legendarisk",
+      "color": "#fd7e14",
+      "statMultiplier": 3.0,
+      "chance": 1
+    }
+  ],
+  "prefixes": [
+    "Flammende",
+    "Frysende",
+    "Elektrisk",
+    "Giftigt",
+    "Helligt",
+    "Mørkets",
+    "Lysets",
+    "Antik",
+    "Rumvæsenets",
+    "Galaktisk"
+  ],
+  "suffixes": [
+    "af Ødelæggelse",
+    "af Præcision",
+    "af Hurtighed",
+    "af Styrke",
+    "af Beskyttelse",
+    "af Visdom",
+    "af Kraft",
+    "af Ilden",
+    "af Stormene",
+    "af Stjernerne"
+  ]
+}

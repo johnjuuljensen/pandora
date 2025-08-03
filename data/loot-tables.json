@@ -1,0 +1,57 @@
+{
+  "encounters": {
+    "easy": {
+      "name": "Let Fjende",
+      "weaponChance": 20,
+      "rarityWeights": [70, 25, 5, 0, 0]
+    },
+    "medium": {
+      "name": "Mellem Fjende", 
+      "weaponChance": 40,
+      "rarityWeights": [40, 35, 20, 5, 0]
+    },
+    "hard": {
+      "name": "Svær Fjende",
+      "weaponChance": 60,
+      "rarityWeights": [20, 30, 30, 15, 5]
+    },
+    "boss": {
+      "name": "Boss Fjende",
+      "weaponChance": 90,
+      "rarityWeights": [5, 15, 30, 35, 15]
+    }
+  },
+  "lootTypes": [
+    {
+      "type": "weapon",
+      "chance": 60
+    },
+    {
+      "type": "credits",
+      "chance": 30,
+      "amount": [10, 100]
+    },
+    {
+      "type": "consumable",
+      "chance": 10,
+      "items": ["Health Potion", "Energy Cell", "Shield Booster"]
+    }
+  ],
+  "environments": {
+    "space_station": {
+      "name": "Rumstation",
+      "weaponBonus": "Teknologisk",
+      "preferredTypes": ["Laser Pistol", "Plasma Rifle", "Ion Cannon"]
+    },
+    "alien_planet": {
+      "name": "Fremmed Planet",
+      "weaponBonus": "Eksotisk",
+      "preferredTypes": ["Quantum Blaster", "Photon Sword"]
+    },
+    "asteroid_field": {
+      "name": "Asteroidefelt",
+      "weaponBonus": "Forbedret",
+      "preferredTypes": ["Ion Cannon", "Plasma Rifle"]
+    }
+  }
+}
