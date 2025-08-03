@@ -177,6 +177,17 @@ section h2 {
     border-color: #6f42c1;
 }
 
+.weapon-too-high-level {
+    opacity: 0.6;
+    background: #f8d7da !important;
+    border-color: #f5c6cb !important;
+}
+
+.weapon-too-high-level:hover {
+    transform: none;
+    border-color: #f5c6cb !important;
+}
+
 .weapon-image {
     width: 100%;
     height: 100px;

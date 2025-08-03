@@ -76,6 +76,8 @@ class CharacterManager {
 
     // Weapon generation
     generateWeapon() {
+        const characterLevel = parseInt(document.getElementById('character-level').value) || 1;
+        
         const weaponTypes = ['Laser Pistol', 'Plasma Rifle', 'Ion Cannon', 'Quantum Blaster', 'Photon Sword'];
         const rarities = [
             { name: 'Almindelig', color: '#6c757d', statBonus: 1 },
@@ -86,12 +88,20 @@ class CharacterManager {
         ];
 
         const randomWeapon = weaponTypes[Math.floor(Math.random() * weaponTypes.length)];
-        const randomRarity = rarities[Math.floor(Math.random() * rarities.length)];
         
+        // Generate weapon level 1-3 levels around character level
+        const minLevel = Math.max(1, characterLevel - 1);
+        const maxLevel = characterLevel + 3;
+        const weaponLevel = Math.floor(Math.random() * (maxLevel - minLevel + 1)) + minLevel;
+        
+        const randomRarity = this.getRandomRarityByLevel(rarities, weaponLevel);
+        
+        // Level-scaled base stats based on weapon level
+        const levelMultiplier = 1 + (weaponLevel - 1) * 0.15; // 15% increase per level
         const baseStats = {
-            damage: Math.floor(Math.random() * 50) + 20,
-            accuracy: Math.floor(Math.random() * 30) + 70,
-            range: Math.floor(Math.random() * 40) + 30
+            damage: Math.floor((Math.random() * 30 + 15) * levelMultiplier),
+            accuracy: Math.floor(Math.random() * 20 + 75),
+            range: Math.floor((Math.random() * 30 + 25) * levelMultiplier)
         };
 
         const weapon = {
@@ -99,6 +109,7 @@ class CharacterManager {
             name: `${randomRarity.name} ${randomWeapon}`,
             type: randomWeapon,
             rarity: randomRarity,
+            level: weaponLevel,
             damage: Math.floor(baseStats.damage * randomRarity.statBonus),
             accuracy: Math.min(100, Math.floor(baseStats.accuracy * randomRarity.statBonus)),
             range: Math.floor(baseStats.range * randomRarity.statBonus),
@@ -107,6 +118,40 @@ class CharacterManager {
 
         this.currentGeneratedWeapon = weapon;
         this.displayNewWeapon(weapon);
+    }
+
+    getRandomRarityByLevel(rarities, level) {
+        // Higher level = better chance for rare items
+        const levelBonus = Math.min(level * 5, 25); // Max 25% bonus at level 5+
+        
+        let weights = [50, 30, 15, 4, 1]; // Base weights
+        
+        // Shift weights based on level
+        if (level >= 3) {
+            weights = [40, 35, 20, 4, 1];
+        }
+        if (level >= 5) {
+            weights = [30, 30, 25, 12, 3];
+        }
+        if (level >= 8) {
+            weights = [20, 25, 30, 20, 5];
+        }
+        if (level >= 12) {
+            weights = [15, 20, 30, 25, 10];
+        }
+        
+        const total = weights.reduce((sum, weight) => sum + weight, 0);
+        const random = Math.random() * total;
+        
+        let currentWeight = 0;
+        for (let i = 0; i < weights.length; i++) {
+            currentWeight += weights[i];
+            if (random <= currentWeight) {
+                return rarities[i];
+            }
+        }
+        
+        return rarities[0]; // Fallback
     }
 
     generateWeaponImage(weaponType) {
@@ -129,6 +174,7 @@ class CharacterManager {
                 <div class="weapon-image">${weapon.image}</div>
                 <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
                 <div class="weapon-stats">
+                    <div>⭐ Level: ${weapon.level}</div>
                     <div>💥 Skade: ${weapon.damage}</div>
                     <div>🎯 Præcision: ${weapon.accuracy}%</div>
                     <div>📏 Rækkevidde: ${weapon.range}m</div>
@@ -173,11 +219,16 @@ class CharacterManager {
             return;
         }
 
-        weaponList.innerHTML = this.weapons.map(weapon => `
-            <div class="weapon-card">
+        weaponList.innerHTML = this.weapons.map(weapon => {
+            const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+            const canUse = weapon.level <= currentLevel;
+            
+            return `
+            <div class="weapon-card ${canUse ? '' : 'weapon-too-high-level'}">
                 <div class="weapon-image">${weapon.image}</div>
                 <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
                 <div class="weapon-stats">
+                    <div>⭐ Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}</div>
                     <div>💥 Skade: ${weapon.damage}</div>
                     <div>🎯 Præcision: ${weapon.accuracy}%</div>
                     <div>📏 Rækkevidde: ${weapon.range}m</div>
@@ -186,7 +237,8 @@ class CharacterManager {
                     Fjern
                 </button>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     removeWeapon(weaponId) {
@@ -247,6 +299,9 @@ class CharacterManager {
         // Health bar updates
         document.getElementById('current-hp').addEventListener('input', () => this.updateHealthBar());
         document.getElementById('max-hp').addEventListener('input', () => this.updateHealthBar());
+        
+        // Level updates
+        document.getElementById('character-level').addEventListener('input', () => this.updateWeaponDisplay());
         
         // Weapon generation
         document.getElementById('generate-weapon').addEventListener('click', () => this.generateWeapon());
