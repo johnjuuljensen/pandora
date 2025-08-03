@@ -13,6 +13,8 @@
 # Loot
 - [x] loot skal omkring mit level ✅ **FÆRDIG**
 - [ ] loot skal være mindre
+- der skal være våben klasser
+- Der skal være faner i inventory
 
 # Next next level
 - [ ] Man skal måske kunne dele våben. Måske med en kode eller et QR kode.

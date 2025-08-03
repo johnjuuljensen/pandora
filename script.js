@@ -187,7 +187,7 @@ class CharacterManager {
     generateWeapon() {
         const characterLevel = parseInt(document.getElementById('character-level').value) || 1;
         
-        const weaponTypes = ['Laser Pistol', 'Plasma Rifle', 'Ion Cannon', 'Quantum Blaster', 'Photon Sword'];
+        const weaponTypes = ['Pistol', 'Riffel', 'Haglgevær', 'Maskingevær', 'Snigskytteriffel'];
         const rarities = [
             { name: 'Almindelig', color: '#6c757d', statBonus: 1 },
             { name: 'Ualmindelig', color: '#28a745', statBonus: 1.2 },
@@ -265,15 +265,483 @@ class CharacterManager {
     }
 
     generateWeaponImage(weaponType) {
-        // Simple emoji-based weapon images for now
-        const weaponEmojis = {
-            'Laser Pistol': '🔫',
-            'Plasma Rifle': '🔫',
-            'Ion Cannon': '💥',
-            'Quantum Blaster': '⚡',
-            'Photon Sword': '⚔️'
-        };
-        return weaponEmojis[weaponType] || '⚔️';
+        // Generate realistic cartoon image for weapon type
+        return this.createWeaponCartoonImage(weaponType);
+    }
+
+    createWeaponCartoonImage(weaponType) {
+        // Create cartoon-style weapon representations using CSS and Unicode
+        switch(weaponType) {
+            case 'Pistol':
+                return this.createPistolCartoon();
+            case 'Riffel':
+                return this.createRifleCartoon();
+            case 'Haglgevær':
+                return this.createShotgunCartoon();
+            case 'Maskingevær':
+                return this.createMachineGunCartoon();
+            case 'Snigskytteriffel':
+                return this.createSniperRifleCartoon();
+            default:
+                return this.createDefaultWeaponCartoon();
+        }
+    }
+
+    createPistolCartoon() {
+        return `
+        <div style="
+            width: 80px; 
+            height: 60px; 
+            position: relative;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <!-- Grip/Handle -->
+            <div style="
+                position: absolute;
+                top: 60%;
+                left: 15%;
+                width: 12px;
+                height: 20px;
+                background: #8b4513;
+                border-radius: 2px;
+                border: 1px solid #654321;
+            "></div>
+            <!-- Trigger Guard -->
+            <div style="
+                position: absolute;
+                top: 65%;
+                left: 32%;
+                width: 8px;
+                height: 8px;
+                border: 2px solid #2c3e50;
+                border-radius: 50%;
+                background: transparent;
+            "></div>
+            <!-- Barrel -->
+            <div style="
+                position: absolute;
+                top: 45%;
+                right: 8%;
+                width: 30px;
+                height: 6px;
+                background: linear-gradient(90deg, #2c3e50, #34495e);
+                border-radius: 3px;
+            "></div>
+            <!-- Slide -->
+            <div style="
+                position: absolute;
+                top: 40%;
+                left: 30%;
+                width: 35px;
+                height: 10px;
+                background: #2c3e50;
+                border-radius: 2px;
+                border: 1px solid #1a252f;
+            "></div>
+            <span style="
+                position: absolute;
+                bottom: 4px;
+                right: 4px;
+                font-size: 10px;
+                color: #95a5a6;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+            ">🔫</span>
+        </div>`;
+    }
+
+    createRifleCartoon() {
+        return `
+        <div style="
+            width: 80px;
+            height: 60px;
+            position: relative;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <!-- Stock -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 5%;
+                transform: translateY(-50%);
+                width: 18px;
+                height: 15px;
+                background: #8b4513;
+                border-radius: 2px;
+                border: 1px solid #654321;
+            "></div>
+            <!-- Body -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 25%;
+                transform: translateY(-50%);
+                width: 25px;
+                height: 12px;
+                background: #2c3e50;
+                border-radius: 2px;
+                border: 1px solid #1a252f;
+            "></div>
+            <!-- Barrel -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                right: 5%;
+                transform: translateY(-50%);
+                width: 35px;
+                height: 8px;
+                background: linear-gradient(90deg, #2c3e50, #34495e);
+                border-radius: 4px;
+            "></div>
+            <!-- Trigger Guard -->
+            <div style="
+                position: absolute;
+                top: 65%;
+                left: 35%;
+                width: 8px;
+                height: 8px;
+                border: 2px solid #2c3e50;
+                border-radius: 50%;
+                background: transparent;
+            "></div>
+            <!-- Magazine -->
+            <div style="
+                position: absolute;
+                bottom: 15%;
+                left: 40%;
+                width: 6px;
+                height: 12px;
+                background: #34495e;
+                border-radius: 1px;
+                border: 1px solid #2c3e50;
+            "></div>
+            <span style="
+                position: absolute;
+                bottom: 4px;
+                right: 4px;
+                font-size: 8px;
+                color: #95a5a6;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+            ">🔫</span>
+        </div>`;
+    }
+
+    createShotgunCartoon() {
+        return `
+        <div style="
+            width: 80px;
+            height: 60px;
+            position: relative;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <!-- Stock -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 5%;
+                transform: translateY(-50%);
+                width: 20px;
+                height: 18px;
+                background: #8b4513;
+                border-radius: 3px;
+                border: 1px solid #654321;
+            "></div>
+            <!-- Body -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 28%;
+                transform: translateY(-50%);
+                width: 20px;
+                height: 12px;
+                background: #2c3e50;
+                border-radius: 2px;
+                border: 1px solid #1a252f;
+            "></div>
+            <!-- Double Barrel -->
+            <div style="
+                position: absolute;
+                top: 45%;
+                right: 5%;
+                width: 28px;
+                height: 6px;
+                background: linear-gradient(90deg, #2c3e50, #34495e);
+                border-radius: 3px;
+            "></div>
+            <div style="
+                position: absolute;
+                top: 55%;
+                right: 5%;
+                width: 28px;
+                height: 6px;
+                background: linear-gradient(90deg, #2c3e50, #34495e);
+                border-radius: 3px;
+            "></div>
+            <!-- Trigger Guard -->
+            <div style="
+                position: absolute;
+                top: 65%;
+                left: 38%;
+                width: 8px;
+                height: 8px;
+                border: 2px solid #2c3e50;
+                border-radius: 50%;
+                background: transparent;
+            "></div>
+            <span style="
+                position: absolute;
+                bottom: 4px;
+                right: 4px;
+                font-size: 8px;
+                color: #95a5a6;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+            ">🔫</span>
+        </div>`;
+    }
+
+    createMachineGunCartoon() {
+        return `
+        <div style="
+            width: 80px;
+            height: 60px;
+            position: relative;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <!-- Stock -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 5%;
+                transform: translateY(-50%);
+                width: 15px;
+                height: 15px;
+                background: #8b4513;
+                border-radius: 2px;
+                border: 1px solid #654321;
+            "></div>
+            <!-- Body/Receiver -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 22%;
+                transform: translateY(-50%);
+                width: 30px;
+                height: 14px;
+                background: #2c3e50;
+                border-radius: 2px;
+                border: 1px solid #1a252f;
+            "></div>
+            <!-- Long Barrel -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                right: 3%;
+                transform: translateY(-50%);
+                width: 40px;
+                height: 6px;
+                background: linear-gradient(90deg, #2c3e50, #34495e);
+                border-radius: 3px;
+            "></div>
+            <!-- Bipod legs -->
+            <div style="
+                position: absolute;
+                bottom: 15%;
+                left: 50%;
+                width: 1px;
+                height: 8px;
+                background: #7f8c8d;
+                transform: rotate(15deg);
+            "></div>
+            <div style="
+                position: absolute;
+                bottom: 15%;
+                left: 55%;
+                width: 1px;
+                height: 8px;
+                background: #7f8c8d;
+                transform: rotate(-15deg);
+            "></div>
+            <!-- Magazine -->
+            <div style="
+                position: absolute;
+                bottom: 12%;
+                left: 40%;
+                width: 8px;
+                height: 15px;
+                background: #34495e;
+                border-radius: 1px;
+                border: 1px solid #2c3e50;
+            "></div>
+            <span style="
+                position: absolute;
+                bottom: 4px;
+                right: 4px;
+                font-size: 8px;
+                color: #95a5a6;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+            ">🔫</span>
+        </div>`;
+    }
+
+    createSniperRifleCartoon() {
+        return `
+        <div style="
+            width: 80px;
+            height: 60px;
+            position: relative;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <!-- Stock -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 3%;
+                transform: translateY(-50%);
+                width: 18px;
+                height: 16px;
+                background: #8b4513;
+                border-radius: 2px;
+                border: 1px solid #654321;
+            "></div>
+            <!-- Body/Receiver -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 23%;
+                transform: translateY(-50%);
+                width: 28px;
+                height: 10px;
+                background: #2c3e50;
+                border-radius: 2px;
+                border: 1px solid #1a252f;
+            "></div>
+            <!-- Long Barrel -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                right: 2%;
+                transform: translateY(-50%);
+                width: 45px;
+                height: 5px;
+                background: linear-gradient(90deg, #2c3e50, #34495e);
+                border-radius: 2px;
+            "></div>
+            <!-- Scope -->
+            <div style="
+                position: absolute;
+                top: 35%;
+                left: 35%;
+                width: 20px;
+                height: 4px;
+                background: #7f8c8d;
+                border-radius: 2px;
+                border: 1px solid #95a5a6;
+            "></div>
+            <!-- Scope mounts -->
+            <div style="
+                position: absolute;
+                top: 42%;
+                left: 37%;
+                width: 2px;
+                height: 3px;
+                background: #7f8c8d;
+            "></div>
+            <div style="
+                position: absolute;
+                top: 42%;
+                left: 50%;
+                width: 2px;
+                height: 3px;
+                background: #7f8c8d;
+            "></div>
+            <!-- Magazine -->
+            <div style="
+                position: absolute;
+                bottom: 15%;
+                left: 40%;
+                width: 5px;
+                height: 10px;
+                background: #34495e;
+                border-radius: 1px;
+                border: 1px solid #2c3e50;
+            "></div>
+            <span style="
+                position: absolute;
+                bottom: 4px;
+                right: 4px;
+                font-size: 8px;
+                color: #95a5a6;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+            ">🎯</span>
+        </div>`;
+    }
+
+    createDefaultWeaponCartoon() {
+        return `
+        <div style="
+            width: 80px;
+            height: 60px;
+            position: relative;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 25%;
+                transform: translateY(-50%);
+                width: 15px;
+                height: 18px;
+                background: #34495e;
+                border-radius: 3px;
+                border: 2px solid #2c3e50;
+            "></div>
+            <div style="
+                position: absolute;
+                top: 50%;
+                right: 15%;
+                transform: translateY(-50%);
+                width: 25px;
+                height: 8px;
+                background: linear-gradient(90deg, #95a5a6, #7f8c8d);
+                border-radius: 4px;
+            "></div>
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 35%;
+                transform: translate(-50%, -50%);
+                width: 4px;
+                height: 4px;
+                background: #3498db;
+                border-radius: 50%;
+                box-shadow: 0 0 4px #3498db;
+            "></div>
+            <span style="
+                position: absolute;
+                bottom: 4px;
+                right: 4px;
+                font-size: 10px;
+                color: white;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            ">🔧</span>
+        </div>`;
     }
 
     displayNewWeapon(weapon) {
