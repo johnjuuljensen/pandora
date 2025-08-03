@@ -117,11 +117,14 @@ class CharacterManager {
         document.getElementById('current-hp').value = this.character.currentHp;
         document.getElementById('max-hp').value = this.character.maxHp;
         document.getElementById('current-shield').value = this.character.currentShield || 0;
-        document.getElementById('max-shield').value = this.character.maxShield || 50;
+        document.getElementById('max-shield').value = this.character.maxShield || 0;
         
         this.updateHealthBar();
         this.updateShieldBar();
         this.updateWeaponDisplay();
+        
+        // Update shield from equipped shield if any, or disable if none
+        this.updateShieldFromEquippedShield();
     }
 
     updateMaxHPForLevel() {
@@ -222,6 +225,39 @@ class CharacterManager {
         this.showMessage(`Skjold genoprettet til ${maxShield}! 🛡️`);
     }
 
+    updateShieldFromEquippedShield() {
+        const equippedShield = this.weapons.find(w => w.equipped && w.weaponClass === 'Shield');
+        
+        if (equippedShield) {
+            // Set max shield to the shield's points, restore current shield
+            document.getElementById('max-shield').value = equippedShield.shieldPoints;
+            document.getElementById('current-shield').value = equippedShield.shieldPoints;
+            
+            // Enable shield inputs and restore button
+            document.getElementById('current-shield').disabled = false;
+            document.getElementById('max-shield').disabled = false;
+            document.getElementById('restore-shield').disabled = false;
+        } else {
+            // No shield equipped, disable shield system
+            this.resetShieldToBase();
+        }
+        
+        this.updateShieldBar();
+    }
+
+    resetShieldToBase() {
+        // Reset to disabled shield state
+        document.getElementById('max-shield').value = 0;
+        document.getElementById('current-shield').value = 0;
+        
+        // Disable shield inputs and restore button
+        document.getElementById('current-shield').disabled = true;
+        document.getElementById('max-shield').disabled = true;
+        document.getElementById('restore-shield').disabled = true;
+        
+        this.updateShieldBar();
+    }
+
     // Weapon generation
     generateWeapon() {
         const characterLevel = parseInt(document.getElementById('character-level').value) || 1;
@@ -284,6 +320,14 @@ class CharacterManager {
                 emoji: '💣',
                 statModifiers: { damage: 2.2, accuracy: 0.5, range: 1.0 }, // Ekstrem skade, meget lav præcision
                 baseRange: 100
+            },
+            'Shield': {
+                types: ['Energi Shield', 'Plasma Barrier', 'Force Field', 'Deflector Shield', 'Riot Shield'],
+                color: '#17a2b8',
+                emoji: '🛡️',
+                statModifiers: { damage: 0.1, accuracy: 1.0, range: 0.1 }, // Minimal skade, kun shield points
+                baseRange: 1,
+                isShield: true // Special flag to identify shields
             }
         };
         
@@ -334,7 +378,9 @@ class CharacterManager {
             accuracy: Math.min(100, Math.floor(baseStats.accuracy * randomRarity.statBonus)),
             range: Math.floor(baseStats.range * randomRarity.statBonus),
             image: this.generateWeaponImage(randomWeapon),
-            equipped: false
+            equipped: false,
+            // For shields, add shield points based on damage stat
+            shieldPoints: selectedClass.isShield ? Math.floor(baseStats.damage * randomRarity.statBonus * 10) : 0
         };
 
         this.currentGeneratedWeapon = weapon;
@@ -867,7 +913,10 @@ class CharacterManager {
                 </div>
                 <div class="weapon-stats compact">
                     <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
-                    <span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>
+                    ${weapon.weaponClass === 'Shield' ? 
+                        `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
+                        `<span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>`
+                    }
                     <span title="Præcision: ${weapon.accuracy}%">🎯${weapon.accuracy}%</span>
                     <span title="Rækkevidde: ${weapon.range}m">📏${weapon.range}m</span>
                 </div>
@@ -962,7 +1011,10 @@ class CharacterManager {
                 </div>` : ''}
                 <div class="weapon-stats compact">
                     <span title="Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}">⭐${weapon.level}${canUse ? '' : '❌'}</span>
-                    <span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>
+                    ${weapon.weaponClass === 'Shield' ? 
+                        `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
+                        `<span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>`
+                    }
                     <span title="Præcision: ${weapon.accuracy}%">🎯${weapon.accuracy}%</span>
                     <span title="Rækkevidde: ${weapon.range}m">📏${weapon.range}m</span>
                 </div>
@@ -991,24 +1043,43 @@ class CharacterManager {
     }
 
     equipWeapon(weaponId) {
-        // Unequip all weapons first
-        this.weapons.forEach(w => w.equipped = false);
-        
-        // Equip the selected weapon
         const weapon = this.weapons.find(w => w.id === weaponId);
-        if (weapon) {
+        if (!weapon) return;
+        
+        // If it's a shield, unequip other shields only
+        if (weapon.weaponClass === 'Shield') {
+            this.weapons.forEach(w => {
+                if (w.weaponClass === 'Shield') w.equipped = false;
+            });
             weapon.equipped = true;
-            this.updateWeaponDisplay();
+            this.updateShieldFromEquippedShield();
+            this.showMessage(`${weapon.name} equipped! 🛡️`);
+        } else {
+            // For weapons, unequip other weapons (not shields)
+            this.weapons.forEach(w => {
+                if (w.weaponClass !== 'Shield') w.equipped = false;
+            });
+            weapon.equipped = true;
             this.showMessage(`${weapon.name} equipped! ⚔️`);
         }
+        
+        this.updateWeaponDisplay();
     }
 
     unequipWeapon(weaponId) {
         const weapon = this.weapons.find(w => w.id === weaponId);
         if (weapon) {
             weapon.equipped = false;
+            
+            // If unequipping a shield, reset shield to base values
+            if (weapon.weaponClass === 'Shield') {
+                this.resetShieldToBase();
+                this.showMessage(`${weapon.name} unequipped - shield reset to base`);
+            } else {
+                this.showMessage(`${weapon.name} unequipped`);
+            }
+            
             this.updateWeaponDisplay();
-            this.showMessage(`${weapon.name} unequipped`);
         }
     }
 

@@ -5,7 +5,9 @@
       "Bash(start index.html)",
       "Bash(start \"C:\\Users\\JJJ\\source\\pandora\\index.html\")",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": []
   }
