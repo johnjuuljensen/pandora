@@ -66,6 +66,12 @@ class CharacterManager {
         if (saved) {
             this.character = JSON.parse(saved);
             this.weapons = savedWeapons ? JSON.parse(savedWeapons) : [];
+            
+            // Add equipped property to old weapons if missing
+            this.weapons.forEach(weapon => {
+                if (weapon.equipped === undefined) weapon.equipped = false;
+            });
+            
             this.updateDisplay();
             this.updateWeaponDisplay();
             this.showMessage('Karakter indlæst! 📁');
@@ -195,7 +201,8 @@ class CharacterManager {
             damage: Math.floor(baseStats.damage * randomRarity.statBonus),
             accuracy: Math.min(100, Math.floor(baseStats.accuracy * randomRarity.statBonus)),
             range: Math.floor(baseStats.range * randomRarity.statBonus),
-            image: this.generateWeaponImage(randomWeapon)
+            image: this.generateWeaponImage(randomWeapon),
+            equipped: false
         };
 
         this.currentGeneratedWeapon = weapon;
@@ -301,23 +308,43 @@ class CharacterManager {
             return;
         }
 
-        weaponList.innerHTML = this.weapons.map(weapon => {
+        // Sort weapons: equipped first, then by ID (newest first)
+        const sortedWeapons = [...this.weapons].sort((a, b) => {
+            if (a.equipped && !b.equipped) return -1;
+            if (!a.equipped && b.equipped) return 1;
+            return b.id - a.id;
+        });
+
+        weaponList.innerHTML = sortedWeapons.map(weapon => {
             const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
             const canUse = weapon.level <= currentLevel;
+            const isEquipped = weapon.equipped;
             
             return `
-            <div class="weapon-card ${canUse ? '' : 'weapon-too-high-level'}">
+            <div class="weapon-card ${canUse ? '' : 'weapon-too-high-level'} ${isEquipped ? 'weapon-equipped' : ''}">
                 <div class="weapon-image">${weapon.image}</div>
-                <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
+                <div class="weapon-name" style="color: ${weapon.rarity.color}">
+                    ${weapon.name} ${isEquipped ? '⚔️' : ''}
+                </div>
                 <div class="weapon-stats">
                     <div>⭐ Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}</div>
                     <div>💥 Skade: ${weapon.damage}</div>
                     <div>🎯 Præcision: ${weapon.accuracy}%</div>
                     <div>📏 Rækkevidde: ${weapon.range}m</div>
                 </div>
-                <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn" style="background: #dc3545;">
-                    Fjern
-                </button>
+                <div class="weapon-actions">
+                    ${canUse ? (isEquipped ? 
+                        `<button onclick="characterManager.unequipWeapon(${weapon.id})" class="action-btn" style="background: #6c757d;">
+                            Unequip
+                        </button>` :
+                        `<button onclick="characterManager.equipWeapon(${weapon.id})" class="action-btn" style="background: #28a745;">
+                            Equip
+                        </button>`
+                    ) : ''}
+                    <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn" style="background: #dc3545;">
+                        Fjern
+                    </button>
+                </div>
             </div>
         `;
         }).join('');
@@ -327,6 +354,28 @@ class CharacterManager {
         this.weapons = this.weapons.filter(w => w.id !== weaponId);
         this.updateWeaponDisplay();
         this.showMessage('Våben fjernet fra inventory');
+    }
+
+    equipWeapon(weaponId) {
+        // Unequip all weapons first
+        this.weapons.forEach(w => w.equipped = false);
+        
+        // Equip the selected weapon
+        const weapon = this.weapons.find(w => w.id === weaponId);
+        if (weapon) {
+            weapon.equipped = true;
+            this.updateWeaponDisplay();
+            this.showMessage(`${weapon.name} equipped! ⚔️`);
+        }
+    }
+
+    unequipWeapon(weaponId) {
+        const weapon = this.weapons.find(w => w.id === weaponId);
+        if (weapon) {
+            weapon.equipped = false;
+            this.updateWeaponDisplay();
+            this.showMessage(`${weapon.name} unequipped`);
+        }
     }
 
     // Dice rolling

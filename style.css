@@ -295,6 +295,31 @@ main {
     border-color: #f5c6cb !important;
 }
 
+.weapon-equipped {
+    background: #d4edda !important;
+    border-color: #28a745 !important;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.weapon-equipped:hover {
+    border-color: #28a745 !important;
+}
+
+.weapon-actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.weapon-actions .action-btn {
+    flex: 1;
+    min-width: 60px;
+    font-size: 0.9em;
+    padding: 8px 12px;
+}
+
 .weapon-image {
     width: 100%;
     height: 100px;
