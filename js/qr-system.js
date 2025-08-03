@@ -140,6 +140,11 @@ class QRSystem {
                 isReceived: true // Mark as received weapon (cannot be shared again)
             };
 
+            // Set as current generated weapon so it can be added to inventory
+            if (window.characterManager) {
+                window.characterManager.currentGeneratedWeapon = weapon;
+            }
+
             // Show received weapon using UI manager
             this.uiManager.displayReceivedWeapon(weapon);
             this.showMessage(`Våben modtaget! ${weapon.name} er nu tilgængeligt 📦`);
