@@ -92,6 +92,13 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Udviklings Noter
 
+### Version 1.5.1 - Avatar Fix (2025-08-03)
+**Bugfixes:**
+- ✅ Fjernet dobbelt ansigts problem i avatar system
+- ✅ Hair delen fjernet (indeholdt ansigts emojis)
+- ✅ Backwards compatibility cleanup for eksisterende avatarer
+- ✅ Avatarer viser nu kun ét hovedansigt plus tilbehør
+
 ### Version 1.5.0 - Ultra-Kompakt QR Format (2025-08-03)
 **Major QR System Overhaul:**
 - ✅ Implementeret QR format v3 med 70% størrelse reduktion
@@ -198,6 +205,7 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 - On "Det er fint" commit current work and present "Næste funktion" list
 - On startup present "Næste funktion" list and a short description in danish, på dansk, on which "Commands" we've established.
 - Commit beskeder skal være på dansk
+- Update version before each commit
 
 ---
 *Denne fil vedligeholdes automatisk af Claude AI*
