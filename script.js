@@ -187,7 +187,67 @@ class CharacterManager {
     generateWeapon() {
         const characterLevel = parseInt(document.getElementById('character-level').value) || 1;
         
-        const weaponTypes = ['Pistol', 'Riffel', 'Haglgevær', 'Maskingevær', 'Snigskytteriffel'];
+        // Weapon classes with their types and characteristics
+        const weaponClasses = {
+            'Nærkamp': {
+                types: ['Sværd', 'Kniv', 'Økse', 'Hammer', 'Stav'],
+                color: '#e74c3c',
+                emoji: '⚔️',
+                statModifiers: { damage: 1.5, accuracy: 1.0, range: 0.1 }, // Høj skade, ingen rækkevidde
+                baseRange: 2 // Fast lav range
+            },
+            'Pistol': {
+                types: ['Pistol', 'Revolver', 'Plasma Pistol'],
+                color: '#3498db', 
+                emoji: '🔫',
+                statModifiers: { damage: 0.9, accuracy: 1.1, range: 1.0 }, // God præcision, moderat range
+                baseRange: 25
+            },
+            'Haglgevær': {
+                types: ['Haglgevær', 'Combat Shotgun', 'Double Barrel'],
+                color: '#e67e22',
+                emoji: '💥',
+                statModifiers: { damage: 1.8, accuracy: 0.6, range: 0.4 }, // Meget høj skade, lav præcision og range
+                baseRange: 15,
+                damageDropoff: true // Skade falder med afstand
+            },
+            'Riffel': {
+                types: ['Riffel', 'Assault Rifle', 'Battle Rifle'],
+                color: '#27ae60',
+                emoji: '🎯',
+                statModifiers: { damage: 1.0, accuracy: 1.0, range: 1.0 }, // Balanceret baseline
+                baseRange: 40
+            },
+            'Sniper': {
+                types: ['Snigskytteriffel', 'Anti-Material Rifle', 'Precision Rifle'],
+                color: '#9b59b6',
+                emoji: '🎯',
+                statModifiers: { damage: 1.7, accuracy: 1.4, range: 2.2 }, // Højeste stats across the board
+                baseRange: 80
+            },
+            'Automatisk': {
+                types: ['Maskingevær', 'Minigun', 'Chain Gun'],
+                color: '#f39c12',
+                emoji: '🔥',
+                statModifiers: { damage: 1.2, accuracy: 0.7, range: 1.1 }, // Høj skade, lav præcision
+                baseRange: 50
+            },
+            'Energi': {
+                types: ['Laser Rifle', 'Plasma Cannon', 'Ion Blaster'],
+                color: '#1abc9c',
+                emoji: '⚡',
+                statModifiers: { damage: 1.1, accuracy: 1.3, range: 1.2 }, // Høj præcision, moderat rækkevidde
+                baseRange: 60
+            },
+            'Eksplosiv': {
+                types: ['Raket Launcher', 'Granat Launcher', 'Missile Pod'],
+                color: '#e74c3c',
+                emoji: '💣',
+                statModifiers: { damage: 2.2, accuracy: 0.5, range: 1.0 }, // Ekstrem skade, meget lav præcision
+                baseRange: 100
+            }
+        };
+        
         const rarities = [
             { name: 'Almindelig', color: '#6c757d', statBonus: 1 },
             { name: 'Ualmindelig', color: '#28a745', statBonus: 1.2 },
@@ -196,7 +256,11 @@ class CharacterManager {
             { name: 'Legendarisk', color: '#fd7e14', statBonus: 3 }
         ];
 
-        const randomWeapon = weaponTypes[Math.floor(Math.random() * weaponTypes.length)];
+        // Select random weapon class and type
+        const classNames = Object.keys(weaponClasses);
+        const randomClassName = classNames[Math.floor(Math.random() * classNames.length)];
+        const selectedClass = weaponClasses[randomClassName];
+        const randomWeapon = selectedClass.types[Math.floor(Math.random() * selectedClass.types.length)];
         
         // Generate weapon level 1-3 levels around character level
         const minLevel = Math.max(1, characterLevel - 1);
@@ -205,18 +269,26 @@ class CharacterManager {
         
         const randomRarity = this.getRandomRarityByLevel(rarities, weaponLevel);
         
-        // Level-scaled base stats based on weapon level
+        // Level-scaled base stats based on weapon level and class
         const levelMultiplier = 1 + (weaponLevel - 1) * 0.15; // 15% increase per level
+        
+        // Calculate range based on class baseRange + some randomness
+        const rangeVariation = selectedClass.baseRange * 0.2; // ±20% variation
+        const finalRange = Math.floor(selectedClass.baseRange + (Math.random() - 0.5) * rangeVariation);
+        
         const baseStats = {
-            damage: Math.floor((Math.random() * 30 + 15) * levelMultiplier),
-            accuracy: Math.floor(Math.random() * 20 + 75),
-            range: Math.floor((Math.random() * 30 + 25) * levelMultiplier)
+            damage: Math.floor((Math.random() * 30 + 15) * levelMultiplier * selectedClass.statModifiers.damage),
+            accuracy: Math.floor((Math.random() * 20 + 75) * selectedClass.statModifiers.accuracy),
+            range: Math.max(1, finalRange) // Ensure minimum range of 1
         };
 
         const weapon = {
             id: Date.now(),
             name: `${randomRarity.name} ${randomWeapon}`,
             type: randomWeapon,
+            weaponClass: randomClassName,
+            classColor: selectedClass.color,
+            classEmoji: selectedClass.emoji,
             rarity: randomRarity,
             level: weaponLevel,
             damage: Math.floor(baseStats.damage * randomRarity.statBonus),
@@ -751,6 +823,9 @@ class CharacterManager {
             <div class="weapon-card">
                 <div class="weapon-image">${weapon.image}</div>
                 <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
+                <div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0;">
+                    ${weapon.classEmoji} ${weapon.weaponClass}
+                </div>
                 <div class="weapon-stats">
                     <div>⭐ Level: ${weapon.level}</div>
                     <div>💥 Skade: ${weapon.damage}</div>
@@ -815,6 +890,9 @@ class CharacterManager {
                 <div class="weapon-name" style="color: ${weapon.rarity.color}">
                     ${weapon.name} ${isEquipped ? '⚔️' : ''}
                 </div>
+                ${weapon.weaponClass ? `<div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0; font-size: 0.9em;">
+                    ${weapon.classEmoji} ${weapon.weaponClass}
+                </div>` : ''}
                 <div class="weapon-stats">
                     <div>⭐ Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}</div>
                     <div>💥 Skade: ${weapon.damage}</div>
