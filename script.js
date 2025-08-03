@@ -830,7 +830,7 @@ class CharacterManager {
                             Equip
                         </button>`
                     ) : ''}
-                    <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn" style="background: #dc3545;">
+                    <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn" style="background: ${isEquipped ? '#6c757d' : '#dc3545'};" ${isEquipped ? 'disabled' : ''}>
                         Fjern
                     </button>
                 </div>
