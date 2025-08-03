@@ -30,8 +30,10 @@ class QRSystem {
 
         try {
             // Create QR code with lower error correction for more data capacity
-            const qr = qrcode(0, 'L'); // Version 0 = auto, Error correction level L (lowest)
-            qr.addData(JSON.stringify(weaponData));
+            const qr = qrcode(0, 'M'); // Version 0 = auto, Error correction level L (lowest)
+            const qrData = JSON.stringify(weaponData);
+            console.log('QR Data:', qrData); // Debugging output
+            qr.addData(qrData);
             qr.make();
 
             // Replace weapon display with QR code
@@ -41,7 +43,7 @@ class QRSystem {
                     <h3>📤 Del Våben</h3>
                     <p><strong>${weapon.name}</strong> er klar til deling!</p>
                     <div class="qr-code-container">
-                        ${qr.createImgTag(8)}
+                        ${qr.createSvgTag({cellSize: 2, margin: 2, scalable: true})}
                     </div>
                     <p class="share-info">
                         Lad en anden spiller scanne denne QR kode med "📷 Modtag Våben" funktionen.

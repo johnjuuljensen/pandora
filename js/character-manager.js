@@ -427,10 +427,22 @@ class CharacterManager {
         });
         
         // Weapon generation
-        document.getElementById('generate-weapon')?.addEventListener('click', () => this.generateWeapon());
+        document.getElementById('generate-weapon')?.addEventListener('click', () => {
+            // Stop QR scanner if running
+            if (this.qrSystem.currentScanner) {
+                this.qrSystem.stopQRScanner();
+            }
+            this.generateWeapon();
+        });
         
         // Dice rolling
-        document.getElementById('roll-dice')?.addEventListener('click', () => this.rollDice());
+        document.getElementById('roll-dice')?.addEventListener('click', () => {
+            // Stop QR scanner if running
+            if (this.qrSystem.currentScanner) {
+                this.qrSystem.stopQRScanner();
+            }
+            this.rollDice();
+        });
         
         // QR Scanner
         document.getElementById('receive-weapon')?.addEventListener('click', () => this.qrSystem.startQRScanner());
@@ -441,6 +453,13 @@ class CharacterManager {
         if (filterSelect) {
             filterSelect.addEventListener('change', () => this.updateWeaponDisplay());
         }
+        
+        // Cleanup QR scanner when page is closed/refreshed
+        window.addEventListener('beforeunload', () => {
+            if (this.qrSystem.currentScanner) {
+                this.qrSystem.stopQRScanner();
+            }
+        });
     }
 
     setupTabSystem() {
@@ -450,6 +469,11 @@ class CharacterManager {
         tabButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 const targetTab = e.target.dataset.tab;
+                
+                // Stop QR scanner if switching away from loot tab
+                if (this.qrSystem.currentScanner) {
+                    this.qrSystem.stopQRScanner();
+                }
                 
                 // Update active states
                 tabButtons.forEach(btn => btn.classList.remove('active'));

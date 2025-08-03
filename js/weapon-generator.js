@@ -61,7 +61,7 @@ class WeaponGenerator {
 
         const weapon = {
             id: Date.now(),
-            name: `${randomRarity.name} ${randomWeapon}`,
+            name: `${randomWeapon}`,
             type: randomWeapon,
             weaponClass: randomClassName,
             classColor: selectedClass.color,
