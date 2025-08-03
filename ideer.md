@@ -13,8 +13,9 @@
 # Loot
 - [x] loot skal omkring mit level ✅ **FÆRDIG**
 - [ ] loot skal være mindre
-- der skal være våben klasser
+- der skal være våben klasser (nærkamp, pistoler, sniper, shotgun). Må ikke forveksles med teknologi (projektil, plasma, laser, osv.)
 - Der skal være faner i inventory
+- man skal ikke kunne slette equippede våben 
 
 # Next next level
 - [ ] Man skal måske kunne dele våben. Måske med en kode eller et QR kode.
