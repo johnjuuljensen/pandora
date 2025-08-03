@@ -690,6 +690,30 @@ main {
     color: #004085;
 }
 
+/* Version Info */
+.version-info {
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0.7;
+}
+
+.version-info small {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8em;
+}
+
+.version-info a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+}
+
+.version-info a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

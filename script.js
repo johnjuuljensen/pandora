@@ -1602,4 +1602,42 @@ class CharacterManager {
 let characterManager;
 document.addEventListener('DOMContentLoaded', () => {
     characterManager = new CharacterManager();
+    
+    // Load version info
+    loadVersionInfo();
 });
+
+// Load version information
+async function loadVersionInfo() {
+    try {
+        const response = await fetch('./version.json');
+        const versionData = await response.json();
+        
+        // Update version number
+        const versionElement = document.getElementById('app-version');
+        if (versionElement) {
+            versionElement.textContent = versionData.version;
+        }
+        
+        // Update build date (use today's date as actual build date)
+        const buildDateElement = document.getElementById('build-date');
+        if (buildDateElement) {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+            buildDateElement.textContent = dateString;
+        }
+        
+        // Store version info for potential use
+        window.appVersion = versionData;
+        
+    } catch (error) {
+        console.log('Could not load version info, using defaults');
+        // Fallback to current date if version.json fails to load
+        const buildDateElement = document.getElementById('build-date');
+        if (buildDateElement) {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            buildDateElement.textContent = dateString;
+        }
+    }
+}

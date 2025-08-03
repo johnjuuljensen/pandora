@@ -92,7 +92,35 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Udviklings Noter
 
-### Version 0.1 - Første Udkast (2025-08-03)
+### Version 1.3.0 - QR Våbendeling (2025-08-03)
+**Implementerede features:**
+- ✅ QR kode våben deling system med kamera scanning
+- ✅ Kompakt data format for effektive QR koder  
+- ✅ Modtagne våben kan ikke deles igen (sikkerhed)
+- ✅ Versioneringssystem med build dato tracking
+- ✅ Footer med version info og GitHub link
+
+**QR System:**
+- Del genererede våben via QR koder (våben forsvinder)
+- Modtag våben ved at scanne QR koder med mobil kamera
+- Single-letter våben klasse koder for kompakt data
+- Fungerer på både mobil og desktop med HTTPS
+
+### Version 1.2.0 - Skade System (2025-08-03)
+**Implementerede features:**
+- ✅ Komplet skade system med shield absorption
+- ✅ Dødsanimation med kranie emoji scaling/fade
+- ✅ Hjælp tooltips (virker på hover og mobil klik)
+- ✅ Kompakt UI design med emoji headers
+
+### Version 1.1.0 - Våben Klasser (2025-08-03)
+**Implementerede features:**
+- ✅ 9 våben klasser med realistiske stats
+- ✅ Shield våben klasse med dynamic UI states
+- ✅ Inventory filtering og level-baserede slots
+- ✅ Tab memory med localStorage integration
+
+### Version 1.0.0 - Første Udkast (2025-08-03)
 **Implementerede features:**
 - ✅ Basic karakter skema (navn, level, health bar)
 - ✅ Inventory system med våben kort

@@ -1,0 +1,21 @@
+{
+  "version": "1.3.0",
+  "buildDate": "2025-08-03",
+  "features": [
+    "Character management system",
+    "Inventory system with level-based slots", 
+    "Weapon generator with 9 classes",
+    "Shield system with dynamic UI",
+    "Damage system with death animation",
+    "QR code weapon sharing",
+    "Tab memory with localStorage",
+    "Responsive mobile design",
+    "Version tracking system"
+  ],
+  "changelog": {
+    "1.3.0": "Added QR weapon sharing system and version tracking",
+    "1.2.0": "Added damage system with death animation and shield functionality",
+    "1.1.0": "Added weapon classes and inventory filtering", 
+    "1.0.0": "Initial release with basic character and inventory management"
+  }
+}
