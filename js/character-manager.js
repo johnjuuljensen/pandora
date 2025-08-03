@@ -15,6 +15,7 @@ class CharacterManager {
         this.storageManager = new StorageManager();
         this.uiManager = new UIManager(this.debugManager);
         this.qrSystem = new QRSystem(this.weaponGenerator, this.uiManager);
+        this.avatarGenerator = new AvatarGenerator();
         
         // Initialize
         this.init();
@@ -33,6 +34,9 @@ class CharacterManager {
             
             // Setup character selector
             this.setupCharacterSelector();
+            
+            // Setup avatar system
+            this.setupAvatarSystem();
             
             // Load saved data
             this.loadSavedCharacter();
@@ -62,7 +66,8 @@ class CharacterManager {
             currentHP: parseInt(document.getElementById('current-hp')?.value) || 100,
             maxHP: parseInt(document.getElementById('max-hp')?.value) || 100,
             currentShield: parseInt(document.getElementById('current-shield')?.value) || 0,
-            maxShield: parseInt(document.getElementById('max-shield')?.value) || 50
+            maxShield: parseInt(document.getElementById('max-shield')?.value) || 50,
+            avatar: this.currentAvatar
         };
     }
 
@@ -458,6 +463,129 @@ class CharacterManager {
         this.loadActiveTab(tabButtons, tabContents);
     }
 
+    // Avatar system functionality
+    setupAvatarSystem() {
+        // Load default avatar for new characters
+        this.currentAvatar = null;
+        
+        // Setup avatar display
+        this.updateAvatarDisplay();
+        
+        // Setup customize button event
+        const customizeBtn = document.getElementById('customize-avatar');
+        if (customizeBtn) {
+            customizeBtn.addEventListener('click', () => {
+                this.openAvatarCustomizer();
+            });
+        }
+    }
+
+    updateAvatarDisplay(avatarData = null) {
+        const container = document.getElementById('character-avatar-display');
+        if (!container) return;
+        
+        const avatar = avatarData || this.currentAvatar || this.avatarGenerator.generateRandomAvatar();
+        container.innerHTML = this.avatarGenerator.createAvatarHTML(avatar);
+        
+        // Save current avatar
+        if (!this.currentAvatar) {
+            this.currentAvatar = avatar;
+        }
+    }
+
+    openAvatarCustomizer() {
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.className = 'avatar-modal';
+        modal.innerHTML = this.avatarGenerator.createAvatarCustomizer(this.currentAvatar);
+        
+        document.body.appendChild(modal);
+        
+        // Setup customizer event listeners
+        this.setupCustomizerEvents(modal);
+    }
+
+    setupCustomizerEvents(modal) {
+        let tempAvatar = { ...this.currentAvatar };
+        
+        // Option button events
+        modal.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const type = e.target.dataset.type;
+                const value = e.target.dataset.value;
+                
+                // Update temp avatar
+                tempAvatar[type] = value;
+                
+                // Update preview
+                const preview = modal.querySelector('#avatar-preview');
+                if (preview) {
+                    preview.innerHTML = this.avatarGenerator.createAvatarHTML(tempAvatar);
+                }
+                
+                // Update active states
+                modal.querySelectorAll(`[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+            });
+        });
+        
+        // Randomize button
+        const randomizeBtn = modal.querySelector('#randomize-avatar');
+        if (randomizeBtn) {
+            randomizeBtn.addEventListener('click', () => {
+                tempAvatar = this.avatarGenerator.generateRandomAvatar();
+                
+                // Update preview
+                const preview = modal.querySelector('#avatar-preview');
+                if (preview) {
+                    preview.innerHTML = this.avatarGenerator.createAvatarHTML(tempAvatar);
+                }
+                
+                // Update active states
+                this.updateCustomizerActiveStates(modal, tempAvatar);
+            });
+        }
+        
+        // Save button
+        const saveBtn = modal.querySelector('#save-avatar');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                this.currentAvatar = tempAvatar;
+                this.updateAvatarDisplay(this.currentAvatar);
+                this.autoSaveCharacter(); // Trigger auto-save
+                this.uiManager.showMessage('Avatar gemt! 🎭');
+                document.body.removeChild(modal);
+            });
+        }
+        
+        // Cancel button
+        const cancelBtn = modal.querySelector('#cancel-avatar');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+        
+        // Click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    updateCustomizerActiveStates(modal, avatar) {
+        // Update all active states based on current avatar
+        Object.keys(avatar).forEach(type => {
+            modal.querySelectorAll(`[data-type="${type}"]`).forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === avatar[type]) {
+                    btn.classList.add('active');
+                }
+            });
+        });
+    }
+
     // Character selector functionality
     setupCharacterSelector() {
         this.populateCharacterDropdown();
@@ -523,7 +651,8 @@ class CharacterManager {
                 currentHP: 100,
                 maxHP: 100,  
                 currentShield: 0,
-                maxShield: 0
+                maxShield: 0,
+                avatar: this.avatarGenerator.generateRandomAvatar()
             };
             
             // Save new character
@@ -546,6 +675,10 @@ class CharacterManager {
             document.getElementById('max-hp').value = characterData.maxHP;
             document.getElementById('current-shield').value = characterData.currentShield;
             document.getElementById('max-shield').value = characterData.maxShield;
+            
+            // Load avatar
+            this.currentAvatar = characterData.avatar || this.avatarGenerator.generateRandomAvatar();
+            this.updateAvatarDisplay(this.currentAvatar);
             
             // Load weapons
             this.weapons = characterData.weapons || [];
