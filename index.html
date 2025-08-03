@@ -108,6 +108,7 @@
                 <div class="generator-controls">
                     <button id="generate-weapon" class="generator-btn">⚔️ Generer Våben</button>
                     <button id="roll-dice" class="generator-btn">🎲 Kast Terning</button>
+                    <button id="receive-weapon" class="generator-btn">📷 Modtag Våben</button>
                 </div>
                 
                 <div id="dice-result" class="dice-result"></div>
@@ -115,10 +116,21 @@
                 <div id="new-weapon-display" class="new-weapon-display">
                     <!-- Generated weapon will appear here -->
                 </div>
+                
+                <div id="qr-scanner-section" class="qr-scanner-section" style="display: none;">
+                    <h3>📷 Scan QR Kode</h3>
+                    <div id="qr-scanner-container"></div>
+                    <p class="scanner-info">Ret kameraet mod QR koden for at modtage våben</p>
+                    <button id="stop-scanner" class="action-btn">❌ Stop Scanning</button>
+                </div>
             </section>
         </main>
     </div>
 
+    <!-- QR Code Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>

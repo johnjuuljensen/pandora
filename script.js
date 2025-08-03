@@ -990,6 +990,9 @@ class CharacterManager {
                     <button onclick="characterManager.addWeaponToInventory(${weapon.id})" class="action-btn compact">
                         Tilføj
                     </button>
+                    <button onclick="characterManager.shareWeapon(${weapon.id})" class="action-btn compact" style="background: #6f42c1;">
+                        📤 Del
+                    </button>
                     <button onclick="characterManager.discardWeapon()" class="action-btn compact" style="background: #dc3545;">
                         Afvis
                     </button>
@@ -1027,6 +1030,248 @@ class CharacterManager {
         document.getElementById('new-weapon-display').style.display = 'none';
         this.currentGeneratedWeapon = null;
         this.showMessage('Våben afvist');
+    }
+
+    // QR Code functionality
+    shareWeapon(weaponId) {
+        const weapon = this.currentGeneratedWeapon;
+        if (!weapon || weapon.id !== weaponId) {
+            this.showMessage('Fejl: Våben ikke fundet');
+            return;
+        }
+
+        // Create ultra-compact weapon data for QR code
+        const weaponData = {
+            n: weapon.name, //.substring(0, 10), // Truncate name
+            c: this.getClassCode(weapon.weaponClass), // Single letter codes
+            d: weapon.damage,
+            a: weapon.accuracy,
+            r: weapon.range,
+            l: weapon.level,
+            s: weapon.shieldPoints || 0,
+            t: this.getRarityCode(weapon.rarity.name) // Single digit codes
+        };
+
+        try {
+            // Create QR code with lower error correction for more data capacity
+            const qr = qrcode(0, 'L'); // Version 0 = auto, Error correction level L (lowest)
+            qr.addData(JSON.stringify(weaponData));
+            qr.make();
+
+            // Replace weapon display with QR code
+            const display = document.getElementById('new-weapon-display');
+            display.innerHTML = `
+                <div class="qr-share-container">
+                    <h3>📤 Del Våben</h3>
+                    <p><strong>${weapon.name}</strong> er klar til deling!</p>
+                    <div class="qr-code-container">
+                        ${qr.createImgTag(8)}
+                    </div>
+                    <p class="share-info">
+                        Lad en anden spiller scanne denne QR kode med "📷 Modtag Våben" funktionen.
+                        <br><strong>Våbnet er nu væk fra dit loot!</strong>
+                    </p>
+                    <button onclick="characterManager.finishSharing()" class="action-btn">✅ Færdig</button>
+                </div>
+            `;
+
+            this.currentGeneratedWeapon = null; // Weapon is now "gone"
+            this.showMessage('QR kode genereret! Våben er klar til deling 📤');
+
+        } catch (error) {
+            console.error('QR Generation error:', error);
+            this.showMessage('Fejl ved QR generation. Prøv igen.');
+        }
+    }
+
+    finishSharing() {
+        document.getElementById('new-weapon-display').style.display = 'none';
+        this.showMessage('Våben delt! Generer nyt loot når du er klar 🎲');
+    }
+
+    startQRScanner() {
+        const scannerSection = document.getElementById('qr-scanner-section');
+        const scannerContainer = document.getElementById('qr-scanner-container');
+        
+        // Hide other sections
+        document.getElementById('new-weapon-display').style.display = 'none';
+        document.getElementById('dice-result').style.display = 'none';
+        
+        // Show scanner section
+        scannerSection.style.display = 'block';
+        
+        // Create video element for scanner
+        scannerContainer.innerHTML = '<video id="qr-video" style="width: 100%; max-width: 400px; border-radius: 10px;"></video>';
+        
+        const video = document.getElementById('qr-video');
+        
+        // Initialize QR Scanner
+        const scanner = new QrScanner(video, (result) => {
+            try {
+                const weaponData = JSON.parse(result.data);
+                this.receiveWeapon(weaponData);
+                this.stopQRScanner();
+            } catch (error) {
+                console.error('QR decode error:', error);
+                this.showMessage('Ugyldig QR kode. Prøv igen.');
+            }
+        }, {
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
+        });
+
+        scanner.start().then(() => {
+            this.currentScanner = scanner;
+            this.showMessage('Kamera startet! Ret det mod QR koden 📷');
+        }).catch(error => {
+            console.error('Camera error:', error);
+            this.showMessage('Kunne ikke få adgang til kamera. Tjek tilladelser.');
+            this.stopQRScanner();
+        });
+    }
+
+    stopQRScanner() {
+        if (this.currentScanner) {
+            this.currentScanner.stop();
+            this.currentScanner.destroy();
+            this.currentScanner = null;
+        }
+        
+        document.getElementById('qr-scanner-section').style.display = 'none';
+        this.showMessage('Scanner stoppet');
+    }
+
+    receiveWeapon(weaponData) {
+        try {
+            // Reconstruct weapon from QR data
+            const weaponClass = this.getClassFromCode(weaponData.c);
+            const rarityName = this.getRarityFromCode(weaponData.t);
+            
+            const weapon = {
+                id: this.generateWeaponId(),
+                name: weaponData.n,
+                weaponClass: weaponClass,
+                damage: weaponData.d,
+                accuracy: weaponData.a,
+                range: weaponData.r,
+                level: weaponData.l,
+                shieldPoints: weaponData.s || 0,
+                rarity: this.getRarityByName(rarityName),
+                image: this.getWeaponImage(weaponClass),
+                classEmoji: this.getClassEmoji(weaponClass),
+                classColor: this.getClassColor(weaponClass)
+            };
+
+            // Mark as received weapon (cannot be shared again)
+            weapon.isReceived = true;
+            
+            // Show received weapon
+            this.currentGeneratedWeapon = weapon;
+            this.displayReceivedWeapon(weapon);
+            this.showMessage(`Våben modtaget! ${weapon.name} er nu tilgængeligt 📦`);
+
+        } catch (error) {
+            console.error('Weapon reconstruction error:', error);
+            this.showMessage('Fejl ved våben modtagelse. Ugyldig data.');
+        }
+    }
+
+    getRarityByName(name) {
+        const rarities = [
+            { name: 'Almindelig', color: '#6c757d' },
+            { name: 'Ualmindelig', color: '#28a745' },
+            { name: 'Sjælden', color: '#007bff' },
+            { name: 'Episk', color: '#6f42c1' },
+            { name: 'Legendarisk', color: '#fd7e14' }
+        ];
+        return rarities.find(r => r.name === name) || rarities[0];
+    }
+
+    getClassCode(weaponClass) {
+        const codes = {
+            'Nærkamp': 'M',
+            'Pistol': 'P', 
+            'Haglgevær': 'S',
+            'Riffel': 'R',
+            'Sniper': 'N',
+            'Automatisk': 'A',
+            'Energi': 'E',
+            'Eksplosiv': 'X',
+            'Shield': 'D'
+        };
+        return codes[weaponClass] || 'M';
+    }
+
+    getClassFromCode(code) {
+        const classes = {
+            'M': 'Nærkamp',
+            'P': 'Pistol',
+            'S': 'Haglgevær', 
+            'R': 'Riffel',
+            'N': 'Sniper',
+            'A': 'Automatisk',
+            'E': 'Energi',
+            'X': 'Eksplosiv',
+            'D': 'Shield'
+        };
+        return classes[code] || 'Nærkamp';
+    }
+
+    getRarityCode(rarityName) {
+        const codes = {
+            'Almindelig': '1',
+            'Ualmindelig': '2',
+            'Sjælden': '3',
+            'Episk': '4',
+            'Legendarisk': '5'
+        };
+        return codes[rarityName] || '1';
+    }
+
+    getRarityFromCode(code) {
+        const rarities = {
+            '1': 'Almindelig',
+            '2': 'Ualmindelig',
+            '3': 'Sjælden',
+            '4': 'Episk', 
+            '5': 'Legendarisk'
+        };
+        return rarities[code] || 'Almindelig';
+    }
+
+    displayReceivedWeapon(weapon) {
+        const display = document.getElementById('new-weapon-display');
+        display.innerHTML = `
+            <h3>📦 Våben Modtaget!</h3>
+            <div class="weapon-card compact">
+                <div class="weapon-image">${weapon.image}</div>
+                <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
+                <div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0;">
+                    ${weapon.classEmoji} ${weapon.weaponClass}
+                </div>
+                <div class="weapon-stats compact">
+                    <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
+                    ${weapon.weaponClass === 'Shield' ? 
+                        `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
+                        `<span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>`
+                    }
+                    <span title="Præcision: ${weapon.accuracy}%">🎯${weapon.accuracy}%</span>
+                    <span title="Rækkevidde: ${weapon.range}m">📏${weapon.range}m</span>
+                </div>
+                <div class="received-info">
+                    <small>📷 Modtaget fra QR kode - kan ikke deles igen</small>
+                </div>
+                <div class="weapon-actions">
+                    <button onclick="characterManager.addWeaponToInventory(${weapon.id})" class="action-btn compact">
+                        Tilføj
+                    </button>
+                    <button onclick="characterManager.discardWeapon()" class="action-btn compact" style="background: #dc3545;">
+                        Afvis
+                    </button>
+                </div>
+            </div>
+        `;
+        display.style.display = 'block';
     }
 
     updateWeaponDisplay() {
@@ -1222,6 +1467,10 @@ class CharacterManager {
         
         // Dice rolling
         document.getElementById('roll-dice').addEventListener('click', () => this.rollDice());
+        
+        // QR Scanner
+        document.getElementById('receive-weapon').addEventListener('click', () => this.startQRScanner());
+        document.getElementById('stop-scanner').addEventListener('click', () => this.stopQRScanner());
         
         // Weapon class filter
         const filterSelect = document.getElementById('weapon-class-filter');
