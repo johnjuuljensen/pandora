@@ -941,6 +941,31 @@ class CharacterManager {
         document.getElementById('roll-dice').addEventListener('click', () => this.rollDice());
     }
 
+    loadActiveTab(tabButtons, tabContents) {
+        const savedTab = localStorage.getItem('pandora-active-tab');
+        
+        if (savedTab) {
+            // Remove active class from all buttons and contents first
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Find and activate the saved tab
+            const savedButton = document.querySelector(`[data-tab="${savedTab}"]`);
+            const savedContent = document.getElementById(`tab-${savedTab}`);
+            
+            if (savedButton && savedContent) {
+                savedButton.classList.add('active');
+                savedContent.classList.add('active');
+            } else {
+                // Fallback to first tab if saved tab doesn't exist
+                if (tabButtons.length > 0 && tabContents.length > 0) {
+                    tabButtons[0].classList.add('active');
+                    tabContents[0].classList.add('active');
+                }
+            }
+        }
+    }
+
     initializeTabs() {
         const tabButtons = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -956,8 +981,14 @@ class CharacterManager {
                 // Add active class to clicked button and corresponding content
                 button.classList.add('active');
                 document.getElementById(`tab-${targetTab}`).classList.add('active');
+                
+                // Save current active tab to localStorage
+                localStorage.setItem('pandora-active-tab', targetTab);
             });
         });
+        
+        // Load saved active tab on page load
+        this.loadActiveTab(tabButtons, tabContents);
     }
 }
 
