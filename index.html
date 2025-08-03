@@ -24,43 +24,55 @@
             <section id="tab-character" class="tab-content active">
                 <div class="character-info">
                     <div class="basic-stats">
-                        <label>
-                            Navn:
+                        <div class="stat-row">
+                            <label for="character-name">Navn:</label>
                             <input type="text" id="character-name" placeholder="Indtast karakternavn">
-                        </label>
-                        <label>
-                            Level:
+                        </div>
+                        <div class="stat-row">
+                            <label for="character-level">Level:</label>
                             <input type="number" id="character-level" min="1" max="20" value="1">
-                        </label>
+                        </div>
                     </div>
                     
                     <div class="health-section">
-                        <label>Health Points:</label>
-                        <div class="health-bar">
-                            <input type="number" id="current-hp" value="100" min="0">
-                            <span>/</span>
-                            <input type="number" id="max-hp" value="100" min="1" readonly>
+                        <div class="stat-row">
+                            <span class="stat-emoji">❤️</span>
+                            <div class="health-bar">
+                                <input type="number" id="current-hp" value="100" min="0">
+                                <span>/</span>
+                                <input type="number" id="max-hp" value="100" min="1" readonly>
+                            </div>
+                            <span class="help-tooltip" data-tooltip="Max HP = 100 + (Level - 1) × 20">❓</span>
                         </div>
                         <div class="health-visual" id="health-bar-visual"></div>
-                        <small class="hp-formula">Max HP = 100 + (Level - 1) × 20</small>
                     </div>
 
                     <div class="shield-section">
-                        <label>🛡️ Shield Points:</label>
-                        <div class="shield-bar">
-                            <input type="number" id="current-shield" value="0" min="0">
-                            <span>/</span>
-                            <input type="number" id="max-shield" value="50" min="0">
+                        <div class="stat-row">
+                            <span class="stat-emoji">🛡️</span>
+                            <div class="shield-bar">
+                                <input type="number" id="current-shield" value="0" min="0">
+                                <span>/</span>
+                                <input type="number" id="max-shield" value="50" min="0">
+                            </div>
+                            <span class="help-tooltip" data-tooltip="Skjolde absorberer skade før HP">❓</span>
                         </div>
                         <div class="shield-visual" id="shield-bar-visual"></div>
-                        <small class="shield-info">Skjolde absorberer skade før HP</small>
+                    </div>
+                </div>
+                
+                <div class="damage-section">
+                    <div class="stat-row">
+                        <label for="damage-input">Skade:</label>
+                        <input type="number" id="damage-input" min="1" value="10" placeholder="Skade">
+                        <button id="take-damage" class="action-btn">💀 Tag Skade</button>
                     </div>
                 </div>
                 
                 <div class="character-actions">
+                    <button id="restore-shield" class="action-btn">🛡️ Genopret Skjold</button>
                     <button id="save-character" class="action-btn">💾 Gem Karakter</button>
                     <button id="load-character" class="action-btn">📁 Indlæs Karakter</button>
-                    <button id="restore-shield" class="action-btn">🛡️ Genopret Skjold</button>
                 </div>
             </section>
 
@@ -69,7 +81,7 @@
                 <div class="inventory-controls">
                     <div class="inventory-slots-info">
                         <span id="slot-counter">📦 Slots: 0/1</span>
-                        <small>+1 slot per 2 levels</small>
+                        <span class="help-tooltip" data-tooltip="+1 slot per 2 levels">❓</span>
                     </div>
                     <div class="filter-controls">
                         <select id="weapon-class-filter" class="filter-select">

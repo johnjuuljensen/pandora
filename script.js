@@ -258,6 +258,72 @@ class CharacterManager {
         this.updateShieldBar();
     }
 
+    takeDamage() {
+        const damageInput = document.getElementById('damage-input');
+        const damage = parseInt(damageInput.value) || 0;
+        
+        if (damage <= 0) {
+            this.showMessage('Skade skal være større end 0!');
+            return;
+        }
+
+        let currentShield = parseInt(document.getElementById('current-shield').value) || 0;
+        let currentHP = parseInt(document.getElementById('current-hp').value) || 0;
+        let remainingDamage = damage;
+
+        // Apply damage to shield first
+        if (currentShield > 0 && remainingDamage > 0) {
+            const shieldDamage = Math.min(currentShield, remainingDamage);
+            currentShield -= shieldDamage;
+            remainingDamage -= shieldDamage;
+            document.getElementById('current-shield').value = currentShield;
+            this.updateShieldBar();
+        }
+
+        // Apply remaining damage to HP
+        if (remainingDamage > 0) {
+            currentHP = Math.max(0, currentHP - remainingDamage);
+            document.getElementById('current-hp').value = currentHP;
+            this.updateHealthBar();
+        }
+
+        // Show damage message
+        const shieldDamage = damage - remainingDamage;
+        let message = `Tog ${damage} skade!`;
+        if (shieldDamage > 0) {
+            message = `Skjold absorberede ${shieldDamage}, tog ${remainingDamage} HP skade!`;
+        }
+        this.showMessage(message);
+
+        // Check for death
+        if (currentHP === 0) {
+            this.playDeathAnimation();
+        }
+
+        // Clear damage input
+        damageInput.value = '';
+    }
+
+    playDeathAnimation() {
+        // Create death animation overlay
+        const deathOverlay = document.createElement('div');
+        deathOverlay.className = 'death-animation';
+        deathOverlay.innerHTML = '💀';
+        document.body.appendChild(deathOverlay);
+
+        // Start animation
+        setTimeout(() => {
+            deathOverlay.classList.add('animate');
+        }, 50);
+
+        // Remove overlay after animation
+        setTimeout(() => {
+            deathOverlay.remove();
+        }, 2000);
+
+        this.showMessage('Du er død! 💀');
+    }
+
     // Weapon generation
     generateWeapon() {
         const characterLevel = parseInt(document.getElementById('character-level').value) || 1;
@@ -1135,6 +1201,7 @@ class CharacterManager {
         document.getElementById('save-character').addEventListener('click', () => this.saveCharacter());
         document.getElementById('load-character').addEventListener('click', () => this.loadSavedCharacter());
         document.getElementById('restore-shield').addEventListener('click', () => this.restoreShield());
+        document.getElementById('take-damage').addEventListener('click', () => this.takeDamage());
         
         // Health bar updates
         document.getElementById('current-hp').addEventListener('input', () => this.updateHealthBar());
@@ -1161,6 +1228,29 @@ class CharacterManager {
         if (filterSelect) {
             filterSelect.addEventListener('change', () => this.updateWeaponDisplay());
         }
+        
+        // Help tooltips for mobile (click to toggle)
+        document.querySelectorAll('.help-tooltip').forEach(tooltip => {
+            tooltip.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Hide all other tooltips
+                document.querySelectorAll('.help-tooltip').forEach(t => {
+                    if (t !== tooltip) t.classList.remove('show-tooltip');
+                });
+                
+                // Toggle this tooltip
+                tooltip.classList.toggle('show-tooltip');
+            });
+        });
+        
+        // Hide tooltips when clicking elsewhere
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.help-tooltip.show-tooltip').forEach(tooltip => {
+                tooltip.classList.remove('show-tooltip');
+            });
+        });
     }
 
     loadActiveTab(tabButtons, tabContents) {
