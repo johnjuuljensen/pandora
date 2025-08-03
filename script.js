@@ -14,7 +14,9 @@ class CharacterManager {
             name: '',
             level: 1,
             currentHp: 100,
-            maxHp: 100
+            maxHp: 100,
+            currentShield: 0,
+            maxShield: 50
         };
         
         if (saved) {
@@ -23,6 +25,11 @@ class CharacterManager {
             character.maxHp = this.calculateMaxHPForLevel(character.level);
             // Ensure current HP doesn't exceed new max HP
             character.currentHp = Math.min(character.currentHp, character.maxHp);
+            
+            // Add shield stats if missing (backwards compatibility)
+            if (character.currentShield === undefined) character.currentShield = 0;
+            if (character.maxShield === undefined) character.maxShield = 50;
+            
             return character;
         }
         
@@ -34,12 +41,15 @@ class CharacterManager {
         return 100 + (level - 1) * 20;
     }
 
+
     saveCharacter() {
         const character = {
             name: document.getElementById('character-name').value,
             level: parseInt(document.getElementById('character-level').value),
             currentHp: parseInt(document.getElementById('current-hp').value),
-            maxHp: parseInt(document.getElementById('max-hp').value)
+            maxHp: parseInt(document.getElementById('max-hp').value),
+            currentShield: parseInt(document.getElementById('current-shield').value) || 0,
+            maxShield: parseInt(document.getElementById('max-shield').value) || 50
         };
         
         localStorage.setItem('pandora-character', JSON.stringify(character));
@@ -75,7 +85,11 @@ class CharacterManager {
         
         document.getElementById('current-hp').value = this.character.currentHp;
         document.getElementById('max-hp').value = this.character.maxHp;
+        document.getElementById('current-shield').value = this.character.currentShield || 0;
+        document.getElementById('max-shield').value = this.character.maxShield || 50;
+        
         this.updateHealthBar();
+        this.updateShieldBar();
     }
 
     updateMaxHPForLevel() {
@@ -119,6 +133,27 @@ class CharacterManager {
         } else {
             healthBar.style.background = '#dc3545';
         }
+    }
+
+    updateShieldBar() {
+        const currentShield = parseInt(document.getElementById('current-shield').value) || 0;
+        const maxShield = parseInt(document.getElementById('max-shield').value) || 50;
+        const percentage = maxShield > 0 ? (currentShield / maxShield) * 100 : 0;
+        
+        const shieldBar = document.getElementById('shield-bar-visual');
+        if (shieldBar) {
+            shieldBar.style.width = percentage + '%';
+            
+            // Shield bar is always blue/cyan
+            shieldBar.style.background = '#17a2b8';
+        }
+    }
+
+    restoreShield() {
+        const maxShield = parseInt(document.getElementById('max-shield').value) || 50;
+        document.getElementById('current-shield').value = maxShield;
+        this.updateShieldBar();
+        this.showMessage(`Skjold genoprettet til ${maxShield}! 🛡️`);
     }
 
     // Weapon generation
@@ -345,10 +380,15 @@ class CharacterManager {
         // Character management
         document.getElementById('save-character').addEventListener('click', () => this.saveCharacter());
         document.getElementById('load-character').addEventListener('click', () => this.loadSavedCharacter());
+        document.getElementById('restore-shield').addEventListener('click', () => this.restoreShield());
         
         // Health bar updates
         document.getElementById('current-hp').addEventListener('input', () => this.updateHealthBar());
         document.getElementById('max-hp').addEventListener('input', () => this.updateHealthBar());
+        
+        // Shield bar updates
+        document.getElementById('current-shield').addEventListener('input', () => this.updateShieldBar());
+        document.getElementById('max-shield').addEventListener('input', () => this.updateShieldBar());
         
         // Level updates
         document.getElementById('character-level').addEventListener('input', () => {

@@ -183,12 +183,52 @@ main {
     background: linear-gradient(90deg, #28a745 0%, #ffc107 70%, #dc3545 90%);
 }
 
-.hp-formula {
+.hp-formula, .shield-info {
     display: block;
     margin-top: 8px;
     color: #666;
     font-style: italic;
     text-align: center;
+}
+
+/* Shield Section Styling */
+.shield-section {
+    background: #e1f5fe;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #b3e5fc;
+    margin-top: 15px;
+}
+
+.shield-section label {
+    font-weight: bold;
+    color: #01579b;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.shield-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.shield-bar input {
+    width: 80px;
+    padding: 8px;
+    border: 2px solid #4fc3f7;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.shield-visual {
+    height: 20px;
+    background: #17a2b8;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    position: relative;
 }
 
 .character-actions {
