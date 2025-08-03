@@ -1,17 +1,24 @@
 
 # Brugergrænseflade
-- Mindre scroll, måske faner
+- [x] Mindre scroll, måske faner ✅ **FÆRDIG**
+- [ ] ved genindlæs skal den lode seneste karakter
 
 # Stats og regler
-- max hp skal følge level.
+- [x] max hp skal følge level ✅ **FÆRDIG**
+- [x] der skal også være shilde ✅ **FÆRDIG**
 
 # Equipped
-- Hvilke af mine våben har jeg i hånden
+- [x] Hvilke af mine våben har jeg i hånden ✅ **FÆRDIG**
 
 # Loot
-- loot skal omkring mit level
-- 
-
+- [x] loot skal omkring mit level ✅ **FÆRDIG**
+- [ ] loot skal være mindre
 
 # Next next level
-Man skal måske kunne dele våben. Måske med en kode eller et QR kode.
+- [ ] Man skal måske kunne dele våben. Måske med en kode eller et QR kode.
+
+# Karakter
+- [ ] billed af karakter
+
+# Inventory
+- [ ] Vært 2 level skal man kunne havde et våben mere i sit inventory
