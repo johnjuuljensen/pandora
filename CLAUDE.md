@@ -92,6 +92,22 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Udviklings Noter
 
+### Version 1.4.0 - Multiple Karakterer (2025-08-03)
+**Implementerede features:**
+- ✅ Multiple karakter system med dropdown selector
+- ✅ Per-karakter storage med individuelle stats og våben
+- ✅ "+" knap for oprettelse af nye karakterer
+- ✅ Karakter skift funktionalitet med komplet data load
+- ✅ Auto-save per karakter med navnbaseret gemning
+- ✅ Automatisk migration fra single-character system
+
+**System oversigt:**
+- Dropdown erstatter navn input med alle gemte karakterer
+- Hver karakter har sin egen localStorage entry
+- Auto-save virker individuelt per karakter
+- Prompt-baseret karakter oprettelse med validering
+- Character selector husker sidste aktive karakter
+
 ### Version 1.3.0 - QR Våbendeling (2025-08-03)
 **Implementerede features:**
 - ✅ QR kode våben deling system med kamera scanning
