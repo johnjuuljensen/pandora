@@ -131,6 +131,7 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 ## Memories
 - On "Det er fint" commit current work and present "Næste funktion" list
 - On startup present "Næste funktion" list and a short description in danish, på dansk, on which "Commands" we've established.
+- Commit beskeder skal være på dansk
 
 ---
 *Denne fil vedligeholdes automatisk af Claude AI*
