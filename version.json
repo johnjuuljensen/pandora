@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
+  "version": "1.5.2",
   "buildDate": "2025-08-03",
   "features": [
     "Ultra-compact QR format with 70% size reduction",
@@ -20,6 +20,7 @@
     "Version tracking system"
   ],
   "changelog": {
+    "1.5.2": "Improved game mechanics: shield auto-restore/clear, level-based weapon unequipping, HP adjustment",
     "1.5.1": "Fixed avatar system double face issue and updated version tracking",
     "1.5.0": "Ultra-compact QR format v3 with 70% size reduction and test functionality",
     "1.4.1": "Fixed QR weapon receiving - received weapons can now be added to inventory",

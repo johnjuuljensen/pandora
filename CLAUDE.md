@@ -92,6 +92,14 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Udviklings Noter
 
+### Version 1.5.2 - Forbedret Game Mechanics (2025-08-03)
+**Game Logic Improvements:**
+- ✅ Shield auto-restore til fuld når equipped, nul når unequipped
+- ✅ Auto-unequip våben over karakter level ved level reduktion
+- ✅ Auto-reducer HP til max HP ved level reduktion
+- ✅ Automatisk character save ved shield/HP ændringer
+- ✅ Forbedrede bruger beskeder for alle ændringer
+
 ### Version 1.5.1 - Avatar Fix (2025-08-03)
 **Bugfixes:**
 - ✅ Fjernet dobbelt ansigts problem i avatar system
@@ -205,7 +213,7 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 - On "Det er fint" commit current work and present "Næste funktion" list
 - On startup present "Næste funktion" list and a short description in danish, på dansk, on which "Commands" we've established.
 - Commit beskeder skal være på dansk
-- Update version before each commit
+- Update version in both html and version.json before each commit
 
 ---
 *Denne fil vedligeholdes automatisk af Claude AI*

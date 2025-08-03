@@ -79,11 +79,46 @@ class CharacterManager {
     updateMaxHPForLevel() {
         const level = parseInt(document.getElementById('character-level').value) || 1;
         const maxHP = 100 + (level - 1) * 20;
+        const currentHP = parseInt(document.getElementById('current-hp').value) || 0;
+        
         document.getElementById('max-hp').value = maxHP;
+        
+        // Lower current HP if it exceeds new max HP
+        if (currentHP > maxHP) {
+            document.getElementById('current-hp').value = maxHP;
+            this.autoSaveCharacter(); // Save HP change
+            this.uiManager.showMessage(`HP lowered to ${maxHP} due to level change ❤️`);
+        }
+        
+        // Unequip weapons that are too high level
+        this.unequipHighLevelWeapons(level);
         
         // Update visual bar
         this.updateHealthBar();
         this.updateWeaponDisplay();
+    }
+
+    unequipHighLevelWeapons(characterLevel) {
+        let unequippedWeapons = [];
+        
+        this.weapons.forEach(weapon => {
+            if (weapon.equipped && weapon.level > characterLevel) {
+                weapon.equipped = false;
+                unequippedWeapons.push(weapon.name);
+                
+                // If it's a shield, set current shield to 0
+                if (weapon.weaponClass === 'Shield') {
+                    document.getElementById('current-shield').value = 0;
+                    this.updateShieldBar();
+                }
+            }
+        });
+        
+        if (unequippedWeapons.length > 0) {
+            this.uiManager.showMessage(`Unequipped ${unequippedWeapons.length} high-level weapon(s): ${unequippedWeapons.join(', ')} ⚔️`);
+            this.updateShieldUIState();
+            this.autoSaveWeapons();
+        }
     }
 
     updateHealthBar() {
@@ -265,20 +300,40 @@ class CharacterManager {
         }
         
         weapon.equipped = true;
+        
+        // If equipping a shield, restore shield to full
+        if (weapon.weaponClass === 'Shield') {
+            document.getElementById('current-shield').value = weapon.shieldPoints;
+            this.updateShieldBar();
+            this.autoSaveCharacter(); // Save shield change
+            this.uiManager.showMessage(`${weapon.name} equipped! Shield restored to ${weapon.shieldPoints} 🛡️`);
+        } else {
+            this.uiManager.showMessage(`${weapon.name} equipped! ⚔️`);
+        }
+        
         this.updateWeaponDisplay();
         this.updateShieldUIState();
         this.autoSaveWeapons(); // Auto-save weapons
-        this.uiManager.showMessage(`${weapon.name} equipped! ⚔️`);
     }
 
     unequipWeapon(weaponId) {
         const weapon = this.weapons.find(w => w.id === weaponId);
         if (weapon) {
             weapon.equipped = false;
+            
+            // If unequipping a shield, set current shield to 0
+            if (weapon.weaponClass === 'Shield') {
+                document.getElementById('current-shield').value = 0;
+                this.updateShieldBar();
+                this.autoSaveCharacter(); // Save shield change
+                this.uiManager.showMessage(`${weapon.name} unequipped! Shield lost 🛡️`);
+            } else {
+                this.uiManager.showMessage(`${weapon.name} unequipped`);
+            }
+            
             this.updateWeaponDisplay();
             this.updateShieldUIState();
             this.autoSaveWeapons(); // Auto-save weapons
-            this.uiManager.showMessage(`${weapon.name} unequipped`);
         }
     }
 
