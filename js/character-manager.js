@@ -613,6 +613,24 @@ class CharacterManager {
                 this.createNewCharacter();
             });
         }
+        
+        // Delete character button event
+        const deleteCharacterBtn = document.getElementById('delete-character');
+        if (deleteCharacterBtn) {
+            deleteCharacterBtn.addEventListener('click', () => {
+                this.deleteCurrentCharacter();
+            });
+        }
+        
+        // Update delete button state when selection changes
+        if (characterSelect) {
+            characterSelect.addEventListener('change', () => {
+                this.updateDeleteButtonState();
+            });
+        }
+        
+        // Initial state
+        this.updateDeleteButtonState();
     }
 
     populateCharacterDropdown() {
@@ -636,6 +654,9 @@ class CharacterManager {
             }
             characterSelect.appendChild(option);
         });
+        
+        // Update delete button state
+        this.updateDeleteButtonState();
     }
 
     createNewCharacter() {
@@ -674,6 +695,93 @@ class CharacterManager {
                 this.uiManager.showMessage('Fejl ved oprettelse af karakter');
             }
         }
+    }
+
+    deleteCurrentCharacter() {
+        const characterSelect = document.getElementById('character-select');
+        const currentCharacterName = characterSelect?.value;
+        
+        if (!currentCharacterName) {
+            this.uiManager.showMessage('Ingen karakter valgt til sletning!');
+            return;
+        }
+        
+        const characterList = this.storageManager.getCharacterList();
+        
+        // Prevent deleting the last character
+        if (characterList.length <= 1) {
+            this.uiManager.showMessage('Du kan ikke slette den sidste karakter!');
+            return;
+        }
+        
+        // Confirmation dialog
+        const confirmMessage = `Er du sikker på at du vil slette karakteren "${currentCharacterName}"?\n\nDette kan ikke fortrydes!`;
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        
+        // Delete the character
+        if (this.storageManager.deleteCharacter(currentCharacterName)) {
+            this.uiManager.showMessage(`Karakter "${currentCharacterName}" slettet! 🗑️`);
+            
+            // Update dropdown
+            this.populateCharacterDropdown();
+            
+            // Load first available character
+            const remainingCharacters = this.storageManager.getCharacterList();
+            if (remainingCharacters.length > 0) {
+                const nextCharacter = remainingCharacters[0];
+                characterSelect.value = nextCharacter;
+                this.loadCharacterByName(nextCharacter);
+            } else {
+                // Clear UI if no characters left (shouldn't happen due to prevention above)
+                this.clearCharacterUI();
+            }
+            
+            this.updateDeleteButtonState();
+        } else {
+            this.uiManager.showMessage('Fejl ved sletning af karakter');
+        }
+    }
+
+    updateDeleteButtonState() {
+        const deleteBtn = document.getElementById('delete-character');
+        const characterSelect = document.getElementById('character-select');
+        
+        if (!deleteBtn) return;
+        
+        const hasSelectedCharacter = characterSelect?.value;
+        const characterList = this.storageManager.getCharacterList();
+        const isLastCharacter = characterList.length <= 1;
+        
+        // Disable if no character selected or if it's the last character
+        const shouldDisable = !hasSelectedCharacter || isLastCharacter;
+        
+        deleteBtn.disabled = shouldDisable;
+        deleteBtn.title = shouldDisable 
+            ? (isLastCharacter ? 'Kan ikke slette sidste karakter' : 'Vælg karakter først')
+            : 'Slet valgte karakter';
+    }
+
+    clearCharacterUI() {
+        // Reset to default values
+        document.getElementById('character-level').value = 1;
+        document.getElementById('current-hp').value = 100;
+        document.getElementById('max-hp').value = 100;
+        document.getElementById('current-shield').value = 0;
+        document.getElementById('max-shield').value = 0;
+        
+        // Clear weapons and avatar
+        this.weapons = [];
+        this.currentAvatar = this.avatarGenerator.generateRandomAvatar();
+        
+        // Update UI
+        this.updateHealthBar();
+        this.updateShieldBar();
+        this.updateWeaponDisplay();
+        this.updateSlotCounter();
+        this.updateShieldUIState();
+        this.updateAvatarDisplay();
     }
 
     loadCharacterByName(characterName) {

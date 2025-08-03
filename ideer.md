@@ -12,7 +12,7 @@
 
 # Equipped
 - [x] Hvilke af mine våben har jeg i hånden ✅ **FÆRDIG**
-
+- det aktive våben skal ses på start skærmen 
 # Loot
 - [x] loot skal omkring mit level ✅ **FÆRDIG**
 - [x] loot skal være mindre
