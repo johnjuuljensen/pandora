@@ -3,6 +3,7 @@ class CharacterManager {
     constructor() {
         this.character = this.loadCharacter();
         this.weapons = [];
+        this.autoLoadSavedData();
         this.initializeEventListeners();
         this.updateDisplay();
     }
@@ -34,6 +35,25 @@ class CharacterManager {
         }
         
         return defaultChar;
+    }
+
+    autoLoadSavedData() {
+        const savedCharacter = localStorage.getItem('pandora-character');
+        const savedWeapons = localStorage.getItem('pandora-weapons');
+        
+        if (savedWeapons) {
+            this.weapons = JSON.parse(savedWeapons);
+            
+            // Add equipped property to old weapons if missing
+            this.weapons.forEach(weapon => {
+                if (weapon.equipped === undefined) weapon.equipped = false;
+            });
+        }
+        
+        // Show message if any data was loaded
+        if (savedCharacter || savedWeapons) {
+            this.showMessage('Seneste karakter indlæst automatisk! 🔄');
+        }
     }
 
     calculateMaxHPForLevel(level) {
@@ -96,6 +116,7 @@ class CharacterManager {
         
         this.updateHealthBar();
         this.updateShieldBar();
+        this.updateWeaponDisplay();
     }
 
     updateMaxHPForLevel() {
