@@ -899,6 +899,13 @@ main {
     color: #004085;
 }
 
+.qr-test-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+
 /* Debug Tab Styling */
 .debug-controls {
     display: flex;

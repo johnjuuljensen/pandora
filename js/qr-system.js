@@ -50,7 +50,10 @@ class QRSystem {
                         Lad en anden spiller scanne denne QR kode med "📷 Modtag Våben" funktionen.
                         <br><strong>Våbnet er nu væk fra dit loot!</strong>
                     </p>
-                    <button onclick="characterManager.finishSharing()" class="action-btn">✅ Færdig</button>
+                    <div class="qr-test-controls">
+                        <button onclick="characterManager.qrSystem.testQRCode()" class="action-btn" style="background: #6c757d; margin-right: 10px;">🔍 Test QR</button>
+                        <button onclick="characterManager.finishSharing()" class="action-btn">✅ Færdig</button>
+                    </div>
                 </div>
             `;
 
@@ -221,6 +224,95 @@ class QRSystem {
             console.error('Weapon reconstruction error:', error);
             this.showMessage(`Våben modtagelse fejl: ${error.message || error}`);
             return null;
+        }
+    }
+
+    async testQRCode() {
+        try {
+            // Find the QR SVG element
+            const qrContainer = document.querySelector('.qr-code-container svg');
+            if (!qrContainer) {
+                this.showMessage('QR kode ikke fundet for test');
+                return;
+            }
+
+            // Convert SVG to canvas for scanning
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const svgData = new XMLSerializer().serializeToString(qrContainer);
+            const img = new Image();
+            
+            return new Promise((resolve, reject) => {
+                img.onload = async () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    try {
+                        // Use QrScanner.scanImage to decode the canvas
+                        const result = await QrScanner.scanImage(canvas, {
+                            returnDetailedScanResult: true
+                        });
+                        
+                        console.log('🔍 QR Test Results:');
+                        console.log('Raw data:', result.data);
+                        
+                        // Parse and display the data
+                        const weaponData = JSON.parse(result.data);
+                        console.log('Parsed weapon data:', weaponData);
+                        
+                        if (Array.isArray(weaponData)) {
+                            console.log('Format: Version 3 Array');
+                            console.log('Version:', weaponData[0]);
+                            console.log('Type Code:', weaponData[1]);
+                            console.log('Rarity Code:', weaponData[2]);
+                            console.log('Damage:', weaponData[3]);
+                            console.log('Accuracy:', weaponData[4]);
+                            console.log('Range:', weaponData[5]);
+                            console.log('Level:', weaponData[6]);
+                            console.log('Shield Points:', weaponData[7]);
+                            
+                            // Show size comparison
+                            const oldFormat = {
+                                n: `${this.weaponGenerator.getRarityFromCode(weaponData[2])} ${this.weaponGenerator.getWeaponTypeFromCode(weaponData[1])}`,
+                                c: this.weaponGenerator.getClassCode(this.weaponGenerator.getWeaponClassFromTypeCode(weaponData[1])),
+                                d: weaponData[3],
+                                a: weaponData[4],
+                                r: weaponData[5],
+                                l: weaponData[6],
+                                s: weaponData[7],
+                                t: weaponData[2]
+                            };
+                            
+                            console.log('📊 Size Comparison:');
+                            console.log('New format:', JSON.stringify(weaponData));
+                            console.log('Old format:', JSON.stringify(oldFormat));
+                            console.log('Size reduction:', Math.round((1 - JSON.stringify(weaponData).length / JSON.stringify(oldFormat).length) * 100) + '%');
+                        } else {
+                            console.log('Format: Legacy Object');
+                        }
+                        
+                        this.showMessage('QR test successful! Check console for details 📊');
+                        resolve(result);
+                        
+                    } catch (scanError) {
+                        console.error('QR scan failed:', scanError);
+                        this.showMessage('QR test failed: ' + scanError.message);
+                        reject(scanError);
+                    }
+                };
+                
+                img.onerror = () => {
+                    this.showMessage('Failed to convert QR to image for testing');
+                    reject(new Error('Image conversion failed'));
+                };
+                
+                img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+            });
+            
+        } catch (error) {
+            console.error('QR test error:', error);
+            this.showMessage('QR test error: ' + error.message);
         }
     }
 
