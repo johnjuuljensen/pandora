@@ -1,0 +1,1 @@
+Show open ideas from claude.md and ideer.md
