@@ -185,14 +185,15 @@ class UIManager {
             html += `
                 <div class="equipped-item-card weapon" onclick="characterManager.unequipWeapon(${equippedWeapon.id})" title="Klik for at unequip våben" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
                     <div class="equipped-item-header">
+                        <span class="equipped-item-level">⭐${equippedWeapon.level}</span>
                         <span class="equipped-item-icon">${equippedWeapon.image}</span>
                         <span class="equipped-item-type">⚔️ Våben</span>
                     </div>
                     <div class="equipped-item-name">${equippedWeapon.name}</div>
                     <div class="equipped-item-stats">
-                        <span>⭐${equippedWeapon.level}</span>
                         <span>💥${equippedWeapon.damage}</span>
                         <span>🎯${equippedWeapon.accuracy}%</span>
+                        <span>📏${equippedWeapon.range}m</span>
                     </div>
                 </div>
             `;
@@ -214,12 +215,12 @@ class UIManager {
             html += `
                 <div class="equipped-item-card shield" onclick="characterManager.unequipWeapon(${equippedShield.id})" title="Klik for at unequip shield" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
                     <div class="equipped-item-header">
+                        <span class="equipped-item-level">⭐${equippedShield.level}</span>
                         <span class="equipped-item-icon">${equippedShield.image}</span>
                         <span class="equipped-item-type">🛡️ Shield</span>
                     </div>
                     <div class="equipped-item-name">${equippedShield.name}</div>
                     <div class="equipped-item-stats">
-                        <span>⭐${equippedShield.level}</span>
                         <span>🛡️${equippedShield.shieldPoints}</span>
                     </div>
                 </div>
