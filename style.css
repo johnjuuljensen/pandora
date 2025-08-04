@@ -484,6 +484,11 @@ main {
     border-color: #2a5298;
 }
 
+.skill-node:hover .skill-description {
+    font-weight: bold;
+    color: #1e3c72;
+}
+
 .skill-node.unlocked {
     background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
     border-color: #ffa500;

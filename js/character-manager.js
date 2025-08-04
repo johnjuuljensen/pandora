@@ -673,21 +673,21 @@ class CharacterManager {
         // Skill effects will be implemented based on gameplay needs
         // For now, just log the effect
         const effects = {
-            'damage-boost': '+5 weapon damage',
-            'critical-master': '+10% critical hit chance',
-            'berserker': '+25% damage under 50% HP',
-            'dual-wielder': 'Can equip 2 weapons',
-            'killstreak': '+2% damage per kill (max 50%)',
-            'tough-guy': '+20 max HP',
-            'shield-expert': '+25% shield capacity',
-            'battle-medic': '10 HP per kill',
-            'heavy-armor': '+50 max HP, +25% shield',
-            'guardian-angel': 'Survive death once per session',
-            'pack-rat': '+1 inventory slot',
-            'treasure-hunter': '+15% higher rarity chance',
-            'weapon-expert': 'See all weapon stats',
-            'weapon-crafter': 'Combine weapons for upgrades',
-            'loot-master': 'All weapons +1 rarity level'
+            'damage-boost': 'All weapon attacks deal +5 extra damage',
+            'critical-master': '10% chance to deal double damage on attacks',
+            'berserker': 'Deal 25% more damage when your HP is below 50%',
+            'dual-wielder': 'Equip a second weapon for dual-wielding combat',
+            'killstreak': 'Each kill gives +2% damage (max 50%). Resets on death',
+            'tough-guy': 'Increases your maximum health by 20 points',
+            'shield-expert': 'All shields have 25% more protection capacity',
+            'battle-medic': 'Automatically heal 10 HP every time you kill an enemy',
+            'heavy-armor': 'Heavy armor: +50 max HP and +25% shield capacity',
+            'guardian-angel': 'When you die, automatically revive with 1 HP (once per session)',
+            'pack-rat': 'Gain one extra weapon slot in your inventory',
+            'treasure-hunter': '15% better chance to find rare and legendary weapons',
+            'weapon-expert': 'See hidden weapon stats and detailed information',
+            'weapon-crafter': 'Unlock weapon crafting to combine and upgrade weapons',
+            'loot-master': 'All found weapons are automatically one rarity level higher'
         };
         
         this.debugManager.log(`Skill effect applied: ${effects[skillId] || skillId}`, 'success');
