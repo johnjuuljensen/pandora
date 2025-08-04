@@ -647,6 +647,7 @@ class CharacterManager {
             this.updateMaxHPForLevel();
             this.updateWeaponDisplay();
             this.adjustKillsForLevel();
+            this.autoSaveCharacter(); // Save level change
         });
         
         // Weapon generation
