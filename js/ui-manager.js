@@ -9,6 +9,16 @@ class UIManager {
         this.debugManager = debugManager;
     }
 
+    darkenColor(color, percent) {
+        // Convert hex to RGB
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = Math.max(0, (num >> 16) - amt);
+        const G = Math.max(0, (num >> 8 & 0x00FF) - amt);
+        const B = Math.max(0, (num & 0x0000FF) - amt);
+        return "#" + (0x1000000 + (R << 16) + (G << 8) + B).toString(16).slice(1);
+    }
+
     showMessage(message, duration = 3000) {
         // Use debug manager if available, otherwise fallback to original method
         if (this.debugManager) {
@@ -154,6 +164,80 @@ class UIManager {
         });
 
         weaponList.innerHTML = sortedWeapons.map(weapon => this.createWeaponCard(weapon)).join('');
+        
+        // Update equipped weapon display on character tab
+        this.updateEquippedWeaponDisplay(weapons);
+    }
+
+    updateEquippedWeaponDisplay(weapons) {
+        const equippedWeaponDisplay = document.getElementById('equipped-weapon-display');
+        if (!equippedWeaponDisplay) return;
+
+        // Find the equipped weapon (non-shield) and shield
+        const equippedWeapon = weapons.find(w => w.equipped && w.weaponClass !== 'Shield');
+        const equippedShield = weapons.find(w => w.equipped && w.weaponClass === 'Shield');
+        
+        let html = '<div class="equipped-items-grid">';
+        
+        // Weapon slot
+        if (equippedWeapon) {
+            const rarityColor = equippedWeapon.rarity.color;
+            html += `
+                <div class="equipped-item-card weapon" onclick="characterManager.unequipWeapon(${equippedWeapon.id})" title="Klik for at unequip våben" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                    <div class="equipped-item-header">
+                        <span class="equipped-item-icon">${equippedWeapon.image}</span>
+                        <span class="equipped-item-type">⚔️ Våben</span>
+                    </div>
+                    <div class="equipped-item-name">${equippedWeapon.name}</div>
+                    <div class="equipped-item-stats">
+                        <span>⭐${equippedWeapon.level}</span>
+                        <span>💥${equippedWeapon.damage}</span>
+                        <span>🎯${equippedWeapon.accuracy}%</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="equipped-item-card empty">
+                    <div class="equipped-item-header">
+                        <span class="equipped-item-icon">⚔️</span>
+                        <span class="equipped-item-type">Våben</span>
+                    </div>
+                    <div class="equipped-item-empty">Intet våben equipped</div>
+                </div>
+            `;
+        }
+        
+        // Shield slot
+        if (equippedShield) {
+            const rarityColor = equippedShield.rarity.color;
+            html += `
+                <div class="equipped-item-card shield" onclick="characterManager.unequipWeapon(${equippedShield.id})" title="Klik for at unequip shield" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                    <div class="equipped-item-header">
+                        <span class="equipped-item-icon">${equippedShield.image}</span>
+                        <span class="equipped-item-type">🛡️ Shield</span>
+                    </div>
+                    <div class="equipped-item-name">${equippedShield.name}</div>
+                    <div class="equipped-item-stats">
+                        <span>⭐${equippedShield.level}</span>
+                        <span>🛡️${equippedShield.shieldPoints}</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="equipped-item-card empty">
+                    <div class="equipped-item-header">
+                        <span class="equipped-item-icon">🛡️</span>
+                        <span class="equipped-item-type">Shield</span>
+                    </div>
+                    <div class="equipped-item-empty">Intet shield equipped</div>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        equippedWeaponDisplay.innerHTML = html;
     }
 
     createWeaponCard(weapon) {

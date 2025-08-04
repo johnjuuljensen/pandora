@@ -215,5 +215,8 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 - Commit beskeder skal være på dansk
 - Update version in both html and version.json before each commit
 
+## Project Slash Commands
+- `/done` - Commit current work and run `/todo` command
+
 ---
 *Denne fil vedligeholdes automatisk af Claude AI*
