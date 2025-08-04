@@ -461,7 +461,7 @@ class CharacterManager {
             this.currentKills = 0;
             
             // Update max HP
-            this.updateMaxHP();
+            this.updateMaxHPForLevel();
             
             // Level up animation and message
             const levelInput = document.getElementById('character-level');
