@@ -49,8 +49,8 @@ class CharacterManager {
             // Setup tab system
             this.setupTabSystem();
             
-            // Load skill row collapse states
-            this.loadSkillRowStates();
+            // Load selected skill tree
+            this.loadSelectedSkillTree();
             
                     // Enable storage auto-save (30 second intervals)
             this.storageManager.enableAutoSave(this);
@@ -710,57 +710,39 @@ class CharacterManager {
         });
     }
 
-    toggleSkillRow(rowType, header) {
-        const skillRow = header.parentElement;
-        const skillNodes = skillRow.querySelector('.skill-nodes');
+    filterSkillTree(selectedTree) {
+        // Hide all skill trees
+        const skillRows = document.querySelectorAll('.skill-row[data-skill-tree]');
+        skillRows.forEach(row => {
+            row.style.display = 'none';
+        });
         
-        if (!skillNodes) return;
-        
-        // Toggle collapsed state
-        const isCollapsed = skillNodes.classList.contains('collapsed');
-        
-        if (isCollapsed) {
-            // Expand
-            skillNodes.classList.remove('collapsed');
-            header.classList.remove('collapsed');
-        } else {
-            // Collapse
-            skillNodes.classList.add('collapsed');
-            header.classList.add('collapsed');
+        // Show selected skill tree
+        const selectedRow = document.querySelector(`[data-skill-tree="${selectedTree}"]`);
+        if (selectedRow) {
+            selectedRow.style.display = 'flex';
         }
         
-        // Save collapsed state to localStorage
-        this.saveSkillRowStates();
+        // Save selected tree to localStorage
+        localStorage.setItem('pandora_selected_skill_tree', selectedTree);
     }
 
-    saveSkillRowStates() {
-        const states = {
-            combat: document.querySelector('[data-toggle="combat"]').classList.contains('collapsed'),
-            survival: document.querySelector('[data-toggle="survival"]').classList.contains('collapsed'),
-            utility: document.querySelector('[data-toggle="utility"]').classList.contains('collapsed')
-        };
-        
-        localStorage.setItem('pandora_skill_row_states', JSON.stringify(states));
-    }
-
-    loadSkillRowStates() {
+    loadSelectedSkillTree() {
         try {
-            const states = JSON.parse(localStorage.getItem('pandora_skill_row_states') || '{}');
+            const selectedTree = localStorage.getItem('pandora_selected_skill_tree') || 'combat';
             
-            Object.keys(states).forEach(rowType => {
-                if (states[rowType]) {
-                    const header = document.querySelector(`[data-toggle="${rowType}"]`);
-                    const skillRow = header?.parentElement;
-                    const skillNodes = skillRow?.querySelector('.skill-nodes');
-                    
-                    if (header && skillNodes) {
-                        header.classList.add('collapsed');
-                        skillNodes.classList.add('collapsed');
-                    }
-                }
-            });
+            // Set dropdown value
+            const dropdown = document.getElementById('skill-tree-filter');
+            if (dropdown) {
+                dropdown.value = selectedTree;
+            }
+            
+            // Filter to show selected tree
+            this.filterSkillTree(selectedTree);
         } catch (error) {
-            console.error('Error loading skill row states:', error);
+            console.error('Error loading selected skill tree:', error);
+            // Default to combat tree
+            this.filterSkillTree('combat');
         }
     }
 
@@ -887,16 +869,13 @@ class CharacterManager {
         // Skills system
         document.getElementById('reset-skills')?.addEventListener('click', () => this.resetSkills());
         
-        // Skill row toggle functionality
+        // Skill tree filter dropdown
+        document.getElementById('skill-tree-filter')?.addEventListener('change', (e) => {
+            this.filterSkillTree(e.target.value);
+        });
+        
+        // Skill node clicking
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.skill-row-header[data-toggle]')) {
-                const header = e.target.closest('.skill-row-header');
-                const rowType = header.dataset.toggle;
-                this.toggleSkillRow(rowType, header);
-                return; // Don't process skill node clicks when clicking header
-            }
-            
-            // Skill node clicking
             if (e.target.closest('.skill-node')) {
                 const skillNode = e.target.closest('.skill-node');
                 const skillId = skillNode.dataset.skill;

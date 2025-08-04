@@ -159,19 +159,24 @@
             <section id="tab-skills" class="tab-content">
                 <div class="skills-header">
                     <h2>🌟 Skill Tree</h2>
-                    <div class="skill-points-display">
-                        <span class="available-points">Available Points: <span id="skill-points-counter">0</span></span>
-                        <button id="reset-skills" class="action-btn" style="background: #dc3545; margin-left: 15px;">🔄 Reset Skills</button>
+                    <div class="skill-controls">
+                        <div class="skill-tree-filter">
+                            <select id="skill-tree-filter" class="filter-select">
+                                <option value="combat">⚔️ Combat Skills</option>
+                                <option value="survival">🛡️ Survival Skills</option>
+                                <option value="utility">🎒 Utility Skills</option>
+                            </select>
+                        </div>
+                        <div class="skill-points-display">
+                            <span class="available-points">Available Points: <span id="skill-points-counter">0</span></span>
+                            <button id="reset-skills" class="action-btn" style="background: #dc3545; margin-left: 15px;">🔄 Reset Skills</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="skill-tree-container">
                     <!-- Combat Row -->
-                    <div class="skill-row combat-row">
-                        <div class="skill-row-header" data-toggle="combat">
-                            <span class="skill-row-title">⚔️ COMBAT</span>
-                            <span class="toggle-arrow">▼</span>
-                        </div>
+                    <div class="skill-row combat-row" data-skill-tree="combat">
                         <div class="skill-nodes">
                             <div class="skill-node" data-skill="damage-boost" data-tier="1" data-row="combat">
                                 <div class="skill-icon">💪</div>
@@ -211,11 +216,7 @@
                     </div>
 
                     <!-- Survival Row -->
-                    <div class="skill-row survival-row">
-                        <div class="skill-row-header" data-toggle="survival">
-                            <span class="skill-row-title">🛡️ SURVIVAL</span>
-                            <span class="toggle-arrow">▼</span>
-                        </div>
+                    <div class="skill-row survival-row" data-skill-tree="survival" style="display: none;">
                         <div class="skill-nodes">
                             <div class="skill-node" data-skill="tough-guy" data-tier="1" data-row="survival">
                                 <div class="skill-icon">❤️</div>
@@ -255,11 +256,7 @@
                     </div>
 
                     <!-- Utility Row -->
-                    <div class="skill-row utility-row">
-                        <div class="skill-row-header" data-toggle="utility">
-                            <span class="skill-row-title">🎒 UTILITY</span>
-                            <span class="toggle-arrow">▼</span>
-                        </div>
+                    <div class="skill-row utility-row" data-skill-tree="utility" style="display: none;">
                         <div class="skill-nodes">
                             <div class="skill-node" data-skill="pack-rat" data-tier="1" data-row="utility">
                                 <div class="skill-icon">🎒</div>

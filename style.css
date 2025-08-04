@@ -412,6 +412,18 @@ main {
     border-bottom: 2px solid #2a5298;
 }
 
+.skill-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.skill-tree-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .skill-points-display {
     display: flex;
     align-items: center;
@@ -438,76 +450,18 @@ main {
 .skill-row {
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: center;
+    width: 100%;
 }
 
-.skill-row-header {
-    min-width: 120px;
-    font-weight: bold;
-    font-size: 1.1em;
-    text-align: center;
-    padding: 10px;
-    border-radius: 8px;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    user-select: none;
-}
-
-.skill-row-header:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.skill-row-title {
-    flex: 1;
-}
-
-.toggle-arrow {
-    font-size: 0.8em;
-    transition: transform 0.3s ease;
-    margin-left: 8px;
-}
-
-.skill-row-header.collapsed .toggle-arrow {
-    transform: rotate(-90deg);
-}
-
-.combat-row .skill-row-header {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-}
-
-.survival-row .skill-row-header {
-    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-}
-
-.utility-row .skill-row-header {
-    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
-}
 
 /* Skill Nodes Container */
 .skill-nodes {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex: 1;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    max-height: 200px;
-    opacity: 1;
-}
-
-.skill-nodes.collapsed {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    width: 100%;
+    justify-content: center;
 }
 
 /* Individual Skill Nodes */
