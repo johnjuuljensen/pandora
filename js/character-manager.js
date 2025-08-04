@@ -482,6 +482,19 @@ class CharacterManager {
         return level;
     }
 
+    adjustKillsForLevel() {
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        const maxKillsForLevel = currentLevel === 1 ? 0 : (currentLevel - 1);
+        
+        // If kills exceed what's possible for current level, cap them
+        if (this.currentKills > maxKillsForLevel) {
+            this.currentKills = maxKillsForLevel;
+            this.uiManager.showMessage(`Kill count adjusted to ${maxKillsForLevel} for level ${currentLevel} ⚔️`);
+            this.updateKillDisplay();
+            this.autoSaveCharacter();
+        }
+    }
+
     updateKillDisplay() {
         const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
         const currentKills = this.currentKills || 0;
@@ -633,6 +646,7 @@ class CharacterManager {
         document.getElementById('character-level')?.addEventListener('change', () => {
             this.updateMaxHPForLevel();
             this.updateWeaponDisplay();
+            this.adjustKillsForLevel();
         });
         
         // Weapon generation
