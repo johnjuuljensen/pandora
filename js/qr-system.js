@@ -10,7 +10,7 @@ class QRSystem {
         this.currentScanner = null;
     }
 
-    shareWeapon(weapon) {
+    shareWeapon(weapon, weaponId = null) {
         if (!weapon) {
             this.showMessage('Fejl: Våben ikke fundet');
             return;
@@ -37,28 +37,14 @@ class QRSystem {
             qr.addData(qrData);
             qr.make();
 
-            // Replace weapon display with QR code
-            const display = document.getElementById('new-weapon-display');
-            display.innerHTML = `
-                <div class="qr-share-container">
-                    <h3>📤 Del Våben</h3>
-                    <p><strong>${weapon.name}</strong> er klar til deling!</p>
-                    <div class="qr-code-container">
-                        ${qr.createImgTag(12,1)}
-                    </div>
-                    <p class="share-info">
-                        Lad en anden spiller scanne denne QR kode med "📷 Modtag Våben" funktionen.
-                        <br><strong>Våbnet er nu væk fra dit loot!</strong>
-                    </p>
-                    <div class="qr-test-controls">
-                        <button onclick="characterManager.qrSystem.testQRCode()" class="action-btn" style="background: #6c757d; margin-right: 10px;">🔍 Test QR</button>
-                        <button onclick="characterManager.finishSharing()" class="action-btn">✅ Færdig</button>
-                    </div>
-                </div>
-            `;
+            // If weaponId is provided, show QR in place of weapon card in inventory
+            if (weaponId) {
+                this.showQRInInventory(weapon, qr, weaponId);
+            } else {
+                // Show QR in loot area (for newly generated weapons)
+                this.showQRInLootArea(weapon, qr);
+            }
 
-            // Make sure the display is visible
-            display.style.display = 'block';
             this.showMessage('QR kode genereret! Våben er klar til deling 📤');
             return true;
 
@@ -67,6 +53,56 @@ class QRSystem {
             this.showMessage(`QR Generation fejl: ${error.message || error}`);
             return false;
         }
+    }
+
+    showQRInInventory(weapon, qr, weaponId) {
+        // Find the weapon card in inventory and replace it with QR code
+        const weaponCards = document.querySelectorAll('.weapon-card');
+        weaponCards.forEach(card => {
+            const equipButton = card.querySelector(`[onclick*="equipWeapon(${weaponId})"]`);
+            const unequipButton = card.querySelector(`[onclick*="unequipWeapon(${weaponId})"]`);
+            const shareButton = card.querySelector(`[onclick*="shareWeaponFromInventory(${weaponId})"]`);
+            
+            if (equipButton || unequipButton || shareButton) {
+                card.innerHTML = `
+                    <div class="qr-share-inventory">
+                        <h4 style="color: ${weapon.rarity.color};">📤 ${weapon.name}</h4>
+                        <div class="qr-code-small">
+                            ${qr.createImgTag(6,1)}
+                        </div>
+                        <p class="qr-info">Scan for at modtage</p>
+                        <button onclick="characterManager.finishSharingInventory()" class="action-btn compact" style="background: #28a745;">
+                            ✅ Færdig
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    showQRInLootArea(weapon, qr) {
+        // Replace weapon display with QR code
+        const display = document.getElementById('new-weapon-display');
+        display.innerHTML = `
+            <div class="qr-share-container">
+                <h3>📤 Del Våben</h3>
+                <p><strong>${weapon.name}</strong> er klar til deling!</p>
+                <div class="qr-code-container">
+                    ${qr.createImgTag(12,1)}
+                </div>
+                <p class="share-info">
+                    Lad en anden spiller scanne denne QR kode med "📷 Modtag Våben" funktionen.
+                    <br><strong>Våbnet er nu væk fra dit loot!</strong>
+                </p>
+                <div class="qr-test-controls">
+                    <button onclick="characterManager.qrSystem.testQRCode()" class="action-btn" style="background: #6c757d; margin-right: 10px;">🔍 Test QR</button>
+                    <button onclick="characterManager.finishSharing()" class="action-btn">✅ Færdig</button>
+                </div>
+            </div>
+        `;
+
+        // Make sure the display is visible
+        display.style.display = 'block';
     }
 
     finishSharing() {

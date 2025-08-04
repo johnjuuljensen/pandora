@@ -376,20 +376,24 @@ class CharacterManager {
             return;
         }
 
-        // Share the weapon using QR system
-        if (this.qrSystem.shareWeapon(weapon)) {
+        // Share the weapon using QR system, show QR in inventory
+        if (this.qrSystem.shareWeapon(weapon, weaponId)) {
             // Remove weapon from inventory after successful sharing
             this.weapons = this.weapons.filter(w => w.id !== weaponId);
-            this.updateWeaponDisplay();
-            this.updateSlotCounter();
-            this.updateShieldUIState();
             this.autoSaveWeapons();
-            this.uiManager.showMessage(`${weapon.name} delt! Våben fjernet fra inventory 📤`);
         }
     }
 
     finishSharing() {
         this.qrSystem.finishSharing();
+    }
+
+    finishSharingInventory() {
+        // Refresh inventory display after sharing
+        this.updateWeaponDisplay();
+        this.updateSlotCounter();
+        this.updateShieldUIState();
+        this.uiManager.showMessage('Våben deling afsluttet');
     }
 
     // Dice rolling
