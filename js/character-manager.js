@@ -376,12 +376,15 @@ class CharacterManager {
             return;
         }
 
-        // Show QR code in place of the weapon card
-        if (this.qrSystem.shareWeaponInPlace(weapon, weaponId)) {
+        // Share the weapon using QR system
+        if (this.qrSystem.shareWeapon(weapon)) {
             // Remove weapon from inventory after successful sharing
             this.weapons = this.weapons.filter(w => w.id !== weaponId);
+            this.updateWeaponDisplay();
+            this.updateSlotCounter();
+            this.updateShieldUIState();
             this.autoSaveWeapons();
-            this.uiManager.showMessage(`${weapon.name} delt! 📤`);
+            this.uiManager.showMessage(`${weapon.name} delt! Våben fjernet fra inventory 📤`);
         }
     }
 
