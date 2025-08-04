@@ -57,6 +57,8 @@ class QRSystem {
                 </div>
             `;
 
+            // Make sure the display is visible
+            display.style.display = 'block';
             this.showMessage('QR kode genereret! Våben er klar til deling 📤');
             return true;
 

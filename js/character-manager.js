@@ -363,6 +363,28 @@ class CharacterManager {
         }
     }
 
+    shareWeaponFromInventory(weaponId) {
+        const weapon = this.weapons.find(w => w.id === weaponId);
+        if (!weapon) {
+            this.uiManager.showMessage('Fejl: Våben ikke fundet i inventory');
+            return;
+        }
+
+        // Check if weapon can be shared (not already shared)
+        if (weapon.isShared) {
+            this.uiManager.showMessage('Dette våben kan ikke deles igen');
+            return;
+        }
+
+        // Show QR code in place of the weapon card
+        if (this.qrSystem.shareWeaponInPlace(weapon, weaponId)) {
+            // Remove weapon from inventory after successful sharing
+            this.weapons = this.weapons.filter(w => w.id !== weaponId);
+            this.autoSaveWeapons();
+            this.uiManager.showMessage(`${weapon.name} delt! 📤`);
+        }
+    }
+
     finishSharing() {
         this.qrSystem.finishSharing();
     }

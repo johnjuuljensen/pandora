@@ -275,6 +275,11 @@ class UIManager {
                             📥
                         </button>`
                     ) : ''}
+                    ${!weapon.isShared ? 
+                        `<button onclick="characterManager.shareWeaponFromInventory(${weapon.id})" class="action-btn compact" style="background: #6f42c1;" title="Del våben">
+                            📤
+                        </button>` : ''
+                    }
                     <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn compact" style="background: ${isEquipped ? '#6c757d' : '#dc3545'};" ${isEquipped ? 'disabled' : ''} title="Fjern våben">
                         🗑️
                     </button>
