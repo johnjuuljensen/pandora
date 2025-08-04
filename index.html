@@ -16,6 +16,7 @@
         <nav class="tab-nav">
             <button class="tab-btn active" data-tab="character">👤 Karakter</button>
             <button class="tab-btn" data-tab="inventory">🎒 Inventory</button>
+            <button class="tab-btn" data-tab="skills">🌟 Skills</button>
             <button class="tab-btn" data-tab="loot">🎲 Loot</button>
             <button class="tab-btn" data-tab="debug">🐛 Debug</button>
         </nav>
@@ -59,6 +60,7 @@
                         <div class="stat-row">
                             <label for="character-level">Level:</label>
                             <input type="number" id="character-level" min="1" max="20" value="1">
+                            <span class="skill-points">Skill Points: <span id="available-skill-points">0</span></span>
                         </div>
                         <div class="stat-row">
                             <label>Progress:</label>
@@ -150,6 +152,142 @@
                 </div>
                 <div id="weapon-list" class="weapon-grid">
                     <p class="empty-state">Ingen våben endnu. Generer noget loot!</p>
+                </div>
+            </section>
+
+            <!-- Skills Tab -->
+            <section id="tab-skills" class="tab-content">
+                <div class="skills-header">
+                    <h2>🌟 Skill Tree</h2>
+                    <div class="skill-points-display">
+                        <span class="available-points">Available Points: <span id="skill-points-counter">0</span></span>
+                        <button id="reset-skills" class="action-btn" style="background: #dc3545; margin-left: 15px;">🔄 Reset Skills</button>
+                    </div>
+                </div>
+
+                <div class="skill-tree-container">
+                    <!-- Combat Row -->
+                    <div class="skill-row combat-row">
+                        <div class="skill-row-header">⚔️ COMBAT</div>
+                        <div class="skill-nodes">
+                            <div class="skill-node" data-skill="damage-boost" data-tier="1" data-row="combat">
+                                <div class="skill-icon">💪</div>
+                                <div class="skill-name">Damage Boost</div>
+                                <div class="skill-description">+5 weapon damage</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="critical-master" data-tier="2" data-row="combat">
+                                <div class="skill-icon">🎯</div>
+                                <div class="skill-name">Critical Master</div>
+                                <div class="skill-description">+10% critical hit chance</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="berserker" data-tier="3" data-row="combat">
+                                <div class="skill-icon">😡</div>
+                                <div class="skill-name">Berserker</div>
+                                <div class="skill-description">+25% damage under 50% HP</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="dual-wielder" data-tier="4" data-row="combat">
+                                <div class="skill-icon">⚔️</div>
+                                <div class="skill-name">Dual Wielder</div>
+                                <div class="skill-description">Equip 2 weapons</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="killstreak" data-tier="5" data-row="combat">
+                                <div class="skill-icon">🔥</div>
+                                <div class="skill-name">Killstreak</div>
+                                <div class="skill-description">+2% damage per kill (max 50%)</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Survival Row -->
+                    <div class="skill-row survival-row">
+                        <div class="skill-row-header">🛡️ SURVIVAL</div>
+                        <div class="skill-nodes">
+                            <div class="skill-node" data-skill="tough-guy" data-tier="1" data-row="survival">
+                                <div class="skill-icon">❤️</div>
+                                <div class="skill-name">Tough Guy</div>
+                                <div class="skill-description">+20 max HP</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="shield-expert" data-tier="2" data-row="survival">
+                                <div class="skill-icon">🛡️</div>
+                                <div class="skill-name">Shield Expert</div>
+                                <div class="skill-description">+25% shield capacity</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="battle-medic" data-tier="3" data-row="survival">
+                                <div class="skill-icon">🏥</div>
+                                <div class="skill-name">Battle Medic</div>
+                                <div class="skill-description">Restore 10 HP per kill</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="heavy-armor" data-tier="4" data-row="survival">
+                                <div class="skill-icon">🦾</div>
+                                <div class="skill-name">Heavy Armor</div>
+                                <div class="skill-description">+50 max HP, +25% shield</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="guardian-angel" data-tier="5" data-row="survival">
+                                <div class="skill-icon">😇</div>
+                                <div class="skill-name">Guardian Angel</div>
+                                <div class="skill-description">Survive death once per session</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Utility Row -->
+                    <div class="skill-row utility-row">
+                        <div class="skill-row-header">🎒 UTILITY</div>
+                        <div class="skill-nodes">
+                            <div class="skill-node" data-skill="pack-rat" data-tier="1" data-row="utility">
+                                <div class="skill-icon">🎒</div>
+                                <div class="skill-name">Pack Rat</div>
+                                <div class="skill-description">+1 inventory slot</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="treasure-hunter" data-tier="2" data-row="utility">
+                                <div class="skill-icon">💎</div>
+                                <div class="skill-name">Treasure Hunter</div>
+                                <div class="skill-description">+15% chance for higher rarity</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="weapon-expert" data-tier="3" data-row="utility">
+                                <div class="skill-icon">🔍</div>
+                                <div class="skill-name">Weapon Expert</div>
+                                <div class="skill-description">See all weapon stats</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="weapon-crafter" data-tier="4" data-row="utility">
+                                <div class="skill-icon">🔨</div>
+                                <div class="skill-name">Weapon Crafter</div>
+                                <div class="skill-description">Combine weapons for upgrades</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                            <div class="skill-connector"></div>
+                            <div class="skill-node" data-skill="loot-master" data-tier="5" data-row="utility">
+                                <div class="skill-icon">👑</div>
+                                <div class="skill-name">Loot Master</div>
+                                <div class="skill-description">All weapons +1 rarity level</div>
+                                <div class="skill-cost">Cost: 1</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

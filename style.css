@@ -394,6 +394,210 @@ main {
     animation: levelUp 1s ease-in-out;
 }
 
+/* Skill Points Display */
+.skill-points {
+    font-weight: bold;
+    color: #ffd700;
+    margin-left: 15px;
+    font-size: 0.9em;
+}
+
+/* Skills Tab Styling */
+.skills-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #2a5298;
+}
+
+.skill-points-display {
+    display: flex;
+    align-items: center;
+}
+
+.available-points {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* Skill Tree Container */
+.skill-tree-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Skill Rows */
+.skill-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.skill-row-header {
+    min-width: 120px;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.combat-row .skill-row-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.survival-row .skill-row-header {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.utility-row .skill-row-header {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+}
+
+/* Skill Nodes Container */
+.skill-nodes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+/* Individual Skill Nodes */
+.skill-node {
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    max-width: 140px;
+    position: relative;
+}
+
+.skill-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    border-color: #2a5298;
+}
+
+.skill-node.unlocked {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-color: #ffa500;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.skill-node.locked {
+    background: rgba(108, 117, 125, 0.7);
+    border-color: #6c757d;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.skill-node.available {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+.skill-icon {
+    font-size: 2em;
+    margin-bottom: 8px;
+}
+
+.skill-name {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: #1e3c72;
+}
+
+.skill-node.unlocked .skill-name {
+    color: #333;
+}
+
+.skill-node.locked .skill-name {
+    color: #999;
+}
+
+.skill-description {
+    font-size: 0.75em;
+    color: #666;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.skill-node.locked .skill-description {
+    color: #999;
+}
+
+.skill-cost {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #ffa500;
+}
+
+.skill-node.locked .skill-cost {
+    color: #999;
+}
+
+/* Skill Connectors */
+.skill-connector {
+    width: 30px;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    position: relative;
+}
+
+.skill-connector.active {
+    background: linear-gradient(90deg, #ffd700 0%, #ffed4e 100%);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .skill-tree-container {
+        padding: 15px;
+    }
+    
+    .skill-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .skill-row-header {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .skill-nodes {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .skill-connector {
+        display: none;
+    }
+    
+    .skill-node {
+        min-width: 120px;
+        max-width: 120px;
+    }
+}
+
 .customize-avatar-btn {
     background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
     color: white;

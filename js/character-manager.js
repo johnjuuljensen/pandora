@@ -17,6 +17,10 @@ class CharacterManager {
         this.qrSystem = new QRSystem(this.weaponGenerator, this.uiManager);
         this.avatarGenerator = new AvatarGenerator();
         
+        // Skills system
+        this.skills = {};
+        this.availableSkillPoints = 0;
+        
         // Initialize
         this.init();
     }
@@ -68,7 +72,9 @@ class CharacterManager {
             currentShield: parseInt(document.getElementById('current-shield')?.value) || 0,
             maxShield: parseInt(document.getElementById('max-shield')?.value) || 50,
             avatar: this.currentAvatar,
-            currentKills: this.currentKills || 0
+            currentKills: this.currentKills || 0,
+            skills: this.skills || {},
+            availableSkillPoints: this.availableSkillPoints || 0
         };
     }
 
@@ -531,6 +537,176 @@ class CharacterManager {
         }
     }
 
+    // Skills System
+    updateAvailableSkillPoints() {
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        const totalSkillPointsEarned = currentLevel - 1; // Level 1 = 0 points, Level 2 = 1 point, etc.
+        const spentSkillPoints = Object.keys(this.skills).length;
+        this.availableSkillPoints = Math.max(0, totalSkillPointsEarned - spentSkillPoints);
+        
+        // Update UI
+        document.getElementById('available-skill-points').textContent = this.availableSkillPoints;
+        document.getElementById('skill-points-counter').textContent = this.availableSkillPoints;
+        
+        this.updateSkillTreeUI();
+    }
+
+    updateSkillTreeUI() {
+        const skillNodes = document.querySelectorAll('.skill-node');
+        
+        skillNodes.forEach(node => {
+            const skillId = node.dataset.skill;
+            const tier = parseInt(node.dataset.tier);
+            const row = node.dataset.row;
+            
+            // Check if skill is unlocked
+            if (this.skills[skillId]) {
+                node.classList.remove('locked', 'available');
+                node.classList.add('unlocked');
+            } else if (this.canUnlockSkill(skillId, tier, row)) {
+                node.classList.remove('locked', 'unlocked');
+                node.classList.add('available');
+            } else {
+                node.classList.remove('available', 'unlocked');
+                node.classList.add('locked');
+            }
+        });
+
+        // Update skill connectors
+        this.updateSkillConnectors();
+    }
+
+    canUnlockSkill(skillId, tier, row) {
+        // Must have available skill points
+        if (this.availableSkillPoints <= 0) return false;
+        
+        // Tier 1 skills are always available
+        if (tier <= 1) return true;
+        
+        // Must have previous tier skill in same row
+        const previousTier = tier - 1;
+        const rowSkills = this.getSkillsInRow(row);
+        const previousSkill = rowSkills.find(skill => skill.tier === previousTier);
+        
+        return previousSkill && this.skills[previousSkill.id];
+    }
+
+    getSkillsInRow(row) {
+        const skills = {
+            combat: [
+                {id: 'damage-boost', tier: 1},
+                {id: 'critical-master', tier: 2},
+                {id: 'berserker', tier: 3},
+                {id: 'dual-wielder', tier: 4},
+                {id: 'killstreak', tier: 5}
+            ],
+            survival: [
+                {id: 'tough-guy', tier: 1},
+                {id: 'shield-expert', tier: 2},
+                {id: 'battle-medic', tier: 3},
+                {id: 'heavy-armor', tier: 4},
+                {id: 'guardian-angel', tier: 5}
+            ],
+            utility: [
+                {id: 'pack-rat', tier: 1},
+                {id: 'treasure-hunter', tier: 2},
+                {id: 'weapon-expert', tier: 3},
+                {id: 'weapon-crafter', tier: 4},
+                {id: 'loot-master', tier: 5}
+            ]
+        };
+        return skills[row] || [];
+    }
+
+    unlockSkill(skillId) {
+        if (this.availableSkillPoints <= 0) {
+            this.uiManager.showMessage('Ingen skill points tilgængelige!');
+            return false;
+        }
+
+        const skillNode = document.querySelector(`[data-skill="${skillId}"]`);
+        if (!skillNode) return false;
+
+        const tier = parseInt(skillNode.dataset.tier);
+        const row = skillNode.dataset.row;
+
+        if (!this.canUnlockSkill(skillId, tier, row)) {
+            this.uiManager.showMessage('Kan ikke låse op for denne skill endnu!');
+            return false;
+        }
+
+        // Unlock the skill
+        this.skills[skillId] = true;
+        this.availableSkillPoints--;
+        
+        // Apply skill effect
+        this.applySkillEffect(skillId);
+        
+        // Update UI
+        this.updateAvailableSkillPoints();
+        this.autoSaveCharacter();
+        
+        const skillName = skillNode.querySelector('.skill-name').textContent;
+        this.uiManager.showMessage(`🌟 Skill unlocked: ${skillName}!`);
+        
+        return true;
+    }
+
+    resetSkills() {
+        if (Object.keys(this.skills).length === 0) {
+            this.uiManager.showMessage('Ingen skills at resette!');
+            return;
+        }
+        
+        if (confirm('Reset alle skills? Dette kan ikke fortrydes.')) {
+            this.skills = {};
+            this.updateAvailableSkillPoints();
+            this.autoSaveCharacter();
+            this.uiManager.showMessage('🔄 Alle skills reset!');
+        }
+    }
+
+    applySkillEffect(skillId) {
+        // Skill effects will be implemented based on gameplay needs
+        // For now, just log the effect
+        const effects = {
+            'damage-boost': '+5 weapon damage',
+            'critical-master': '+10% critical hit chance',
+            'berserker': '+25% damage under 50% HP',
+            'dual-wielder': 'Can equip 2 weapons',
+            'killstreak': '+2% damage per kill (max 50%)',
+            'tough-guy': '+20 max HP',
+            'shield-expert': '+25% shield capacity',
+            'battle-medic': '10 HP per kill',
+            'heavy-armor': '+50 max HP, +25% shield',
+            'guardian-angel': 'Survive death once per session',
+            'pack-rat': '+1 inventory slot',
+            'treasure-hunter': '+15% higher rarity chance',
+            'weapon-expert': 'See all weapon stats',
+            'weapon-crafter': 'Combine weapons for upgrades',
+            'loot-master': 'All weapons +1 rarity level'
+        };
+        
+        this.debugManager.log(`Skill effect applied: ${effects[skillId] || skillId}`, 'success');
+    }
+
+    updateSkillConnectors() {
+        const connectors = document.querySelectorAll('.skill-connector');
+        connectors.forEach(connector => {
+            // Find adjacent skill nodes
+            const prevNode = connector.previousElementSibling;
+            const nextNode = connector.nextElementSibling;
+            
+            if (prevNode && nextNode && 
+                prevNode.classList.contains('unlocked') && 
+                nextNode.classList.contains('unlocked')) {
+                connector.classList.add('active');
+            } else {
+                connector.classList.remove('active');
+            }
+        });
+    }
+
     // Dice rolling
     rollDice() {
         const result = Math.floor(Math.random() * 20) + 1;
@@ -647,7 +823,23 @@ class CharacterManager {
             this.updateMaxHPForLevel();
             this.updateWeaponDisplay();
             this.adjustKillsForLevel();
+            this.updateAvailableSkillPoints(); // Update skill points on level change
             this.autoSaveCharacter(); // Save level change
+        });
+        
+        // Skills system
+        document.getElementById('reset-skills')?.addEventListener('click', () => this.resetSkills());
+        
+        // Skill node clicking
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.skill-node')) {
+                const skillNode = e.target.closest('.skill-node');
+                const skillId = skillNode.dataset.skill;
+                
+                if (skillNode.classList.contains('available')) {
+                    this.unlockSkill(skillId);
+                }
+            }
         });
         
         // Weapon generation
@@ -1027,6 +1219,7 @@ class CharacterManager {
         this.updateHealthBar();
         this.updateShieldBar();
         this.updateKillDisplay();
+        this.updateAvailableSkillPoints(); // Update skill points
         this.updateWeaponDisplay();
         this.updateSlotCounter();
         this.updateShieldUIState();
@@ -1043,6 +1236,8 @@ class CharacterManager {
             document.getElementById('current-shield').value = characterData.currentShield;
             document.getElementById('max-shield').value = characterData.maxShield;
             this.currentKills = characterData.currentKills || 0;
+            this.skills = characterData.skills || {};
+            this.availableSkillPoints = characterData.availableSkillPoints || 0;
             
             // Load avatar
             this.currentAvatar = characterData.avatar || this.avatarGenerator.generateRandomAvatar();
@@ -1055,6 +1250,7 @@ class CharacterManager {
             this.updateHealthBar();
             this.updateShieldBar();
             this.updateKillDisplay();
+            this.updateAvailableSkillPoints(); // Update skill points
             this.updateMaxHPForLevel();
             this.updateWeaponDisplay();
             this.updateSlotCounter();
