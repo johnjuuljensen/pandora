@@ -489,6 +489,11 @@ main {
     color: #1e3c72;
 }
 
+.skill-node.locked:hover .skill-description {
+    font-weight: bold;
+    color: #666; /* Darker but still readable on hover for locked skills */
+}
+
 .skill-node.unlocked {
     background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
     border-color: #ffa500;
@@ -526,7 +531,7 @@ main {
 }
 
 .skill-node.locked .skill-name {
-    color: #999;
+    color: #555; /* Darker for better readability */
 }
 
 .skill-description {
@@ -537,7 +542,7 @@ main {
 }
 
 .skill-node.locked .skill-description {
-    color: #999;
+    color: #666; /* Keep description readable even when locked */
 }
 
 .skill-cost {
@@ -547,7 +552,7 @@ main {
 }
 
 .skill-node.locked .skill-cost {
-    color: #999;
+    color: #999; /* Only cost text stays grayed out */
 }
 
 /* Skill Connectors */
