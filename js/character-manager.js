@@ -67,7 +67,8 @@ class CharacterManager {
             maxHP: parseInt(document.getElementById('max-hp')?.value) || 100,
             currentShield: parseInt(document.getElementById('current-shield')?.value) || 0,
             maxShield: parseInt(document.getElementById('max-shield')?.value) || 50,
-            avatar: this.currentAvatar
+            avatar: this.currentAvatar,
+            currentKills: this.currentKills || 0
         };
     }
 
@@ -236,6 +237,7 @@ class CharacterManager {
             
             this.currentGeneratedWeapon = weapon;
             this.uiManager.displayNewWeapon(weapon);
+            // Weapon generated - no XP bonus
         } catch (error) {
             console.error('Weapon generation error:', error);
             this.uiManager.showMessage('Fejl ved våben generering. Prøv igen.');
@@ -260,6 +262,12 @@ class CharacterManager {
             this.updateWeaponDisplay();
             this.updateSlotCounter();
             this.autoSaveWeapons(); // Auto-save weapons
+            
+            // Add XP for receiving weapon (more if it was from QR code)
+            const xpAmount = weaponData.isShared ? 5 : 10;
+            const xpReason = weaponData.isShared ? 'Våben modtaget' : 'Våben tilføjet';
+            // Weapon added to inventory - no XP bonus
+            
             this.discardWeapon();
         }
     }
@@ -381,6 +389,7 @@ class CharacterManager {
             // Remove weapon from inventory after successful sharing
             this.weapons = this.weapons.filter(w => w.id !== weaponId);
             this.autoSaveWeapons();
+            // Weapon shared - no XP bonus
         }
     }
 
@@ -394,6 +403,119 @@ class CharacterManager {
         this.updateSlotCounter();
         this.updateShieldUIState();
         this.uiManager.showMessage('Våben deling afsluttet');
+    }
+
+    // Experience Point System
+    getRequiredXPForLevel(level) {
+        if (level <= 5) return level * 100;
+        if (level <= 10) return 500 + (level - 5) * 150;
+        if (level <= 15) return 1250 + (level - 10) * 200;
+        if (level <= 20) return 2250 + (level - 15) * 250;
+        return 3500; // Max level
+    }
+
+    addKill() {
+        this.currentKills = (this.currentKills || 0) + 1;
+        this.updateKillDisplay();
+        
+        this.uiManager.showMessage(`Fjende dræbt! Total kills: ${this.currentKills} ⚔️`);
+
+        // Check for level up
+        this.checkLevelUpFromKills();
+        this.autoSaveCharacter();
+    }
+
+    removeKill() {
+        if (this.currentKills > 0) {
+            this.currentKills = this.currentKills - 1;
+            this.updateKillDisplay();
+            this.uiManager.showMessage(`Kill fjernet. Total kills: ${this.currentKills} ⚔️`);
+            this.autoSaveCharacter();
+        } else {
+            this.uiManager.showMessage('Kan ikke fjerne flere kills - allerede på 0');
+        }
+    }
+
+    updateKillsFromInput() {
+        const killInput = document.getElementById('current-kills-input');
+        const newKills = Math.max(0, parseInt(killInput.value) || 0);
+        
+        if (newKills !== this.currentKills) {
+            this.currentKills = newKills;
+            this.updateKillDisplay();
+            this.checkLevelUpFromKills();
+            this.autoSaveCharacter();
+        }
+    }
+
+    checkLevelUpFromKills() {
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        const requiredKills = this.getRequiredKillsForLevel(currentLevel + 1);
+        
+        if (this.currentKills >= requiredKills && currentLevel < 20) {
+            // Level up!
+            const newLevel = currentLevel + 1;
+            document.getElementById('character-level').value = newLevel;
+            
+            // Reset kill counter to 0 for next level
+            this.currentKills = 0;
+            
+            // Update max HP
+            this.updateMaxHP();
+            
+            // Level up animation and message
+            const levelInput = document.getElementById('character-level');
+            levelInput.classList.add('level-up-animation');
+            setTimeout(() => levelInput.classList.remove('level-up-animation'), 1000);
+            
+            this.uiManager.showMessage(`🎉 Level Up! Nu level ${newLevel}! +20 HP! Kill counter reset! 🎉`);
+            
+            // Update displays
+            this.updateSlotCounter();
+            this.updateKillDisplay();
+            this.updateShieldUIState();
+        }
+    }
+
+    getRequiredKillsForLevel(level) {
+        // Level 2 requires 2 kills, level 3 requires 3 kills, etc.
+        return level;
+    }
+
+    updateKillDisplay() {
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        const currentKills = this.currentKills || 0;
+        
+        // Update kill input field
+        const killInput = document.getElementById('current-kills-input');
+        if (killInput && parseInt(killInput.value) !== currentKills) {
+            killInput.value = currentKills;
+        }
+        
+        // Update kill counter display if it still exists
+        const killCounter = document.getElementById('kill-count');
+        if (killCounter) {
+            killCounter.textContent = currentKills;
+        }
+        
+        if (currentLevel >= 20) {
+            // Max level reached
+            document.getElementById('current-kills').textContent = currentKills;
+            document.getElementById('required-kills').textContent = 'MAX';
+            document.getElementById('kill-progress').style.width = '100%';
+        } else {
+            // Show progress to next level
+            const nextLevel = currentLevel + 1;
+            const requiredKills = this.getRequiredKillsForLevel(nextLevel);
+            
+            // Update progress text
+            document.getElementById('current-kills').textContent = currentKills;
+            document.getElementById('required-kills').textContent = requiredKills;
+            
+            // Update progress bar
+            const progressPercent = Math.min(100, (currentKills / requiredKills) * 100);
+            document.getElementById('kill-progress').style.width = `${progressPercent}%`;
+        }
     }
 
     // Dice rolling
@@ -497,12 +619,15 @@ class CharacterManager {
         document.getElementById('restore-shield')?.addEventListener('click', () => this.restoreShield());
         document.getElementById('restore-hp')?.addEventListener('click', () => this.restoreHP());
         document.getElementById('take-damage')?.addEventListener('click', () => this.takeDamage());
+        document.getElementById('kill-plus')?.addEventListener('click', () => this.addKill());
+        document.getElementById('kill-minus')?.addEventListener('click', () => this.removeKill());
         
         // Health bar updates
         document.getElementById('current-hp')?.addEventListener('input', () => this.updateHealthBar());
         document.getElementById('max-hp')?.addEventListener('input', () => this.updateHealthBar());
         document.getElementById('current-shield')?.addEventListener('input', () => this.updateShieldBar());
         document.getElementById('max-shield')?.addEventListener('input', () => this.updateShieldBar());
+        document.getElementById('current-kills-input')?.addEventListener('input', () => this.updateKillsFromInput());
         
         // Level changes
         document.getElementById('character-level')?.addEventListener('change', () => {
@@ -886,6 +1011,7 @@ class CharacterManager {
         // Update UI
         this.updateHealthBar();
         this.updateShieldBar();
+        this.updateKillDisplay();
         this.updateWeaponDisplay();
         this.updateSlotCounter();
         this.updateShieldUIState();
@@ -901,6 +1027,7 @@ class CharacterManager {
             document.getElementById('max-hp').value = characterData.maxHP;
             document.getElementById('current-shield').value = characterData.currentShield;
             document.getElementById('max-shield').value = characterData.maxShield;
+            this.currentKills = characterData.currentKills || 0;
             
             // Load avatar
             this.currentAvatar = characterData.avatar || this.avatarGenerator.generateRandomAvatar();
@@ -912,6 +1039,7 @@ class CharacterManager {
             // Update UI
             this.updateHealthBar();
             this.updateShieldBar();
+            this.updateKillDisplay();
             this.updateMaxHPForLevel();
             this.updateWeaponDisplay();
             this.updateSlotCounter();
