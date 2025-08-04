@@ -49,6 +49,9 @@ class CharacterManager {
             // Setup tab system
             this.setupTabSystem();
             
+            // Load skill row collapse states
+            this.loadSkillRowStates();
+            
                     // Enable storage auto-save (30 second intervals)
             this.storageManager.enableAutoSave(this);
             
@@ -707,6 +710,60 @@ class CharacterManager {
         });
     }
 
+    toggleSkillRow(rowType, header) {
+        const skillRow = header.parentElement;
+        const skillNodes = skillRow.querySelector('.skill-nodes');
+        
+        if (!skillNodes) return;
+        
+        // Toggle collapsed state
+        const isCollapsed = skillNodes.classList.contains('collapsed');
+        
+        if (isCollapsed) {
+            // Expand
+            skillNodes.classList.remove('collapsed');
+            header.classList.remove('collapsed');
+        } else {
+            // Collapse
+            skillNodes.classList.add('collapsed');
+            header.classList.add('collapsed');
+        }
+        
+        // Save collapsed state to localStorage
+        this.saveSkillRowStates();
+    }
+
+    saveSkillRowStates() {
+        const states = {
+            combat: document.querySelector('[data-toggle="combat"]').classList.contains('collapsed'),
+            survival: document.querySelector('[data-toggle="survival"]').classList.contains('collapsed'),
+            utility: document.querySelector('[data-toggle="utility"]').classList.contains('collapsed')
+        };
+        
+        localStorage.setItem('pandora_skill_row_states', JSON.stringify(states));
+    }
+
+    loadSkillRowStates() {
+        try {
+            const states = JSON.parse(localStorage.getItem('pandora_skill_row_states') || '{}');
+            
+            Object.keys(states).forEach(rowType => {
+                if (states[rowType]) {
+                    const header = document.querySelector(`[data-toggle="${rowType}"]`);
+                    const skillRow = header?.parentElement;
+                    const skillNodes = skillRow?.querySelector('.skill-nodes');
+                    
+                    if (header && skillNodes) {
+                        header.classList.add('collapsed');
+                        skillNodes.classList.add('collapsed');
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error loading skill row states:', error);
+        }
+    }
+
     // Dice rolling
     rollDice() {
         const result = Math.floor(Math.random() * 20) + 1;
@@ -830,8 +887,16 @@ class CharacterManager {
         // Skills system
         document.getElementById('reset-skills')?.addEventListener('click', () => this.resetSkills());
         
-        // Skill node clicking
+        // Skill row toggle functionality
         document.addEventListener('click', (e) => {
+            if (e.target.closest('.skill-row-header[data-toggle]')) {
+                const header = e.target.closest('.skill-row-header');
+                const rowType = header.dataset.toggle;
+                this.toggleSkillRow(rowType, header);
+                return; // Don't process skill node clicks when clicking header
+            }
+            
+            // Skill node clicking
             if (e.target.closest('.skill-node')) {
                 const skillNode = e.target.closest('.skill-node');
                 const skillId = skillNode.dataset.skill;
