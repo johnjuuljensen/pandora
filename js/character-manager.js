@@ -545,7 +545,17 @@ class CharacterManager {
     updateAvailableSkillPoints() {
         const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
         const totalSkillPointsEarned = currentLevel - 1; // Level 1 = 0 points, Level 2 = 1 point, etc.
-        const spentSkillPoints = Object.keys(this.skills).length;
+        
+        // Calculate actual spent skill points based on tier costs
+        let spentSkillPoints = 0;
+        for (const skillId in this.skills) {
+            const skillNode = document.querySelector(`[data-skill="${skillId}"]`);
+            if (skillNode) {
+                const tier = parseInt(skillNode.dataset.tier);
+                spentSkillPoints += this.getSkillCost(tier);
+            }
+        }
+        
         this.availableSkillPoints = Math.max(0, totalSkillPointsEarned - spentSkillPoints);
         
         // Update UI
@@ -580,9 +590,15 @@ class CharacterManager {
         this.updateSkillConnectors();
     }
 
+    getSkillCost(tier) {
+        // Progressive costs: tier 1 = 1 point, tier 2 = 2 points, etc.
+        return tier;
+    }
+
     canUnlockSkill(skillId, tier, row) {
-        // Must have available skill points
-        if (this.availableSkillPoints <= 0) return false;
+        // Must have enough skill points for this tier
+        const requiredPoints = this.getSkillCost(tier);
+        if (this.availableSkillPoints < requiredPoints) return false;
         
         // Tier 1 skills are always available
         if (tier <= 1) return true;
@@ -602,37 +618,41 @@ class CharacterManager {
                 {id: 'critical-master', tier: 2},
                 {id: 'berserker', tier: 3},
                 {id: 'dual-wielder', tier: 4},
-                {id: 'killstreak', tier: 5}
+                {id: 'killstreak', tier: 5},
+                {id: 'weapon-master', tier: 6}
             ],
             survival: [
                 {id: 'tough-guy', tier: 1},
                 {id: 'shield-expert', tier: 2},
                 {id: 'battle-medic', tier: 3},
                 {id: 'heavy-armor', tier: 4},
-                {id: 'guardian-angel', tier: 5}
+                {id: 'guardian-angel', tier: 5},
+                {id: 'tank', tier: 6}
             ],
             utility: [
                 {id: 'pack-rat', tier: 1},
                 {id: 'treasure-hunter', tier: 2},
                 {id: 'weapon-expert', tier: 3},
                 {id: 'weapon-crafter', tier: 4},
-                {id: 'loot-master', tier: 5}
+                {id: 'loot-master', tier: 5},
+                {id: 'lucky', tier: 6}
             ]
         };
         return skills[row] || [];
     }
 
     unlockSkill(skillId) {
-        if (this.availableSkillPoints <= 0) {
-            this.uiManager.showMessage('Ingen skill points tilgængelige!');
-            return false;
-        }
-
         const skillNode = document.querySelector(`[data-skill="${skillId}"]`);
         if (!skillNode) return false;
 
         const tier = parseInt(skillNode.dataset.tier);
         const row = skillNode.dataset.row;
+        const requiredPoints = this.getSkillCost(tier);
+
+        if (this.availableSkillPoints < requiredPoints) {
+            this.uiManager.showMessage(`Ikke nok skill points! Kræver ${requiredPoints} points.`);
+            return false;
+        }
 
         if (!this.canUnlockSkill(skillId, tier, row)) {
             this.uiManager.showMessage('Kan ikke låse op for denne skill endnu!');
@@ -641,7 +661,7 @@ class CharacterManager {
 
         // Unlock the skill
         this.skills[skillId] = true;
-        this.availableSkillPoints--;
+        this.availableSkillPoints -= requiredPoints;
         
         // Apply skill effect
         this.applySkillEffect(skillId);
@@ -651,7 +671,7 @@ class CharacterManager {
         this.autoSaveCharacter();
         
         const skillName = skillNode.querySelector('.skill-name').textContent;
-        this.uiManager.showMessage(`🌟 Skill unlocked: ${skillName}!`);
+        this.uiManager.showMessage(`🌟 Skill unlocked: ${skillName}! (Cost: ${requiredPoints} points)`);
         
         return true;
     }
@@ -674,21 +694,24 @@ class CharacterManager {
         // Skill effects will be implemented based on gameplay needs
         // For now, just log the effect
         const effects = {
-            'damage-boost': 'All weapon attacks deal +5 extra damage',
-            'critical-master': '10% chance to deal double damage on attacks',
-            'berserker': 'Deal 25% more damage when your HP is below 50%',
-            'dual-wielder': 'Equip a second weapon for dual-wielding combat',
-            'killstreak': 'Each kill gives +2% damage (max 50%). Resets on death',
-            'tough-guy': 'Increases your maximum health by 20 points',
-            'shield-expert': 'All shields have 25% more protection capacity',
-            'battle-medic': 'Automatically heal 10 HP every time you kill an enemy',
-            'heavy-armor': 'Heavy armor: +50 max HP and +25% shield capacity',
-            'guardian-angel': 'When you die, automatically revive with 1 HP (once per session)',
-            'pack-rat': 'Gain one extra weapon slot in your inventory',
-            'treasure-hunter': '15% better chance to find rare and legendary weapons',
-            'weapon-expert': 'See hidden weapon stats and detailed information',
-            'weapon-crafter': 'Unlock weapon crafting to combine and upgrade weapons',
-            'loot-master': 'All found weapons are automatically one rarity level higher'
+            'damage-boost': 'Alle våben gør +5 ekstra skade',
+            'critical-master': '10% chance for dobbelt skade på angreb',
+            'berserker': 'Gør 25% mere skade når dit HP er under 50%',
+            'dual-wielder': 'Equip et andet våben for dobbelt-våben kamp',
+            'killstreak': 'Hvert drab giver +2% skade (max 50%). Nulstilles ved død',
+            'weapon-master': 'Alle våben gør +10 ekstra skade',
+            'tough-guy': 'Øger dit maksimale helbred med 20 point',
+            'shield-expert': 'Alle skjolde har 25% mere beskyttelse',
+            'battle-medic': 'Automatisk heling af 10 HP hver gang du dræber en fjende',
+            'heavy-armor': 'Tung rustning: +50 max HP og +25% skjold kapacitet',
+            'guardian-angel': 'Når du dør, genopliv automatisk med 1 HP (én gang per session)',
+            'tank': 'Al indkommende skade reduceres med 25%',
+            'pack-rat': 'Få en ekstra våben slot i dit inventory',
+            'treasure-hunter': '15% bedre chance for at finde sjældne og legendære våben',
+            'weapon-expert': 'Se skjulte våben stats og detaljeret information',
+            'weapon-crafter': 'Lås op for våben crafting til at kombinere og opgradere våben',
+            'loot-master': 'Alle fundne våben er automatisk ét raritet niveau højere',
+            'lucky': '30% bedre chance for at finde sjældne og legendære våben'
         };
         
         this.debugManager.log(`Skill effect applied: ${effects[skillId] || skillId}`, 'success');
