@@ -477,11 +477,12 @@ class CharacterManager {
             levelInput.classList.add('level-up-animation');
             setTimeout(() => levelInput.classList.remove('level-up-animation'), 1000);
             
-            this.uiManager.showMessage(`🎉 Level Up! Nu level ${newLevel}! +20 HP! Kill counter reset! 🎉`);
+            this.uiManager.showMessage(`🎉 Level Up! Nu level ${newLevel}! +20 HP! +1 Skill Point! Kill counter reset! 🎉`);
             
             // Update displays
             this.updateSlotCounter();
             this.updateKillDisplay();
+            this.updateAvailableSkillPoints(); // Update skill points after level up
             this.updateShieldUIState();
         }
     }
