@@ -68,15 +68,16 @@ class UIManager {
 
     displayNewWeapon(weapon) {
         const display = document.getElementById('new-weapon-display');
+        const rarityColor = weapon.rarity.color;
         display.innerHTML = `
-            <h3>Nyt Våben Genereret!</h3>
-            <div class="weapon-card compact">
+            <h3 style="color: ${rarityColor};">Nyt Våben Genereret!</h3>
+            <div class="weapon-card compact" style="color: ${rarityColor};">
                 <div class="weapon-image">${weapon.image}</div>
-                <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
-                <div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0;">
+                <div class="weapon-name" style="color: ${rarityColor}; font-weight: bold; font-size: 1.2em;">${weapon.name}</div>
+                <div class="weapon-class" style="color: ${rarityColor}; font-weight: bold; margin: 5px 0;">
                     ${weapon.classEmoji} ${weapon.weaponClass}
                 </div>
-                <div class="weapon-stats compact">
+                <div class="weapon-stats compact" style="color: ${rarityColor};">
                     <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
                     ${weapon.weaponClass === 'Shield' ? 
                         `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
@@ -103,15 +104,16 @@ class UIManager {
 
     displayReceivedWeapon(weapon) {
         const display = document.getElementById('new-weapon-display');
+        const rarityColor = weapon.rarity.color;
         display.innerHTML = `
-            <h3>📦 Våben Modtaget!</h3>
-            <div class="weapon-card compact">
+            <h3 style="color: ${rarityColor};">📦 Våben Modtaget!</h3>
+            <div class="weapon-card compact" style="color: ${rarityColor};">
                 <div class="weapon-image">${weapon.image}</div>
-                <div class="weapon-name" style="color: ${weapon.rarity.color}">${weapon.name}</div>
-                <div class="weapon-class" style="color: ${weapon.classColor}; font-weight: bold; margin: 5px 0;">
+                <div class="weapon-name" style="color: ${rarityColor}; font-weight: bold; font-size: 1.2em;">${weapon.name}</div>
+                <div class="weapon-class" style="color: ${rarityColor}; font-weight: bold; margin: 5px 0;">
                     ${weapon.classEmoji} ${weapon.weaponClass}
                 </div>
-                <div class="weapon-stats compact">
+                <div class="weapon-stats compact" style="color: ${rarityColor};">
                     <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
                     ${weapon.weaponClass === 'Shield' ? 
                         `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
@@ -120,7 +122,7 @@ class UIManager {
                     <span title="Præcision: ${weapon.accuracy}%">🎯${weapon.accuracy}%</span>
                     <span title="Rækkevidde: ${weapon.range}m">📏${weapon.range}m</span>
                 </div>
-                <div class="received-info">
+                <div class="received-info" style="color: ${rarityColor};">
                     <small>📷 Modtaget fra QR kode - kan ikke deles igen</small>
                 </div>
                 <div class="weapon-actions">
