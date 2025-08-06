@@ -15,7 +15,7 @@ class CharacterManager {
         this.storageManager = new StorageManager();
         this.uiManager = new UIManager(this.debugManager);
         this.qrSystem = new QRSystem(this.weaponGenerator, this.uiManager);
-        this.avatarGenerator = new AvatarGenerator();
+        this.characterPortraits = new CharacterPortraits();
         
         // Skills system
         this.skills = {};
@@ -37,10 +37,10 @@ class CharacterManager {
             this.uiManager.setupHelpTooltips();
             
             // Setup character selector
-            this.setupCharacterSelector();
+            await this.setupCharacterSelector();
             
-            // Setup avatar system
-            this.setupAvatarSystem();
+            // Setup portrait system
+            this.setupPortraitSystem();
             
             // Load saved data
             this.loadSavedCharacter();
@@ -74,7 +74,7 @@ class CharacterManager {
             maxHP: parseInt(document.getElementById('max-hp')?.value) || 100,
             currentShield: parseInt(document.getElementById('current-shield')?.value) || 0,
             maxShield: parseInt(document.getElementById('max-shield')?.value) || 50,
-            avatar: this.currentAvatar,
+            characterId: this.currentCharacterId || 'amara',
             currentKills: this.currentKills || 0,
             skills: this.skills || {},
             availableSkillPoints: this.availableSkillPoints || 0
@@ -789,7 +789,7 @@ class CharacterManager {
             }
             
             // Load the character data
-            this.loadCharacterByName(activeCharacterName);
+            await this.loadCharacterByName(activeCharacterName);
         } else {
             // Fallback to old system for migration
             const character = this.storageManager.loadCharacter();
@@ -798,11 +798,11 @@ class CharacterManager {
                 const weapons = this.storageManager.loadWeapons();
                 this.storageManager.saveCharacterByName(character.name, character, weapons);
                 this.populateCharacterDropdown();
-                this.loadCharacterByName(character.name);
+                await this.loadCharacterByName(character.name);
             } else {
-                // No existing character - create default avatar
-                this.currentAvatar = this.avatarGenerator.generateRandomAvatar();
-                this.updateAvatarDisplay(this.currentAvatar);
+                // No existing character - set default character
+                this.currentCharacterId = this.characterPortraits.getRandomCharacter().id;
+                await this.updatePortraitDisplay(this.currentCharacterId);
             }
         }
     }
@@ -976,104 +976,103 @@ class CharacterManager {
     }
 
     // Avatar system functionality
-    setupAvatarSystem() {
-        // Initialize avatar if not already set
-        if (!this.currentAvatar) {
-            this.currentAvatar = this.avatarGenerator.generateRandomAvatar();
+    setupPortraitSystem() {
+        // Initialize character if not already set
+        if (!this.currentCharacterId) {
+            this.currentCharacterId = 'amara';
         }
         
-        // Setup avatar display
-        this.updateAvatarDisplay();
+        // Setup portrait display
+        this.updatePortraitDisplay();
         
         // Setup customize button event
         const customizeBtn = document.getElementById('customize-avatar');
         if (customizeBtn) {
             customizeBtn.addEventListener('click', () => {
-                this.openAvatarCustomizer();
+                this.openCharacterSelector();
             });
         }
     }
 
-    updateAvatarDisplay(avatarData = null) {
+    async updatePortraitDisplay(characterId = null) {
         const container = document.getElementById('character-avatar-display');
         if (!container) return;
         
-        const avatar = avatarData || this.currentAvatar || this.avatarGenerator.generateRandomAvatar();
-        container.innerHTML = this.avatarGenerator.createAvatarHTML(avatar);
+        const currentId = characterId || this.currentCharacterId || 'amara';
+        const portraitHTML = await this.characterPortraits.createPortraitHTML(currentId);
+        container.innerHTML = portraitHTML;
         
-        // Save current avatar
-        if (!this.currentAvatar) {
-            this.currentAvatar = avatar;
+        // Save current character ID
+        if (!this.currentCharacterId) {
+            this.currentCharacterId = currentId;
         }
     }
 
-    openAvatarCustomizer() {
+    openCharacterSelector() {
         // Create modal overlay
         const modal = document.createElement('div');
         modal.className = 'avatar-modal';
-        modal.innerHTML = this.avatarGenerator.createAvatarCustomizer(this.currentAvatar);
+        modal.innerHTML = this.characterPortraits.createCharacterSelector(this.currentCharacterId);
         
         document.body.appendChild(modal);
         
-        // Setup customizer event listeners
-        this.setupCustomizerEvents(modal);
+        // Setup selector event listeners
+        this.setupSelectorEvents(modal);
     }
 
-    setupCustomizerEvents(modal) {
-        let tempAvatar = { ...this.currentAvatar };
+    setupSelectorEvents(modal) {
+        let tempCharacterId = this.currentCharacterId;
         
-        // Option button events
-        modal.querySelectorAll('.option-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const type = e.target.dataset.type;
-                const value = e.target.dataset.value;
+        // Character option events
+        modal.querySelectorAll('.character-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const characterId = e.currentTarget.dataset.character;
+                tempCharacterId = characterId;
                 
-                // Update temp avatar
-                tempAvatar[type] = value;
+                // Update selected states
+                modal.querySelectorAll('.character-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    opt.style.border = '3px solid rgba(0,0,0,0.1)';
+                    opt.style.background = 'rgba(255,255,255,0.5)';
+                });
+                
+                // Mark this option as selected
+                const character = this.characterPortraits.getCharacterById(characterId);
+                e.currentTarget.classList.add('selected');
+                e.currentTarget.style.border = `3px solid ${character.color}`;
+                e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
                 
                 // Update preview
-                const preview = modal.querySelector('#avatar-preview');
+                const preview = modal.querySelector('#character-preview');
                 if (preview) {
-                    preview.innerHTML = this.avatarGenerator.createAvatarHTML(tempAvatar);
+                    preview.innerHTML = this.characterPortraits.createPortraitPreview(character);
                 }
                 
-                // Update active states
-                modal.querySelectorAll(`[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
+                // Update title text
+                const titleDiv = preview.parentElement.querySelector('div[style*="margin-top: 10px"]');
+                if (titleDiv) {
+                    titleDiv.textContent = `${character.name} - ${character.class}`;
+                    titleDiv.style.color = character.color;
+                }
             });
         });
         
-        // Randomize button
-        const randomizeBtn = modal.querySelector('#randomize-avatar');
-        if (randomizeBtn) {
-            randomizeBtn.addEventListener('click', () => {
-                tempAvatar = this.avatarGenerator.generateRandomAvatar();
-                
-                // Update preview
-                const preview = modal.querySelector('#avatar-preview');
-                if (preview) {
-                    preview.innerHTML = this.avatarGenerator.createAvatarHTML(tempAvatar);
-                }
-                
-                // Update active states
-                this.updateCustomizerActiveStates(modal, tempAvatar);
-            });
-        }
-        
         // Save button
-        const saveBtn = modal.querySelector('#save-avatar');
+        const saveBtn = modal.querySelector('#save-character-selection');
         if (saveBtn) {
-            saveBtn.addEventListener('click', () => {
-                this.currentAvatar = tempAvatar;
-                this.updateAvatarDisplay(this.currentAvatar);
+            saveBtn.addEventListener('click', async () => {
+                this.currentCharacterId = tempCharacterId;
+                await this.updatePortraitDisplay(this.currentCharacterId);
                 this.autoSaveCharacter(); // Trigger auto-save
-                this.uiManager.showMessage('Avatar gemt! 🎭');
+                
+                const character = this.characterPortraits.getCharacterById(tempCharacterId);
+                this.uiManager.showMessage(`${character.name} valgt! 🎭`);
                 document.body.removeChild(modal);
             });
         }
         
         // Cancel button
-        const cancelBtn = modal.querySelector('#cancel-avatar');
+        const cancelBtn = modal.querySelector('#cancel-character-selection');
         if (cancelBtn) {
             cancelBtn.addEventListener('click', () => {
                 document.body.removeChild(modal);
@@ -1088,28 +1087,18 @@ class CharacterManager {
         });
     }
 
-    updateCustomizerActiveStates(modal, avatar) {
-        // Update all active states based on current avatar
-        Object.keys(avatar).forEach(type => {
-            modal.querySelectorAll(`[data-type="${type}"]`).forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.value === avatar[type]) {
-                    btn.classList.add('active');
-                }
-            });
-        });
-    }
+    // Method removed - no longer needed with character portraits
 
     // Character selector functionality
-    setupCharacterSelector() {
+    async setupCharacterSelector() {
         this.populateCharacterDropdown();
         
         // Character selection event
         const characterSelect = document.getElementById('character-select');
         if (characterSelect) {
-            characterSelect.addEventListener('change', (e) => {
+            characterSelect.addEventListener('change', async (e) => {
                 if (e.target.value) {
-                    this.loadCharacterByName(e.target.value);
+                    await this.loadCharacterByName(e.target.value);
                 }
             });
         }
@@ -1117,8 +1106,8 @@ class CharacterManager {
         // New character button event
         const newCharacterBtn = document.getElementById('new-character');
         if (newCharacterBtn) {
-            newCharacterBtn.addEventListener('click', () => {
-                this.createNewCharacter();
+            newCharacterBtn.addEventListener('click', async () => {
+                await this.createNewCharacter();
             });
         }
         
@@ -1167,7 +1156,7 @@ class CharacterManager {
         this.updateDeleteButtonState();
     }
 
-    createNewCharacter() {
+    async createNewCharacter() {
         const characterName = prompt('Indtast karakterens navn:');
         if (characterName && characterName.trim()) {
             const sanitizedName = characterName.trim();
@@ -1197,7 +1186,7 @@ class CharacterManager {
                 // Set the new avatar as current before loading
                 this.currentAvatar = defaultCharacter.avatar;
                 
-                this.loadCharacterByName(sanitizedName);
+                await this.loadCharacterByName(sanitizedName);
                 this.uiManager.showMessage(`Ny karakter "${sanitizedName}" oprettet! 🎭`);
             } else {
                 this.uiManager.showMessage('Fejl ved oprettelse af karakter');
@@ -1240,7 +1229,7 @@ class CharacterManager {
             if (remainingCharacters.length > 0) {
                 const nextCharacter = remainingCharacters[0];
                 characterSelect.value = nextCharacter;
-                this.loadCharacterByName(nextCharacter);
+                await this.loadCharacterByName(nextCharacter);
             } else {
                 // Clear UI if no characters left (shouldn't happen due to prevention above)
                 this.clearCharacterUI();
@@ -1279,9 +1268,9 @@ class CharacterManager {
         document.getElementById('current-shield').value = 0;
         document.getElementById('max-shield').value = 0;
         
-        // Clear weapons and avatar
+        // Clear weapons and set default character
         this.weapons = [];
-        this.currentAvatar = this.avatarGenerator.generateRandomAvatar();
+        this.currentCharacterId = 'amara';
         
         // Update UI
         this.updateHealthBar();
@@ -1291,10 +1280,10 @@ class CharacterManager {
         this.updateWeaponDisplay();
         this.updateSlotCounter();
         this.updateShieldUIState();
-        this.updateAvatarDisplay();
+        await this.updatePortraitDisplay();
     }
 
-    loadCharacterByName(characterName) {
+    async loadCharacterByName(characterName) {
         const characterData = this.storageManager.loadCharacterByName(characterName);
         if (characterData) {
             // Update UI with character data
@@ -1307,9 +1296,9 @@ class CharacterManager {
             this.skills = characterData.skills || {};
             this.availableSkillPoints = characterData.availableSkillPoints || 0;
             
-            // Load avatar
-            this.currentAvatar = characterData.avatar || this.avatarGenerator.generateRandomAvatar();
-            this.updateAvatarDisplay(this.currentAvatar);
+            // Load character portrait
+            this.currentCharacterId = characterData.characterId || 'amara';
+            await this.updatePortraitDisplay(this.currentCharacterId);
             
             // Load weapons
             this.weapons = characterData.weapons || [];

@@ -1,10 +1,10 @@
 {
-  "version": "1.5.2",
-  "buildDate": "2025-08-03",
+  "version": "1.6.0",
+  "buildDate": "2025-08-06",
   "features": [
     "Ultra-compact QR format with 70% size reduction",
     "QR test functionality with console output",
-    "Fixed avatar system (no double faces)",
+    "Borderlands 3 character portraits system",
     "Automatic QR scanner stop on tab/function switch",
     "Multiple character management system",
     "Character dropdown with creation/deletion",
@@ -20,6 +20,7 @@
     "Version tracking system"
   ],
   "changelog": {
+    "1.6.0": "Replaced emoji avatars with Borderlands 3 character portrait system (Amara, FL4K, Moze, Zane)",
     "1.5.2": "Improved game mechanics: shield auto-restore/clear, level-based weapon unequipping, HP adjustment",
     "1.5.1": "Fixed avatar system double face issue and updated version tracking",
     "1.5.0": "Ultra-compact QR format v3 with 70% size reduction and test functionality",
