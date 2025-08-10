@@ -1,31 +1,80 @@
+# Pandora RPG - Ideer & Features
 
-# Brugergrænseflade
-- [x] Mindre scroll, måske faner ✅ **FÆRDIG** (v1.1.0)
-- [x] ved genindlæs skal den loade seneste karakter ✅ **FÆRDIG** (v1.4.0)
-- [x] Tilføj en reset hp knap. Den skal stå på samme linie som reset skjold knappen ✅ **FÆRDIG** (v1.2.0)
-- [x] Understøt flere karakterer. Der skal kun være en synlig ad gangen, men man skal kunne gemme under flere navne og vælge et navn. Det kunne evt. være sådan at Navn feltet var et dropdown som listede alle gemte karakterer. Der kunne så være en "Opret karakter" knap et sted (måske et + ved siden af Navn) ✅ **FÆRDIG** (v1.4.0)
-- [x] Lav auto-save, ved ændring af hp, skjold, equipped, inventory, så gem ✅ **FÆRDIG** (v1.4.0) 
+## Aktuelle Prioriteter (Top)
 
-# Stats og regler
-- [x] max hp skal følge level ✅ **FÆRDIG**
-- [x] der skal også være shilde ✅ **FÆRDIG**
+### Høj Prioritet
+- [x] Det aktive våben skal ses på start skærmen (karakter tab)
+- [ ] Export/import funktioner for karakterer
+- [ ] Våben customization system
+- [ ] Inventory sortering og bulk actions
 
-# Equipped
-- [x] Hvilke af mine våben har jeg i hånden ✅ **FÆRDIG** (v1.1.0)
-- [ ] det aktive våben skal ses på start skærmen 
-# Loot
-- [x] loot skal omkring mit level ✅ **FÆRDIG** (v1.0.0)
-- [x] loot skal være mindre ✅ **FÆRDIG** (v1.0.0)
-- [x] der skal være våben klasser (nærkamp, pistoler, sniper, shotgun). Må ikke forveksles med teknologi (projektil, plasma, laser, osv.) ✅ **FÆRDIG** (v1.1.0)
-- [x] Der skal være faner i inventory ✅ **FÆRDIG** (v1.1.0)
-- [x] man skal ikke kunne slette equippede våben ✅ **FÆRDIG** (v1.0.0) 
+### Medium Prioritet
+- [x] Experience point system med progression
+- [x] Flere våben typer og variationer
+- [ ] Våben animations og visuelle effekter
+- [ ] Achievement system
+- [ ] Combat simulator
 
-# Next next level
-- [x] Man skal måske kunne dele våben. Måske med en kode eller et QR kode. Koden skal indeholde stats, men ikke billede. Koden skal ikke være mere end 8-10 karakterer lang ✅ **FÆRDIG** (v1.3.0 - QR system)
+### Lav Prioritet
+- [x] Multiplayer våben trading
+- [ ] Advanced crafting system
+- [ ] Dungeon generator
 
-# Karakter
-- [ ] billed af karakter
+---
 
-# Inventory
-- [x] Der skal være et max antal våbenslots i inventory. Antal slots skal følge level, en slot for hvert andet level ✅ **FÆRDIG** (v1.1.0)
-- [ ] Bedre våbenbilleder
+## Implementerede Features ✅
+
+### v1.6.1 (Seneste)
+- [x] **Avanceret SVG våbenbillede system** - Detaljerede våben grafik med level tiers
+
+### v1.6.0
+- [x] **Borderlands 3 karakter portraits** - Amara, FL4K, Moze, Zane avatarer
+
+### v1.5.x
+- [x] **Ultra-kompakt QR format** med 70% størrelse reduktion
+- [x] **Game mechanics forbedringer** - Shield auto-restore, level-baseret våben handling
+
+### v1.4.x  
+- [x] **Multiple karakterer** - Dropdown selector med opret/slet funktioner
+- [x] **Auto-save per karakter** - Individuel data lagring
+- [x] **QR våben deling** - Del våben mellem spillere
+
+### v1.3.x
+- [x] **QR code system** - Våben deling via QR koder
+- [x] **Version tracking** - Build dato og changelog
+
+### v1.2.x
+- [x] **Damage system** - Shield absorption og død animation
+- [x] **Hjælp tooltips** - Hover og mobil support
+
+### v1.1.x
+- [x] **Våben klasser** - 9 forskellige klasser med realiste stats
+- [x] **Shield system** - Dynamic UI states og absorption
+- [x] **Inventory filtering** - Level-baserede slots og tabs
+- [x] **Tab memory** - localStorage integration
+
+### v1.0.x - Foundation
+- [x] **Basic karakter skema** - Navn, level, health bar system
+- [x] **Inventory system** - Våben kort med preview
+- [x] **Våben generator** - 5 raritet niveauer, level-scaled stats
+- [x] **Terningkast funktionalitet** - D20 system
+- [x] **localStorage** - Data persistence
+- [x] **Responsive design** - Mobile-friendly interface
+- [x] **Level-baserede inventory slots** - Progression system
+- [x] **Max HP følger level** - Character progression
+- [x] **Equipped våben system** - Dual wielding support
+
+---
+
+## Arkiverede/Forkastede Ideer
+
+### Completed Cleanup
+- ~~Mindre scroll, måske faner~~ → Implementeret som tab system
+- ~~Loot skal omkring mit level~~ → Level-scaled generation
+- ~~Man skal ikke kunne slette equippede våben~~ → UI beskyttelse
+- ~~Våben billede creation~~ → SVG system implementeret
+- ~~Billed af karakter~~ → Borderlands portraits implementeret
+
+---
+
+*Sidste opdatering: v1.6.1 - 2025-08-10*

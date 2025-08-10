@@ -1,1 +1,1 @@
-Show open ideas from claude.md and ideer.md
+Show open ideas from ideer.md
