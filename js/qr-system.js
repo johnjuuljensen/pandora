@@ -208,6 +208,7 @@ class QRSystem {
                 shieldPoints: shieldPoints || 0,
                 rarity: this.weaponGenerator.getRarityByName(rarityName),
                 image: this.weaponGenerator.getWeaponImageByClass(weaponClass),
+                svgImage: this.weaponGenerator.svgGenerator.generateSVGWeaponImage(weaponType, weaponClass, rarityName, level),
                 classEmoji: this.weaponGenerator.getClassEmojiByClass(weaponClass),
                 classColor: this.weaponGenerator.getClassColorByClass(weaponClass),
                 isReceived: true // Mark as received weapon (cannot be shared again)

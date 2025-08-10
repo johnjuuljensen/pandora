@@ -71,14 +71,18 @@ class UIManager {
         const rarityColor = weapon.rarity.color;
         display.innerHTML = `
             <h3 style="color: ${rarityColor};">Nyt Våben Genereret!</h3>
-            <div class="weapon-card compact" style="color: ${rarityColor};">
-                <div class="weapon-image">${weapon.image}</div>
-                <div class="weapon-name" style="color: ${rarityColor}; font-weight: bold; font-size: 1.2em;">${weapon.name}</div>
-                <div class="weapon-class" style="color: ${rarityColor}; font-weight: bold; margin: 5px 0;">
-                    ${weapon.classEmoji} ${weapon.weaponClass}
+            <div class="equipped-item-card inventory-weapon" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                <div class="equipped-item-type-overlay" style="color: ${weapon.classColor};" title="${weapon.weaponClass}">
+                    ${weapon.classEmoji}
                 </div>
-                <div class="weapon-stats compact" style="color: ${rarityColor};">
-                    <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
+                <div class="equipped-item-header">
+                    <span class="equipped-item-level" title="Level: ${weapon.level}">⭐${weapon.level}</span>
+                    <span class="equipped-item-icon">${weapon.svgImage || weapon.image}</span>
+                </div>
+                <div class="equipped-item-name" title="${weapon.name}">
+                    ${weapon.name}
+                </div>
+                <div class="equipped-item-stats">
                     ${weapon.weaponClass === 'Shield' ? 
                         `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
                         `<span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>`
@@ -91,7 +95,7 @@ class UIManager {
                         Tilføj
                     </button>
                     <button onclick="characterManager.shareWeapon(${weapon.id})" class="action-btn compact" style="background: #6f42c1;">
-                        📤 Del
+                        📱 Del
                     </button>
                     <button onclick="characterManager.discardWeapon()" class="action-btn compact" style="background: #dc3545;">
                         Afvis
@@ -107,14 +111,18 @@ class UIManager {
         const rarityColor = weapon.rarity.color;
         display.innerHTML = `
             <h3 style="color: ${rarityColor};">📦 Våben Modtaget!</h3>
-            <div class="weapon-card compact" style="color: ${rarityColor};">
-                <div class="weapon-image">${weapon.image}</div>
-                <div class="weapon-name" style="color: ${rarityColor}; font-weight: bold; font-size: 1.2em;">${weapon.name}</div>
-                <div class="weapon-class" style="color: ${rarityColor}; font-weight: bold; margin: 5px 0;">
-                    ${weapon.classEmoji} ${weapon.weaponClass}
+            <div class="equipped-item-card inventory-weapon" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                <div class="equipped-item-type-overlay" style="color: ${weapon.classColor};" title="${weapon.weaponClass}">
+                    ${weapon.classEmoji}
                 </div>
-                <div class="weapon-stats compact" style="color: ${rarityColor};">
-                    <span title="Level: ${weapon.level}">⭐${weapon.level}</span>
+                <div class="equipped-item-header">
+                    <span class="equipped-item-level" title="Level: ${weapon.level}">⭐${weapon.level}</span>
+                    <span class="equipped-item-icon">${weapon.svgImage || weapon.image}</span>
+                </div>
+                <div class="equipped-item-name" title="${weapon.name}">
+                    ${weapon.name}
+                </div>
+                <div class="equipped-item-stats">
                     ${weapon.weaponClass === 'Shield' ? 
                         `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
                         `<span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>`
@@ -165,7 +173,7 @@ class UIManager {
             return b.id - a.id;
         });
 
-        weaponList.innerHTML = sortedWeapons.map(weapon => this.createWeaponCard(weapon)).join('');
+        weaponList.innerHTML = `<div class="inventory-grid">${sortedWeapons.map(weapon => this.createWeaponCard(weapon)).join('')}</div>`;
         
         // Update equipped weapon display on character tab
         this.updateEquippedWeaponDisplay(weapons);
@@ -205,6 +213,9 @@ class UIManager {
             const rarityColor = weapon.rarity.color;
             html += `
                 <div class="equipped-item-card weapon" onclick="characterManager.unequipWeapon(${weapon.id})" title="Klik for at unequip våben" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                    <div class="equipped-item-type-overlay" style="color: ${weapon.classColor};" title="${weapon.weaponClass}">
+                        ${weapon.classEmoji}
+                    </div>
                     <div class="equipped-item-header">
                         <span class="equipped-item-level">⭐${weapon.level}</span>
                         <span class="equipped-item-icon">${weapon.image}</span>
@@ -224,6 +235,9 @@ class UIManager {
                 const weaponLabel = index === 0 ? "⚔️ Våben 1" : "🗡️ Våben 2";
                 html += `
                     <div class="equipped-item-card weapon dual-wield" onclick="characterManager.unequipWeapon(${weapon.id})" title="Klik for at unequip våben ${index + 1}" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                        <div class="equipped-item-type-overlay" style="color: ${weapon.classColor};" title="${weapon.weaponClass}">
+                            ${weapon.classEmoji}
+                        </div>
                         <div class="equipped-item-header">
                             <span class="equipped-item-level">⭐${weapon.level}</span>
                             <span class="equipped-item-icon">${weapon.image}</span>
@@ -245,6 +259,9 @@ class UIManager {
                 const rarityColor = equippedShield.rarity.color;
                 html += `
                     <div class="equipped-item-card shield" onclick="characterManager.unequipWeapon(${equippedShield.id})" title="Klik for at unequip shield" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                        <div class="equipped-item-type-overlay" style="color: ${equippedShield.classColor};" title="${equippedShield.weaponClass}">
+                            ${equippedShield.classEmoji}
+                        </div>
                         <div class="equipped-item-header">
                             <span class="equipped-item-level">⭐${equippedShield.level}</span>
                             <span class="equipped-item-icon">${equippedShield.image}</span>
@@ -277,16 +294,18 @@ class UIManager {
         const isEquipped = weapon.equipped;
 
         return `
-            <div class="weapon-card compact ${canUse ? '' : 'weapon-too-high-level'} ${isEquipped ? 'weapon-equipped' : ''}">
-                <div class="weapon-image compact">${weapon.image}</div>
-                <div class="weapon-name compact" style="color: ${weapon.rarity.color}">
+            <div class="equipped-item-card inventory-weapon ${canUse ? '' : 'weapon-too-high-level'} ${isEquipped ? 'weapon-equipped' : ''}" style="background: linear-gradient(135deg, ${weapon.rarity.color} 0%, ${this.darkenColor(weapon.rarity.color, 20)} 100%);">
+                <div class="equipped-item-type-overlay" style="color: ${weapon.classColor};" title="${weapon.weaponClass}">
+                    ${weapon.classEmoji}
+                </div>
+                <div class="equipped-item-header">
+                    <span class="equipped-item-level" title="Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}">⭐${weapon.level}${canUse ? '' : '❌'}</span>
+                    <span class="equipped-item-icon">${weapon.svgImage || weapon.image}</span>
+                </div>
+                <div class="equipped-item-name" title="${weapon.name}">
                     ${weapon.name} ${isEquipped ? '⚔️' : ''}
                 </div>
-                ${weapon.weaponClass ? `<div class="weapon-class compact" style="color: ${weapon.classColor}; font-weight: bold;">
-                    ${weapon.classEmoji} ${weapon.weaponClass}
-                </div>` : ''}
-                <div class="weapon-stats compact">
-                    <span title="Level: ${weapon.level} ${canUse ? '' : '(For høj level!)'}">⭐${weapon.level}${canUse ? '' : '❌'}</span>
+                <div class="equipped-item-stats">
                     ${weapon.weaponClass === 'Shield' ? 
                         `<span title="Shield Points: ${weapon.shieldPoints}">🛡️${weapon.shieldPoints}</span>` :
                         `<span title="Skade: ${weapon.damage}">💥${weapon.damage}</span>`
@@ -305,7 +324,7 @@ class UIManager {
                     ) : ''}
                     ${!weapon.isShared ? 
                         `<button onclick="characterManager.shareWeaponFromInventory(${weapon.id})" class="action-btn compact" style="background: #6f42c1;" title="Del våben">
-                            📤
+                            📱
                         </button>` : ''
                     }
                     <button onclick="characterManager.removeWeapon(${weapon.id})" class="action-btn compact" style="background: ${isEquipped ? '#6c757d' : '#dc3545'};" ${isEquipped ? 'disabled' : ''} title="Fjern våben">

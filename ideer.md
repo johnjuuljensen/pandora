@@ -20,6 +20,9 @@
 - [ ] Advanced crafting system
 - [ ] Dungeon generator
 
+### Ideer til skills
+- [ ] Begræns antal loot genereringer, kan modificeres af skills og evt. af hvilket monster det er
+
 ---
 
 ## Implementerede Features ✅
