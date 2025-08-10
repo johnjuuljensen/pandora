@@ -255,11 +255,12 @@ class CharacterManager {
 
     addWeaponToInventory(weaponId) {
         // Check inventory slot limit
-        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
-        const maxSlots = this.calculateMaxSlotsForLevel(currentLevel);
+        const maxSlots = this.getMaxSlots();
         
         if (this.weapons.length >= maxSlots) {
-            this.uiManager.showMessage(`Inventory fuldt! Level ${currentLevel} tillader ${maxSlots} våben. Level op for flere slots! 📦`);
+            const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+            const packRatBonus = this.skills && this.skills['pack-rat'] ? ' (+1 fra Pack Rat)' : '';
+            this.uiManager.showMessage(`Inventory fuldt! Du har ${maxSlots} slots${packRatBonus}. Level op for flere slots! 📦`);
             return;
         }
 
@@ -363,10 +364,21 @@ class CharacterManager {
     calculateMaxSlotsForLevel(level) {
         return 1 + Math.floor((level - 1) / 2);
     }
+    
+    getMaxSlots() {
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        let maxSlots = this.calculateMaxSlotsForLevel(currentLevel);
+        
+        // Add extra slot for Pack Rat skill
+        if (this.skills && this.skills['pack-rat']) {
+            maxSlots += 1;
+        }
+        
+        return maxSlots;
+    }
 
     updateSlotCounter() {
-        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
-        const maxSlots = this.calculateMaxSlotsForLevel(currentLevel);
+        const maxSlots = this.getMaxSlots();
         this.uiManager.updateSlotCounter(this.weapons.length, maxSlots);
     }
 
@@ -683,38 +695,120 @@ class CharacterManager {
         }
         
         if (confirm('Reset alle skills? Dette kan ikke fortrydes.')) {
+            // Save current max HP to restore base HP
+            const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+            const baseHP = 80 + ((currentLevel - 1) * 20); // Base HP calculation
+            
             this.skills = {};
+            
+            // Reset HP to base level (remove skill bonuses)
+            document.getElementById('max-hp').value = baseHP;
+            
             this.updateAvailableSkillPoints();
+            this.updateHealthBar();
+            this.updateShieldUIState();
+            this.updateSlotCounter();
             this.autoSaveCharacter();
             this.uiManager.showMessage('🔄 Alle skills reset!');
         }
     }
 
     applySkillEffect(skillId) {
-        // Skill effects will be implemented based on gameplay needs
-        // For now, just log the effect
-        const effects = {
-            'damage-boost': 'Alle våben gør +5 ekstra skade',
-            'critical-master': '10% chance for dobbelt skade på angreb',
-            'berserker': 'Gør 25% mere skade når dit HP er under 50%',
-            'dual-wielder': 'Equip et andet våben for dobbelt-våben kamp',
-            'killstreak': 'Hvert drab giver +2% skade (max 50%). Nulstilles ved død',
-            'weapon-master': 'Alle våben gør +10 ekstra skade',
-            'tough-guy': 'Øger dit maksimale helbred med 20 point',
-            'shield-expert': 'Alle skjolde har 25% mere beskyttelse',
-            'battle-medic': 'Automatisk heling af 10 HP hver gang du dræber en fjende',
-            'heavy-armor': 'Tung rustning: +50 max HP og +25% skjold kapacitet',
-            'guardian-angel': 'Når du dør, genopliv automatisk med 1 HP (én gang per session)',
-            'tank': 'Al indkommende skade reduceres med 25%',
-            'pack-rat': 'Få en ekstra våben slot i dit inventory',
-            'treasure-hunter': '15% bedre chance for at finde sjældne og legendære våben',
-            'weapon-expert': 'Se skjulte våben stats og detaljeret information',
-            'weapon-crafter': 'Lås op for våben crafting til at kombinere og opgradere våben',
-            'loot-master': 'Alle fundne våben er automatisk ét raritet niveau højere',
-            'lucky': '30% bedre chance for at finde sjældne og legendære våben'
-        };
+        const maxHPInput = document.getElementById('max-hp');
+        const currentMaxHP = parseInt(maxHPInput.value) || 100;
         
-        this.debugManager.log(`Skill effect applied: ${effects[skillId] || skillId}`, 'success');
+        switch(skillId) {
+            case 'tough-guy':
+                // Øger maksimale helbred med 20 point
+                maxHPInput.value = currentMaxHP + 20;
+                // Also increase current HP to new max (heal to full)
+                document.getElementById('current-hp').value = currentMaxHP + 20;
+                this.updateHealthBar();
+                this.debugManager.log('Tough Guy: +20 Max HP', 'success');
+                this.uiManager.showMessage('💪 Max HP øget med 20! Nu: ' + (currentMaxHP + 20) + ' HP');
+                break;
+                
+            case 'heavy-armor':
+                // +50 max HP og +25% skjold kapacitet
+                maxHPInput.value = currentMaxHP + 50;
+                // Also increase current HP to new max (heal to full)
+                document.getElementById('current-hp').value = currentMaxHP + 50;
+                this.updateHealthBar();
+                this.updateShieldUIState(); // This will recalculate shield capacity
+                this.debugManager.log('Heavy Armor: +50 Max HP, +25% Shield', 'success');
+                this.uiManager.showMessage('🛡️ Heavy Armor: +50 HP og +25% shield kapacitet!');
+                break;
+                
+            case 'pack-rat':
+                // En ekstra våben slot - update slot counter
+                this.updateSlotCounter();
+                this.debugManager.log('Pack Rat: Extra weapon slot', 'success');
+                this.uiManager.showMessage('🎒 Pack Rat: Ekstra våben slot tilgængelig!');
+                break;
+                
+            case 'damage-boost':
+                this.debugManager.log('Damage Boost: +5 weapon damage', 'success');
+                this.uiManager.showMessage('💪 Damage Boost: Alle våben gør +5 ekstra skade!');
+                break;
+                
+            case 'weapon-master':
+                this.debugManager.log('Weapon Master: +10 weapon damage', 'success');
+                this.uiManager.showMessage('🔥 Weapon Master: Alle våben gør +10 ekstra skade!');
+                break;
+                
+            case 'critical-master':
+                this.debugManager.log('Critical Master: 10% critical chance', 'success');
+                this.uiManager.showMessage('🎯 Critical Master: 10% chance for dobbelt skade!');
+                break;
+                
+            case 'shield-expert':
+                this.updateShieldUIState(); // Recalculate shield capacity with bonus
+                this.debugManager.log('Shield Expert: +25% shield capacity', 'success');
+                this.uiManager.showMessage('🛡️ Shield Expert: +25% shield beskyttelse!');
+                break;
+                
+            default:
+                // For skills without implemented effects yet
+                const skillName = document.querySelector(`[data-skill="${skillId}"] .skill-name`)?.textContent || skillId;
+                this.debugManager.log(`Skill unlocked: ${skillName}`, 'info');
+                break;
+        }
+        
+        // Always save after applying skill effect
+        this.autoSaveCharacter();
+    }
+    
+    // Re-apply all unlocked skills (used when loading character)
+    reapplyAllSkills() {
+        const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
+        const baseHP = 80 + ((currentLevel - 1) * 20); // Base HP without skill bonuses
+        
+        // Start with base HP
+        let maxHP = baseHP;
+        
+        // Apply HP bonuses from skills
+        for (const skillId in this.skills) {
+            if (this.skills[skillId]) {
+                switch(skillId) {
+                    case 'tough-guy':
+                        maxHP += 20;
+                        break;
+                    case 'heavy-armor':
+                        maxHP += 50;
+                        break;
+                }
+            }
+        }
+        
+        // Update max HP
+        document.getElementById('max-hp').value = maxHP;
+        
+        // Update all UI elements affected by skills
+        this.updateHealthBar();
+        this.updateShieldUIState();
+        this.updateSlotCounter();
+        
+        this.debugManager.log(`Skills reapplied: ${Object.keys(this.skills).length} active skills`, 'info');
     }
 
     updateSkillConnectors() {
@@ -1303,15 +1397,15 @@ class CharacterManager {
             // Load weapons
             this.weapons = characterData.weapons || [];
             
+            // Re-apply all skill effects
+            this.reapplyAllSkills();
+            
             // Update UI
             this.updateHealthBar();
             this.updateShieldBar();
             this.updateKillDisplay();
             this.updateAvailableSkillPoints(); // Update skill points
-            this.updateMaxHPForLevel();
             this.updateWeaponDisplay();
-            this.updateSlotCounter();
-            this.updateShieldUIState();
             
             // Set as active character
             this.storageManager.setActiveCharacter(characterName);
