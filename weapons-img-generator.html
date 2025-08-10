@@ -207,6 +207,7 @@
 
             <button onclick="generateWeapons()">🎲 Generer Våben</button>
             <button onclick="testAllClasses()">🧪 Test Alle Klasser</button>
+            <button onclick="testAllLevels()">📈 Test Alle Levels</button>
         </div>
 
         <div id="error-display"></div>
@@ -226,7 +227,7 @@
                 // Generate initial weapons
                 generateWeapons();
                 
-                showStatus('SVG Våben Generator klar! 🚀', 'success');
+                console.log('SVG Våben Generator klar! 🚀');
             } catch (error) {
                 showError('Fejl ved indlæsning: ' + error.message);
                 console.error('Initialization error:', error);
@@ -277,6 +278,35 @@
             } catch (error) {
                 showError('Fejl ved klasse test: ' + error.message);
                 console.error('Class test error:', error);
+            }
+        }
+
+        function testAllLevels() {
+            if (!svgGenerator) {
+                showError('Generator ikke indlæst endnu...');
+                return;
+            }
+
+            try {
+                const weaponClass = document.getElementById('weaponClass').value || null;
+                const count = parseInt(document.getElementById('generateCount').value) || 20;
+                
+                // Generate weapons distributed across levels 1-20
+                const weapons = [];
+                for (let i = 0; i < count; i++) {
+                    const level = Math.floor((i / count) * 20) + 1; // Distribute evenly from 1-20
+                    const weapon = svgGenerator.generateWeapon(level, weaponClass);
+                    weapons.push(weapon);
+                }
+
+                // Sort by level for better visualization
+                weapons.sort((a, b) => a.level - b.level);
+                
+                displayWeapons(weapons);
+                clearError();
+            } catch (error) {
+                showError('Fejl ved level test: ' + error.message);
+                console.error('Level test error:', error);
             }
         }
 
