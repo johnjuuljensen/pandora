@@ -175,31 +175,22 @@ class UIManager {
         const equippedWeaponDisplay = document.getElementById('equipped-weapon-display');
         if (!equippedWeaponDisplay) return;
 
-        // Find the equipped weapon (non-shield) and shield
-        const equippedWeapon = weapons.find(w => w.equipped && w.weaponClass !== 'Shield');
+        // Find all equipped weapons (can be 0, 1, or 2) and shield
+        const equippedWeapons = weapons.filter(w => w.equipped && w.weaponClass !== 'Shield');
         const equippedShield = weapons.find(w => w.equipped && w.weaponClass === 'Shield');
         
-        let html = '<div class="equipped-items-grid">';
+        // Determine grid class based on equipment
+        let gridClass = 'equipped-items-grid';
+        if (equippedWeapons.length === 2) {
+            // When dual wielding, shield slot is hidden, so always 2 columns for 2 weapons
+            gridClass += ' dual-wield-only';
+        }
         
-        // Weapon slot
-        if (equippedWeapon) {
-            const rarityColor = equippedWeapon.rarity.color;
-            html += `
-                <div class="equipped-item-card weapon" onclick="characterManager.unequipWeapon(${equippedWeapon.id})" title="Klik for at unequip våben" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
-                    <div class="equipped-item-header">
-                        <span class="equipped-item-level">⭐${equippedWeapon.level}</span>
-                        <span class="equipped-item-icon">${equippedWeapon.image}</span>
-                        <span class="equipped-item-type">⚔️ Våben</span>
-                    </div>
-                    <div class="equipped-item-name">${equippedWeapon.name}</div>
-                    <div class="equipped-item-stats">
-                        <span>💥${equippedWeapon.damage}</span>
-                        <span>🎯${equippedWeapon.accuracy}%</span>
-                        <span>📏${equippedWeapon.range}m</span>
-                    </div>
-                </div>
-            `;
-        } else {
+        let html = `<div class="${gridClass}">`;
+        
+        // Handle weapon slots based on number of equipped weapons
+        if (equippedWeapons.length === 0) {
+            // No weapons equipped
             html += `
                 <div class="equipped-item-card empty">
                     <div class="equipped-item-header">
@@ -209,34 +200,76 @@ class UIManager {
                     <div class="equipped-item-empty">Intet våben equipped</div>
                 </div>
             `;
-        }
-        
-        // Shield slot
-        if (equippedShield) {
-            const rarityColor = equippedShield.rarity.color;
+        } else if (equippedWeapons.length === 1) {
+            // Single weapon equipped
+            const weapon = equippedWeapons[0];
+            const rarityColor = weapon.rarity.color;
             html += `
-                <div class="equipped-item-card shield" onclick="characterManager.unequipWeapon(${equippedShield.id})" title="Klik for at unequip shield" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                <div class="equipped-item-card weapon" onclick="characterManager.unequipWeapon(${weapon.id})" title="Klik for at unequip våben" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
                     <div class="equipped-item-header">
-                        <span class="equipped-item-level">⭐${equippedShield.level}</span>
-                        <span class="equipped-item-icon">${equippedShield.image}</span>
-                        <span class="equipped-item-type">🛡️ Shield</span>
+                        <span class="equipped-item-level">⭐${weapon.level}</span>
+                        <span class="equipped-item-icon">${weapon.image}</span>
+                        <span class="equipped-item-type">⚔️ Våben</span>
                     </div>
-                    <div class="equipped-item-name">${equippedShield.name}</div>
+                    <div class="equipped-item-name">${weapon.name}</div>
                     <div class="equipped-item-stats">
-                        <span>🛡️${equippedShield.shieldPoints}</span>
+                        <span>💥${weapon.damage}</span>
+                        <span>🎯${weapon.accuracy}%</span>
+                        <span>📏${weapon.range}m</span>
                     </div>
                 </div>
             `;
         } else {
-            html += `
-                <div class="equipped-item-card empty">
-                    <div class="equipped-item-header">
-                        <span class="equipped-item-icon">🛡️</span>
-                        <span class="equipped-item-type">Shield</span>
+            // Dual wielding (2 weapons) - show both
+            equippedWeapons.forEach((weapon, index) => {
+                const rarityColor = weapon.rarity.color;
+                const weaponLabel = index === 0 ? "⚔️ Våben 1" : "🗡️ Våben 2";
+                html += `
+                    <div class="equipped-item-card weapon dual-wield" onclick="characterManager.unequipWeapon(${weapon.id})" title="Klik for at unequip våben ${index + 1}" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                        <div class="equipped-item-header">
+                            <span class="equipped-item-level">⭐${weapon.level}</span>
+                            <span class="equipped-item-icon">${weapon.image}</span>
+                            <span class="equipped-item-type">${weaponLabel}</span>
+                        </div>
+                        <div class="equipped-item-name">${weapon.name}</div>
+                        <div class="equipped-item-stats">
+                            <span>💥${weapon.damage}</span>
+                            <span>🎯${weapon.accuracy}%</span>
+                            <span>📏${weapon.range}m</span>
+                        </div>
                     </div>
-                    <div class="equipped-item-empty">Intet shield equipped</div>
-                </div>
-            `;
+                `;
+            });
+        }
+        
+        // Shield slot - only show when not dual wielding (2 weapons)
+        if (equippedWeapons.length < 2) {
+            if (equippedShield) {
+                const rarityColor = equippedShield.rarity.color;
+                html += `
+                    <div class="equipped-item-card shield" onclick="characterManager.unequipWeapon(${equippedShield.id})" title="Klik for at unequip shield" style="background: linear-gradient(135deg, ${rarityColor} 0%, ${this.darkenColor(rarityColor, 20)} 100%);">
+                        <div class="equipped-item-header">
+                            <span class="equipped-item-level">⭐${equippedShield.level}</span>
+                            <span class="equipped-item-icon">${equippedShield.image}</span>
+                            <span class="equipped-item-type">🛡️ Shield</span>
+                        </div>
+                        <div class="equipped-item-name">${equippedShield.name}</div>
+                        <div class="equipped-item-stats">
+                            <span>🛡️${equippedShield.shieldPoints}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="equipped-item-card empty">
+                        <div class="equipped-item-header">
+                            <span class="equipped-item-icon">🛡️</span>
+                            <span class="equipped-item-type">Shield</span>
+                        </div>
+                        <div class="equipped-item-empty">Intet shield equipped</div>
+                    </div>
+                `;
+            }
         }
         
         html += '</div>';

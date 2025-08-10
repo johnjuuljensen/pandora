@@ -301,32 +301,88 @@ class CharacterManager {
         const weapon = this.weapons.find(w => w.id === weaponId);
         if (!weapon) return;
         
-        // If it's a shield, unequip other shields only
+        const hasDualWielder = this.skills && this.skills['dual-wielder'];
+        const currentlyEquipped = this.weapons.filter(w => w.equipped);
+        const equippedShields = currentlyEquipped.filter(w => w.weaponClass === 'Shield');
+        const equippedWeapons = currentlyEquipped.filter(w => w.weaponClass !== 'Shield');
+        
         if (weapon.weaponClass === 'Shield') {
-            this.weapons.forEach(w => {
-                if (w.weaponClass === 'Shield' && w.id !== weaponId) {
+            // Equipping a shield
+            if (equippedShields.length > 0) {
+                // Unequip other shields
+                equippedShields.forEach(w => {
+                    if (w.id !== weaponId) {
+                        w.equipped = false;
+                    }
+                });
+            }
+            
+            if (hasDualWielder && equippedWeapons.length === 2) {
+                // With dual wielder: can't have shield + 2 weapons, unequip oldest weapon
+                equippedWeapons[0].equipped = false;
+                this.uiManager.showMessage(`${equippedWeapons[0].name} unequipped - can't dual wield with shield 🛡️`);
+            } else if (!hasDualWielder && equippedWeapons.length > 0) {
+                // Without dual wielder: can have 1 weapon + 1 shield, unequip extra weapons
+                equippedWeapons.slice(1).forEach(w => {
                     w.equipped = false;
+                });
+                if (equippedWeapons.length > 1) {
+                    this.uiManager.showMessage(`Extra weapons unequipped - only 1 weapon + shield allowed`);
                 }
-            });
+            }
         } else {
-            // For non-shields, unequip other non-shields
-            this.weapons.forEach(w => {
-                if (w.weaponClass !== 'Shield' && w.id !== weaponId) {
-                    w.equipped = false;
+            // Equipping a weapon
+            if (!hasDualWielder) {
+                // Without dual wielder: max 1 weapon (+ optional shield)
+                if (equippedWeapons.length > 0) {
+                    equippedWeapons.forEach(w => {
+                        if (w.id !== weaponId) {
+                            w.equipped = false;
+                        }
+                    });
                 }
-            });
+            } else {
+                // With dual wielder: check total equipped count
+                if (currentlyEquipped.length >= 2) {
+                    // Already at max (2), need to unequip something
+                    if (equippedShields.length > 0 && equippedWeapons.length >= 1) {
+                        // Has shield + weapon, unequip shield to allow dual wield
+                        equippedShields[0].equipped = false;
+                        this.uiManager.showMessage(`${equippedShields[0].name} unequipped for dual wielding 🗡️⚔️`);
+                    } else if (equippedWeapons.length >= 2) {
+                        // Already has 2 weapons, unequip oldest
+                        equippedWeapons[0].equipped = false;
+                        this.uiManager.showMessage(`${equippedWeapons[0].name} unequipped for new weapon 🗡️`);
+                    }
+                }
+            }
         }
         
         weapon.equipped = true;
         
-        // If equipping a shield, restore shield to full
+        // Update messages and UI based on new equipment state
+        const newlyEquipped = this.weapons.filter(w => w.equipped);
+        const newShields = newlyEquipped.filter(w => w.weaponClass === 'Shield');
+        const newWeapons = newlyEquipped.filter(w => w.weaponClass !== 'Shield');
+        
         if (weapon.weaponClass === 'Shield') {
             document.getElementById('current-shield').value = weapon.shieldPoints;
             this.updateShieldBar();
             this.autoSaveCharacter(); // Save shield change
-            this.uiManager.showMessage(`${weapon.name} equipped! Shield restored to ${weapon.shieldPoints} 🛡️`);
+            
+            if (newWeapons.length > 0) {
+                this.uiManager.showMessage(`${weapon.name} equipped! Shield + weapon combo! 🛡️⚔️ (${weapon.shieldPoints} shield)`);
+            } else {
+                this.uiManager.showMessage(`${weapon.name} equipped! Shield restored to ${weapon.shieldPoints} 🛡️`);
+            }
         } else {
-            this.uiManager.showMessage(`${weapon.name} equipped! ⚔️`);
+            if (newWeapons.length === 2 && newShields.length === 0) {
+                this.uiManager.showMessage(`${weapon.name} equipped! Dual wielding active! 🗡️⚔️`);
+            } else if (newWeapons.length === 1 && newShields.length === 1) {
+                this.uiManager.showMessage(`${weapon.name} equipped! Weapon + shield combo! ⚔️🛡️`);
+            } else {
+                this.uiManager.showMessage(`${weapon.name} equipped! ⚔️`);
+            }
         }
         
         this.updateWeaponDisplay();
@@ -759,6 +815,11 @@ class CharacterManager {
             case 'critical-master':
                 this.debugManager.log('Critical Master: 10% critical chance', 'success');
                 this.uiManager.showMessage('🎯 Critical Master: 10% chance for dobbelt skade!');
+                break;
+                
+            case 'dual-wielder':
+                this.debugManager.log('Dual Wielder: Can equip 2 weapons or weapon+shield', 'success');
+                this.uiManager.showMessage('🗡️ Dual Wielder: Du kan nu dual wield våben (max 2 equipped total)!');
                 break;
                 
             case 'shield-expert':

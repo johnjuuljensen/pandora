@@ -159,6 +159,16 @@ main {
     width: 100%;
 }
 
+/* Special grid layout for dual wielding (3 items: 2 weapons + shield) */
+.equipped-items-grid.dual-wield-with-shield {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Special grid layout for dual wielding only (2 weapons) */  
+.equipped-items-grid.dual-wield-only {
+    grid-template-columns: 1fr 1fr;
+}
+
 .equipped-item-card {
     color: white;
     padding: 12px;
@@ -250,6 +260,11 @@ main {
     .equipped-items-grid {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
+    }
+    
+    .equipped-items-grid.dual-wield-with-shield {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
     }
     
     .equipped-item-card {
@@ -457,11 +472,14 @@ main {
 
 /* Skill Nodes Container */
 .skill-nodes {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    justify-items: center;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     width: 100%;
-    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 /* Individual Skill Nodes */
@@ -613,8 +631,9 @@ main {
     }
     
     .skill-nodes {
-        flex-wrap: wrap;
-        justify-content: center;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 100%;
     }
     
     .skill-connector {
