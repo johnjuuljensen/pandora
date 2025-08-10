@@ -195,7 +195,6 @@ class UIManager {
                 <div class="equipped-item-card empty">
                     <div class="equipped-item-header">
                         <span class="equipped-item-icon">⚔️</span>
-                        <span class="equipped-item-type">Våben</span>
                     </div>
                     <div class="equipped-item-empty">Intet våben equipped</div>
                 </div>
@@ -209,7 +208,6 @@ class UIManager {
                     <div class="equipped-item-header">
                         <span class="equipped-item-level">⭐${weapon.level}</span>
                         <span class="equipped-item-icon">${weapon.image}</span>
-                        <span class="equipped-item-type">⚔️ Våben</span>
                     </div>
                     <div class="equipped-item-name">${weapon.name}</div>
                     <div class="equipped-item-stats">
@@ -229,7 +227,6 @@ class UIManager {
                         <div class="equipped-item-header">
                             <span class="equipped-item-level">⭐${weapon.level}</span>
                             <span class="equipped-item-icon">${weapon.image}</span>
-                            <span class="equipped-item-type">${weaponLabel}</span>
                         </div>
                         <div class="equipped-item-name">${weapon.name}</div>
                         <div class="equipped-item-stats">
@@ -251,7 +248,6 @@ class UIManager {
                         <div class="equipped-item-header">
                             <span class="equipped-item-level">⭐${equippedShield.level}</span>
                             <span class="equipped-item-icon">${equippedShield.image}</span>
-                            <span class="equipped-item-type">🛡️ Shield</span>
                         </div>
                         <div class="equipped-item-name">${equippedShield.name}</div>
                         <div class="equipped-item-stats">
@@ -264,7 +260,6 @@ class UIManager {
                     <div class="equipped-item-card empty">
                         <div class="equipped-item-header">
                             <span class="equipped-item-icon">🛡️</span>
-                            <span class="equipped-item-type">Shield</span>
                         </div>
                         <div class="equipped-item-empty">Intet shield equipped</div>
                     </div>

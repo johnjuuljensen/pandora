@@ -1,6 +1,6 @@
 {
-  "version": "1.6.0",
-  "buildDate": "2025-08-06",
+  "version": "1.6.1",
+  "buildDate": "2025-08-10",
   "features": [
     "Ultra-compact QR format with 70% size reduction",
     "QR test functionality with console output",
@@ -20,6 +20,7 @@
     "Version tracking system"
   ],
   "changelog": {
+    "1.6.1": "Upgraded to advanced SVG weapon generation system with detailed weapon graphics",
     "1.6.0": "Replaced emoji avatars with Borderlands 3 character portrait system (Amara, FL4K, Moze, Zane)",
     "1.5.2": "Improved game mechanics: shield auto-restore/clear, level-based weapon unequipping, HP adjustment",
     "1.5.1": "Fixed avatar system double face issue and updated version tracking",

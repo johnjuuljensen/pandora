@@ -8,6 +8,8 @@ class WeaponGenerator {
         this.weaponClasses = null;
         this.rarities = null;
         this.isLoaded = false;
+        this.svgGenerator = new SVGWeaponGenerator();
+        this.weapon = null; // Current weapon being generated
     }
 
     async loadData() {
@@ -20,6 +22,11 @@ class WeaponGenerator {
             this.weaponClasses = await weaponClassesResponse.json();
             this.rarities = await raritiesResponse.json();
             this.isLoaded = true;
+            
+            // Also initialize SVG generator data
+            this.svgGenerator.weaponClasses = this.weaponClasses;
+            this.svgGenerator.rarities = this.rarities;
+            this.svgGenerator.isLoaded = true;
             
             console.log('Weapon data loaded successfully');
         } catch (error) {
@@ -71,11 +78,15 @@ class WeaponGenerator {
             damage: Math.floor(baseStats.damage * randomRarity.statBonus),
             accuracy: Math.min(100, Math.floor(baseStats.accuracy * randomRarity.statBonus)),
             range: Math.floor(baseStats.range * randomRarity.statBonus),
-            image: this.generateWeaponImage(randomWeapon),
             equipped: false,
             // For shields, add shield points based on damage stat
             shieldPoints: selectedClass.isShield ? Math.floor(baseStats.damage * randomRarity.statBonus * 10) : 0
         };
+        
+        // Store current weapon for SVG generation
+        this.weapon = weapon;
+        weapon.svgImage = this.svgGenerator.generateSVGWeaponImage(randomWeapon, randomClassName, randomRarity, weaponLevel);
+        weapon.image = weapon.svgImage; // Backwards compatibility
 
         return weapon;
     }
@@ -112,8 +123,8 @@ class WeaponGenerator {
     }
 
     generateWeaponImage(weaponType) {
-        // Generate realistic cartoon image for weapon type
-        return this.createWeaponCartoonImage(weaponType);
+        // Use SVG generator for better weapon images
+        return this.svgGenerator.generateSVGWeaponImage(weaponType, this.weapon.weaponClass, this.weapon.rarity, this.weapon.level);
     }
 
     createWeaponCartoonImage(weaponType) {
