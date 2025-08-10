@@ -51,7 +51,7 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 - [x] Loot tabeller og raritet system
 
 ### Næste Features
-- [ ] Multiple karakterer
+- [x] Multiple karakterer (✅ v1.4.0)
 - [ ] Export/import funktioner
 - [ ] Våben customization
 - [ ] Bedre våben grafik (SVG)
@@ -199,7 +199,6 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
 
 ## Næste funktion
 1. Åbne features fra CLAUDE.md:
-   - Multiple karakterer
    - Export/import funktioner
    - Våben customization
    - Bedre våben grafik (SVG)
@@ -207,7 +206,9 @@ Et webbaseret RPG brætspils karakter management system udviklet af børn (10 og
    - Experience point system
 
 2. Åbne features fra ideer.md:
-   - (Kræver læsning af ideer.md)
+   - Billed af karakter (character portraits)
+   - Det aktive våben skal ses på start skærmen
+   - Bedre våbenbilleder
 
 ## Memories
 - On "Det er fint" commit current work and present "Næste funktion" list

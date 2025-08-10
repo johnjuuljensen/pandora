@@ -43,7 +43,7 @@ class CharacterManager {
             this.setupPortraitSystem();
             
             // Load saved data
-            this.loadSavedCharacter();
+            await this.loadSavedCharacter();
             this.loadSavedWeapons();
             
             // Setup tab system
@@ -778,7 +778,7 @@ class CharacterManager {
 
     // Storage operations (manual load only - auto-save handles saving)
 
-    loadSavedCharacter() {
+    async loadSavedCharacter() {
         // Try to load the active character
         const activeCharacterName = this.storageManager.getActiveCharacter();
         if (activeCharacterName) {
@@ -1114,8 +1114,8 @@ class CharacterManager {
         // Delete character button event
         const deleteCharacterBtn = document.getElementById('delete-character');
         if (deleteCharacterBtn) {
-            deleteCharacterBtn.addEventListener('click', () => {
-                this.deleteCurrentCharacter();
+            deleteCharacterBtn.addEventListener('click', async () => {
+                await this.deleteCurrentCharacter();
             });
         }
         
@@ -1194,7 +1194,7 @@ class CharacterManager {
         }
     }
 
-    deleteCurrentCharacter() {
+    async deleteCurrentCharacter() {
         const characterSelect = document.getElementById('character-select');
         const currentCharacterName = characterSelect?.value;
         
@@ -1232,7 +1232,7 @@ class CharacterManager {
                 await this.loadCharacterByName(nextCharacter);
             } else {
                 // Clear UI if no characters left (shouldn't happen due to prevention above)
-                this.clearCharacterUI();
+                await this.clearCharacterUI();
             }
             
             this.updateDeleteButtonState();
@@ -1260,7 +1260,7 @@ class CharacterManager {
             : 'Slet valgte karakter';
     }
 
-    clearCharacterUI() {
+    async clearCharacterUI() {
         // Reset to default values
         document.getElementById('character-level').value = 1;
         document.getElementById('current-hp').value = 100;
