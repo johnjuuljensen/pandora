@@ -550,26 +550,35 @@ class SVGWeaponGenerator {
                     <rect x="${10 + stockSize + 50}" y="38" width="${barrelLength}" height="6" rx="3" fill="#2C3E50" stroke="#1A252F" stroke-width="2"/>
                 `}
                 
-                <!-- Scope System -->
+                <!-- Scope System (Mounted on Receiver) -->
                 ${isAntiMaterial ? `
-                    <!-- Massive Scope -->
-                    <ellipse cx="${10 + stockSize + 75}" cy="28" rx="${scopeSize}" ry="6" fill="#1A252F" stroke="#0D1117" stroke-width="3"/>
-                    <ellipse cx="${10 + stockSize + 75}" cy="28" rx="${scopeSize - 5}" ry="4" fill="#4A90E2" opacity="0.4"/>
-                    <circle cx="${10 + stockSize + 75}" cy="28" r="3" fill="#FF0000" opacity="0.6"/>
+                    <!-- Massive Scope Body -->
+                    <rect x="${10 + stockSize + 15}" y="22" width="${scopeSize}" height="10" rx="5" fill="#1A252F" stroke="#0D1117" stroke-width="2"/>
+                    <!-- Scope Lens -->
+                    <rect x="${10 + stockSize + 15 + scopeSize - 8}" y="24" width="6" height="6" rx="3" fill="#4A90E2" opacity="0.4"/>
+                    <circle cx="${10 + stockSize + 15 + scopeSize - 5}" cy="27" r="2" fill="#FF0000" opacity="0.6"/>
+                    <!-- Eyepiece -->
+                    <rect x="${10 + stockSize + 15}" y="23" width="8" height="8" rx="4" fill="#2C3E50"/>
                 ` : isPrecision ? `
                     <!-- High-End Precision Scope -->
-                    <ellipse cx="${10 + stockSize + 75}" cy="30" rx="${scopeSize}" ry="5" fill="#1A252F" stroke="#0D1117" stroke-width="2"/>
-                    <ellipse cx="${10 + stockSize + 75}" cy="30" rx="${scopeSize - 3}" ry="3" fill="#4A90E2" opacity="0.5"/>
-                    <circle cx="${10 + stockSize + 75}" cy="30" r="2" fill="#00FF00" opacity="0.7"/>
+                    <rect x="${10 + stockSize + 20}" y="24" width="${scopeSize}" height="8" rx="4" fill="#1A252F" stroke="#0D1117" stroke-width="2"/>
+                    <!-- Scope Lens -->
+                    <rect x="${10 + stockSize + 20 + scopeSize - 6}" y="26" width="4" height="4" rx="2" fill="#4A90E2" opacity="0.5"/>
+                    <circle cx="${10 + stockSize + 20 + scopeSize - 4}" cy="28" r="1" fill="#00FF00" opacity="0.7"/>
+                    <!-- Eyepiece -->
+                    <rect x="${10 + stockSize + 20}" y="25" width="6" height="6" rx="3" fill="#2C3E50"/>
                 ` : `
                     <!-- Standard Scope -->
-                    <ellipse cx="${10 + stockSize + 75}" cy="30" rx="${scopeSize}" ry="4" fill="#1A252F" stroke="#0D1117" stroke-width="2"/>
-                    <ellipse cx="${10 + stockSize + 75}" cy="30" rx="${scopeSize - 5}" ry="3" fill="#4A90E2" opacity="0.3"/>
+                    <rect x="${10 + stockSize + 25}" y="25" width="${scopeSize}" height="6" rx="3" fill="#1A252F" stroke="#0D1117" stroke-width="2"/>
+                    <!-- Scope Lens -->
+                    <rect x="${10 + stockSize + 25 + scopeSize - 5}" y="26" width="3" height="4" rx="1" fill="#4A90E2" opacity="0.3"/>
+                    <!-- Eyepiece -->
+                    <rect x="${10 + stockSize + 25}" y="26" width="4" height="4" rx="2" fill="#2C3E50"/>
                 `}
                 
-                <!-- Scope Mounts -->
-                <rect x="${10 + stockSize + 45}" y="32" width="8" height="6" fill="#666"/>
-                <rect x="${10 + stockSize + 95}" y="32" width="8" height="6" fill="#666"/>
+                <!-- Scope Mounts (Connected to Receiver) -->
+                <rect x="${10 + stockSize + 10}" y="32" width="6" height="4" fill="#666"/>
+                <rect x="${10 + stockSize + 35}" y="32" width="6" height="4" fill="#666"/>
                 
                 <!-- Bipod -->
                 ${isAntiMaterial ? `
@@ -606,9 +615,14 @@ class SVGWeaponGenerator {
             <svg width="160" height="100" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
                 ${glowEffect}
                 
+                <!-- Stock/Butt -->
+                <rect x="5" y="45" width="18" height="18" rx="3" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                <rect x="7" y="47" width="14" height="3" fill="#654321"/>
+                <rect x="7" y="57" width="14" height="3" fill="#654321"/>
+                
                 ${isMinigun ? `
                     <!-- Minigun Body -->
-                    <rect x="20" y="45" width="70" height="20" rx="4" fill="${baseColor}" stroke="#333" stroke-width="3" filter="url(#glow)"/>
+                    <rect x="23" y="45" width="67" height="20" rx="4" fill="${baseColor}" stroke="#333" stroke-width="3" filter="url(#glow)"/>
                     <!-- Multiple Rotating Barrels -->
                     <rect x="90" y="44" width="${barrelLength}" height="4" rx="2" fill="#2C3E50" stroke="#1A252F" stroke-width="1"/>
                     <rect x="90" y="49" width="${barrelLength}" height="4" rx="2" fill="#2C3E50" stroke="#1A252F" stroke-width="1"/>
@@ -619,24 +633,24 @@ class SVGWeaponGenerator {
                     <!-- Barrel Housing -->
                     <circle cx="90" cy="52" r="12" fill="#34495E" stroke="#2C3E50" stroke-width="2"/>
                     <!-- Motor -->
-                    <rect x="25" y="40" width="15" height="10" rx="5" fill="#666" stroke="#444" stroke-width="2"/>
+                    <rect x="28" y="40" width="15" height="10" rx="5" fill="#666" stroke="#444" stroke-width="2"/>
                 ` : isChainGun ? `
                     <!-- Chain Gun Body -->
-                    <rect x="20" y="42" width="65" height="22" rx="4" fill="${baseColor}" stroke="#333" stroke-width="3" filter="url(#glow)"/>
+                    <rect x="23" y="42" width="62" height="22" rx="4" fill="${baseColor}" stroke="#333" stroke-width="3" filter="url(#glow)"/>
                     <!-- Chain Feed System -->
-                    <rect x="15" y="35" width="30" height="8" rx="4" fill="#666" stroke="#444" stroke-width="2"/>
-                    <rect x="17" y="37" width="26" height="4" fill="#FFD700" opacity="0.6"/>
+                    <rect x="18" y="35" width="30" height="8" rx="4" fill="#666" stroke="#444" stroke-width="2"/>
+                    <rect x="20" y="37" width="26" height="4" fill="#FFD700" opacity="0.6"/>
                     <!-- Heavy Barrel -->
                     <rect x="85" y="46" width="${barrelLength}" height="16" rx="8" fill="#2C3E50" stroke="#1A252F" stroke-width="2"/>
                     <!-- Chain Links -->
-                    ${Array.from({length: 8}, (_, i) => `<rect x="${20 + i * 3}" y="32" width="2" height="4" fill="#FFD700"/>`).join('')}
+                    ${Array.from({length: 8}, (_, i) => `<rect x="${23 + i * 3}" y="32" width="2" height="4" fill="#FFD700"/>`).join('')}
                 ` : `
                     <!-- Standard Machine Gun Body -->
-                    <rect x="20" y="45" width="60" height="18" rx="3" fill="${baseColor}" stroke="#333" stroke-width="3" filter="url(#glow)"/>
+                    <rect x="23" y="45" width="57" height="18" rx="3" fill="${baseColor}" stroke="#333" stroke-width="3" filter="url(#glow)"/>
                     <!-- Heavy Barrel -->
                     <rect x="80" y="47" width="${barrelLength}" height="14" rx="7" fill="#2C3E50" stroke="#1A252F" stroke-width="2"/>
                     <!-- Large Magazine/Ammo Belt -->
-                    <rect x="35" y="63" width="25" height="25" rx="3" fill="#34495E" stroke="#2C3E50" stroke-width="2"/>
+                    <rect x="38" y="63" width="25" height="25" rx="3" fill="#34495E" stroke="#2C3E50" stroke-width="2"/>
                 `}
                 
                 <!-- Carrying Handle -->
@@ -776,8 +790,9 @@ class SVGWeaponGenerator {
         
         const tubeLength = 45 + levelModifiers.size * 8;
         const isRocket = weaponType.includes('Raket') || variation === 0;
-        const isGrenade = weaponType.includes('Granat') || variation === 1;
-        const isMissile = weaponType.includes('Missile') || variation === 2;
+        const isRPG = variation === 1;  // RPG variation
+        const isGrenade = weaponType.includes('Granat') || variation === 2;
+        const isMissile = weaponType.includes('Missile') || (!isRocket && !isRPG && !isGrenade);
         
         return `
             <svg width="140" height="100" viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg">
@@ -791,6 +806,21 @@ class SVGWeaponGenerator {
                     <!-- Rocket Visible -->
                     <path d="M${80 + tubeLength - 5} 42 L${80 + tubeLength + 8} 40 L${80 + tubeLength + 8} 50 Z" fill="#E74C3C" stroke="#C0392B" stroke-width="1"/>
                     <rect x="${80 + tubeLength - 10}" y="43" width="8" height="4" fill="#FFD700"/>
+                ` : isRPG ? `
+                    <!-- RPG-7 Style Body -->
+                    <rect x="25" y="40" width="45" height="12" rx="2" fill="${baseColor}" stroke="#333" stroke-width="2" filter="url(#glow)"/>
+                    <!-- RPG Tube -->
+                    <rect x="70" y="35" width="${tubeLength}" height="22" rx="11" fill="#2C3E50" stroke="#1A252F" stroke-width="2"/>
+                    <!-- Venturi Nozzles (back) -->
+                    <rect x="20" y="42" width="8" height="8" rx="4" fill="#666" stroke="#444" stroke-width="1"/>
+                    <circle cx="24" cy="46" r="2" fill="#333"/>
+                    <!-- RPG Grenade -->
+                    <path d="M${70 + tubeLength - 8} 42 L${70 + tubeLength + 5} 40 L${70 + tubeLength + 8} 44 L${70 + tubeLength + 5} 48 L${70 + tubeLength - 8} 46 Z" fill="#E74C3C" stroke="#C0392B" stroke-width="1"/>
+                    <!-- Fins -->
+                    <rect x="${70 + tubeLength + 2}" y="38" width="4" height="2" fill="#666"/>
+                    <rect x="${70 + tubeLength + 2}" y="52" width="4" height="2" fill="#666"/>
+                    <!-- Wood Furniture -->
+                    <rect x="30" y="52" width="25" height="6" rx="3" fill="#8B4513" stroke="#654321" stroke-width="1"/>
                 ` : isGrenade ? `
                     <!-- Grenade Launcher Body -->
                     <rect x="25" y="38" width="55" height="16" rx="3" fill="${baseColor}" stroke="#333" stroke-width="2" filter="url(#glow)"/>
@@ -820,6 +850,12 @@ class SVGWeaponGenerator {
                     <rect x="92" y="28" width="4" height="34" fill="#E74C3C"/>
                     <rect x="99" y="28" width="4" height="34" fill="#F39C12"/>
                     <rect x="106" y="28" width="4" height="34" fill="#E74C3C"/>
+                ` : isRPG ? `
+                    <!-- RPG Warnings -->
+                    <rect x="75" y="33" width="3" height="26" fill="#F39C12"/>
+                    <rect x="80" y="33" width="3" height="26" fill="#E74C3C"/>
+                    <!-- Russian Text Style -->
+                    <rect x="35" y="38" width="8" height="3" fill="#E74C3C"/>
                 ` : isGrenade ? `
                     <!-- Grenade Warnings -->
                     <rect x="82" y="33" width="3" height="24" fill="#F39C12"/>
@@ -854,6 +890,12 @@ class SVGWeaponGenerator {
                     <circle cx="20" cy="40" r="4" fill="#666"/>
                     <circle cx="20" cy="50" r="4" fill="#666"/>
                     ${levelTier === 'master' ? `<circle cx="20" cy="45" r="2" fill="#E74C3C" opacity="0.8"/>` : ''}
+                ` : isRPG ? `
+                    <!-- RPG Exhaust Nozzles -->
+                    <circle cx="16" cy="43" r="2" fill="#333"/>
+                    <circle cx="16" cy="49" r="2" fill="#333"/>
+                    <!-- Blast Deflector -->
+                    <rect x="12" y="41" width="6" height="10" rx="3" fill="#666" stroke="#444" stroke-width="1"/>
                 ` : isGrenade ? `
                     <rect x="18" y="42" width="8" height="8" rx="4" fill="#666"/>
                 ` : `
