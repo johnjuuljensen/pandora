@@ -19,7 +19,7 @@ class CharacterPortraits {
                 id: 'fl4k',
                 name: 'FL4K',
                 class: 'The Beastmaster',
-                image: 'assets/characters/fl4k.png',
+                image: 'assets/characters/fl4k.jpg',
                 fallbackImage: 'assets/characters/fl4k.jpg',
                 emoji: '🤖', // Fallback if image not found
                 color: '#27ae60' // Green theme for FL4K
@@ -28,7 +28,7 @@ class CharacterPortraits {
                 id: 'moze',
                 name: 'Moze',
                 class: 'The Gunner',
-                image: 'assets/characters/moze.png',
+                image: 'assets/characters/moze.jpg',
                 fallbackImage: 'assets/characters/moze.jpg',
                 emoji: '💣', // Fallback if image not found
                 color: '#f39c12' // Orange theme for Moze
@@ -113,7 +113,6 @@ class CharacterPortraits {
                 <img src="${imageData.url}" alt="${character.name}" style="
                     width: 100%;
                     height: 100%;
-                    object-fit: cover;
                     border-radius: 50%;
                 ">
                 
@@ -205,17 +204,40 @@ class CharacterPortraits {
                          style="
                         border: 3px solid ${character.id === currentCharacterId ? character.color : 'rgba(0,0,0,0.1)'};
                         border-radius: 10px;
-                        padding: 15px;
-                        text-align: center;
                         cursor: pointer;
                         transition: all 0.3s ease;
                         background: ${character.id === currentCharacterId ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)'};
+                        overflow: hidden;
+                        display: flex;
+                        flex-direction: column;
                     ">
-                        <div style="margin-bottom: 10px;">
-                            ${this.createMiniPortrait(character)}
+                        <!-- Character Image Area -->
+                        <div class="character-portrait character-option-image" style="
+                            width: 100%;
+                            background: linear-gradient(135deg, ${character.color}, ${this.darkenColor(character.color)});
+                            position: relative;
+                            overflow: hidden;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">
+                            <img src="${character.image}" alt="${character.name}" style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                            " onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div style="font-size: 40px; display: none; color: white;">${character.emoji}</div>
                         </div>
-                        <div style="font-weight: bold; color: ${character.color};">${character.name}</div>
-                        <div style="font-size: 12px; color: #666;">${character.class}</div>
+                        
+                        <!-- Character Info Area -->
+                        <div style="
+                            padding: 8px 5px;
+                            text-align: center;
+                            background: rgba(255,255,255,0.9);
+                        ">
+                            <div style="font-weight: bold; color: ${character.color}; font-size: 14px;">${character.name}</div>
+                            <div style="font-size: 10px; color: #666; margin-top: 2px;">${character.class}</div>
+                        </div>
                     </div>
                 `).join('')}
             </div>
@@ -229,7 +251,7 @@ class CharacterPortraits {
 
     createPortraitPreview(character) {
         return `
-        <div style="
+        <div class="character-portrait character-portrait-large" style="
             width: 100px;
             height: 100px;
             margin: 0 auto;
@@ -240,14 +262,20 @@ class CharacterPortraits {
             align-items: center;
             justify-content: center;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         ">
-            <div style="font-size: 45px;">${character.emoji}</div>
+            <img src="${character.image}" alt="${character.name}" style="
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            " onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="font-size: 45px; display: none;">${character.emoji}</div>
         </div>`;
     }
 
     createMiniPortrait(character) {
         return `
-        <div style="
+        <div class="character-portrait character-portrait-mini" style="
             width: 60px;
             height: 60px;
             margin: 0 auto;
@@ -258,8 +286,14 @@ class CharacterPortraits {
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         ">
-            <div style="font-size: 25px;">${character.emoji}</div>
+            <img src="${character.image}" alt="${character.name}" style="
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            " onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="font-size: 25px; display: none;">${character.emoji}</div>
         </div>`;
     }
 

@@ -1549,3 +1549,84 @@ main {
         justify-content: center;
     }
 }
+
+/* Character Portrait Hover Effect */
+.character-portrait {
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.character-portrait:hover {
+    transform: scale(1.1);
+    z-index: 100;
+}
+
+.character-portrait img {
+    transition: transform 0.3s ease-in-out;
+    object-fit: cover;
+    object-position: center center;
+    transform-origin: center top;
+}
+
+.character-portrait:hover img {
+    transform: scale(2.0);
+}
+
+/* Character selector portraits */
+.character-portrait-large img {
+    object-position: center center;
+    transform-origin: center top;
+}
+
+.character-portrait-large:hover {
+    transform: scale(1.15);
+}
+
+.character-portrait-large:hover img {
+    transform: scale(2.0);
+}
+
+.character-portrait-mini img {
+    object-position: center center;
+    transform-origin: center top;
+}
+
+.character-portrait-mini:hover {
+    transform: scale(1.2);
+}
+
+.character-portrait-mini:hover img {
+    transform: scale(2.0);
+}
+
+/* Character option hover effect */
+.character-option {
+    transition: all 0.3s ease;
+}
+
+.character-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Character option image hover */
+.character-option-image {
+    aspect-ratio: 1;
+}
+
+.character-option-image:hover {
+    transform: scale(1.05);
+}
+
+.character-option-image img {
+    transition: transform 0.3s ease-in-out;
+    object-fit: cover;
+    object-position: center center;
+    transform-origin: center top;
+}
+
+.character-option-image:hover img {
+    transform: scale(2.0);
+}
