@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Placeholder Character Images</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .character-container { margin: 20px 0; text-align: center; }
+        .character-circle { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 50%; 
+            margin: 10px auto; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 80px; 
+            color: white; 
+            font-weight: bold; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .download-btn { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            border-radius: 5px;
+            margin: 5px;
+        }
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Placeholder Karakterbilleder</h1>
+    <p>Højreklik og "Gem som" på hver karakter, eller brug download knapperne:</p>
+    
+    <div class="character-container">
+        <h3>Amara - The Siren</h3>
+        <div class="character-circle" style="background: linear-gradient(135deg, #e74c3c, #a93226);">🔥</div>
+        <button class="download-btn" onclick="downloadCharacter('amara', '🔥', '#e74c3c', '#a93226')">Download amara.png</button>
+    </div>
+    
+    <div class="character-container">
+        <h3>FL4K - The Beastmaster</h3>
+        <div class="character-circle" style="background: linear-gradient(135deg, #27ae60, #1e8449);">🤖</div>
+        <button class="download-btn" onclick="downloadCharacter('fl4k', '🤖', '#27ae60', '#1e8449')">Download fl4k.png</button>
+    </div>
+    
+    <div class="character-container">
+        <h3>Moze - The Gunner</h3>
+        <div class="character-circle" style="background: linear-gradient(135deg, #f39c12, #d68910);">💣</div>
+        <button class="download-btn" onclick="downloadCharacter('moze', '💣', '#f39c12', '#d68910')">Download moze.png</button>
+    </div>
+    
+    <div class="character-container">
+        <h3>Zane - The Operative</h3>
+        <div class="character-circle" style="background: linear-gradient(135deg, #3498db, #2980b9);">🎯</div>
+        <button class="download-btn" onclick="downloadCharacter('zane', '🎯', '#3498db', '#2980b9')">Download zane.png</button>
+    </div>
+    
+    <canvas id="canvas" width="200" height="200"></canvas>
+    
+    <script>
+        function downloadCharacter(name, emoji, color1, color2) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 200, 200);
+            
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 200, 200);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            
+            // Draw circle
+            ctx.beginPath();
+            ctx.arc(100, 100, 95, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw emoji
+            ctx.font = '80px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.shadowBlur = 4;
+            ctx.fillText(emoji, 100, 100);
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = name + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
