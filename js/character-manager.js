@@ -89,16 +89,23 @@ class CharacterManager {
     // Health and shield management
     updateMaxHPForLevel() {
         const level = parseInt(document.getElementById('character-level').value) || 1;
-        const maxHP = 100 + (level - 1) * 20;
+        const oldMaxHP = parseInt(document.getElementById('max-hp').value) || 100;
+        const newMaxHP = 100 + (level - 1) * 20;
         const currentHP = parseInt(document.getElementById('current-hp').value) || 0;
         
-        document.getElementById('max-hp').value = maxHP;
+        document.getElementById('max-hp').value = newMaxHP;
         
-        // Lower current HP if it exceeds new max HP
-        if (currentHP > maxHP) {
-            document.getElementById('current-hp').value = maxHP;
+        // If leveling up (new max HP is higher), restore to full HP
+        if (newMaxHP > oldMaxHP) {
+            document.getElementById('current-hp').value = newMaxHP;
             this.autoSaveCharacter(); // Save HP change
-            this.uiManager.showMessage(`HP lowered to ${maxHP} due to level change ❤️`);
+            this.uiManager.showMessage(`Level up! HP restored to ${newMaxHP} ❤️`);
+        }
+        // If leveling down, lower current HP if it exceeds new max HP
+        else if (currentHP > newMaxHP) {
+            document.getElementById('current-hp').value = newMaxHP;
+            this.autoSaveCharacter(); // Save HP change
+            this.uiManager.showMessage(`HP lowered to ${newMaxHP} due to level change ❤️`);
         }
         
         // Unequip weapons that are too high level
