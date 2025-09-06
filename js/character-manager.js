@@ -16,6 +16,7 @@ class CharacterManager {
         this.uiManager = new UIManager(this.debugManager);
         this.qrSystem = new QRSystem(this.weaponGenerator, this.uiManager);
         this.characterPortraits = new CharacterPortraits();
+        this.avatarGenerator = new AvatarGenerator();
         
         // Skills system
         this.skills = {};
@@ -753,7 +754,7 @@ class CharacterManager {
         if (confirm('Reset alle skills? Dette kan ikke fortrydes.')) {
             // Save current max HP to restore base HP
             const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
-            const baseHP = 80 + ((currentLevel - 1) * 20); // Base HP calculation
+            const baseHP = 100 + ((currentLevel - 1) * 20); // Base HP calculation
             
             this.skills = {};
             
@@ -842,7 +843,7 @@ class CharacterManager {
     // Re-apply all unlocked skills (used when loading character)
     reapplyAllSkills() {
         const currentLevel = parseInt(document.getElementById('character-level').value) || 1;
-        const baseHP = 80 + ((currentLevel - 1) * 20); // Base HP without skill bonuses
+        const baseHP = 100 + ((currentLevel - 1) * 20); // Base HP without skill bonuses
         
         // Start with base HP
         let maxHP = baseHP;
@@ -1323,6 +1324,10 @@ class CharacterManager {
                 return;
             }
             
+            // Clear current weapons to prevent old character's weapons from showing
+            this.weapons = [];
+            this.updateWeaponDisplay(); // Update UI immediately to clear equipped weapons
+            
             // Create new character with default values
             const defaultCharacter = {
                 name: sanitizedName,
@@ -1441,6 +1446,10 @@ class CharacterManager {
     async loadCharacterByName(characterName) {
         const characterData = this.storageManager.loadCharacterByName(characterName);
         if (characterData) {
+            // Clear current weapons first to prevent old character's weapons from showing
+            this.weapons = [];
+            this.updateWeaponDisplay();
+            
             // Update UI with character data
             document.getElementById('character-level').value = characterData.level;
             document.getElementById('current-hp').value = characterData.currentHP;

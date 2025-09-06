@@ -149,6 +149,9 @@ class UIManager {
     updateWeaponDisplay(weapons, selectedClass = 'all') {
         const weaponList = document.getElementById('weapon-list');
         
+        // Always update equipped weapon display, even with empty weapons
+        this.updateEquippedWeaponDisplay(weapons || []);
+        
         if (!weapons || weapons.length === 0) {
             weaponList.innerHTML = '<p class="empty-state">Ingen våben endnu. Generer noget loot!</p>';
             return;
@@ -174,9 +177,6 @@ class UIManager {
         });
 
         weaponList.innerHTML = `<div class="inventory-grid">${sortedWeapons.map(weapon => this.createWeaponCard(weapon)).join('')}</div>`;
-        
-        // Update equipped weapon display on character tab
-        this.updateEquippedWeaponDisplay(weapons);
     }
 
     updateEquippedWeaponDisplay(weapons) {
