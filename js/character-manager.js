@@ -69,7 +69,7 @@ class CharacterManager {
     // Character data methods
     getCharacterData() {
         return {
-            name: document.getElementById('character-name')?.value || '',
+            name: this.getCurrentCharacterName(),
             level: parseInt(document.getElementById('character-level')?.value) || 1,
             currentHP: parseInt(document.getElementById('current-hp')?.value) || 100,
             maxHP: parseInt(document.getElementById('max-hp')?.value) || 100,
@@ -78,7 +78,8 @@ class CharacterManager {
             characterId: this.currentCharacterId || 'amara',
             currentKills: this.currentKills || 0,
             skills: this.skills || {},
-            availableSkillPoints: this.availableSkillPoints || 0
+            availableSkillPoints: this.availableSkillPoints || 0,
+            avatar: this.currentAvatar // Keep for backwards compatibility
         };
     }
 
@@ -1148,13 +1149,7 @@ class CharacterManager {
         // Setup portrait display
         this.updatePortraitDisplay();
         
-        // Setup customize button event
-        const customizeBtn = document.getElementById('customize-avatar');
-        if (customizeBtn) {
-            customizeBtn.addEventListener('click', () => {
-                this.openCharacterSelector();
-            });
-        }
+        // Avatar customize removed - avatars are now set only during character creation
     }
 
     async updatePortraitDisplay(characterId = null) {
@@ -1172,6 +1167,7 @@ class CharacterManager {
     }
 
     openCharacterSelector() {
+        console.log('Opening character selector. Current character:', this.currentCharacterId);
         // Create modal overlay
         const modal = document.createElement('div');
         modal.className = 'avatar-modal';
@@ -1185,7 +1181,7 @@ class CharacterManager {
 
     setupSelectorEvents(modal) {
         let tempCharacterId = this.currentCharacterId;
-        
+        console.log('Setting up selector events. Current character:', this.currentCharacterId);
         // Character option events
         modal.querySelectorAll('.character-option').forEach(option => {
             option.addEventListener('click', (e) => {
@@ -1232,6 +1228,8 @@ class CharacterManager {
                 this.uiManager.showMessage(`${character.name} valgt! 🎭`);
                 document.body.removeChild(modal);
             });
+        } else {
+            console.error('Save button not found in character selector modal');
         }
         
         // Cancel button
@@ -1240,6 +1238,8 @@ class CharacterManager {
             cancelBtn.addEventListener('click', () => {
                 document.body.removeChild(modal);
             });
+        } else {
+            console.error('Cancel button not found in character selector modal');
         }
         
         // Click outside to close
@@ -1254,43 +1254,35 @@ class CharacterManager {
 
     // Character selector functionality
     async setupCharacterSelector() {
-        this.populateCharacterDropdown();
-        
-        // Character selection event
-        const characterSelect = document.getElementById('character-select');
-        if (characterSelect) {
-            characterSelect.addEventListener('change', async (e) => {
-                if (e.target.value) {
-                    await this.loadCharacterByName(e.target.value);
-                }
-            });
-        }
-        
-        // New character button event
-        const newCharacterBtn = document.getElementById('new-character');
+        // New character button event (icon version)
+        const newCharacterBtn = document.getElementById('new-character-icon');
         if (newCharacterBtn) {
             newCharacterBtn.addEventListener('click', async () => {
                 await this.createNewCharacter();
             });
         }
         
-        // Delete character button event
-        const deleteCharacterBtn = document.getElementById('delete-character');
+        // Delete character button event (icon version)
+        const deleteCharacterBtn = document.getElementById('delete-character-icon');
         if (deleteCharacterBtn) {
             deleteCharacterBtn.addEventListener('click', async () => {
                 await this.deleteCurrentCharacter();
             });
         }
         
-        // Update delete button state when selection changes
-        if (characterSelect) {
-            characterSelect.addEventListener('change', () => {
-                this.updateDeleteButtonState();
+        // Load character button event
+        const loadCharacterBtn = document.getElementById('load-character');
+        if (loadCharacterBtn) {
+            loadCharacterBtn.addEventListener('click', () => {
+                this.showLoadCharacterDialog();
             });
         }
         
         // Initial state
         this.updateDeleteButtonState();
+        
+        // Setup load modal handlers once
+        this.setupLoadModalHandlers();
     }
 
     populateCharacterDropdown() {
@@ -1320,55 +1312,274 @@ class CharacterManager {
     }
 
     async createNewCharacter() {
-        const characterName = prompt('Indtast karakterens navn:');
-        if (characterName && characterName.trim()) {
-            const sanitizedName = characterName.trim();
+        // Show modal instead of prompt
+        this.showNewCharacterModal();
+    }
+
+    showNewCharacterModal() {
+        console.log('Showing new character modal. Current character:', this.currentCharacterId);
+        const modal = document.getElementById('new-character-modal');
+        const nameInput = document.getElementById('new-character-name');
+        const createBtn = document.getElementById('create-character');
+        const selectorContainer = document.getElementById('avatar-selector-container');
+        
+        // Reset modal
+        if (nameInput) {
+            nameInput.value = '';
+        }
+        if (createBtn) {
+            createBtn.disabled = true;
+        }
+        
+        // Set default character
+        this.selectedCharacterId = 'amara';
+        
+        // Insert character selector
+        if (selectorContainer) {
+            selectorContainer.innerHTML = this.characterPortraits.createCharacterSelector(this.selectedCharacterId);
+        }
+        
+        // Setup character selector events
+        this.setupNewCharacterSelectorEvents();
+        
+        // Setup modal button events for this instance
+        this.setupNewCharacterModalButtons();
+        
+        // Show modal
+        if (modal) {
+            modal.classList.add('show');
             
-            // Check if character already exists
-            const existingCharacters = this.storageManager.getCharacterList();
-            if (existingCharacters.includes(sanitizedName)) {
-                this.uiManager.showMessage('En karakter med det navn eksisterer allerede!');
-                return;
-            }
-            
-            // Clear current weapons to prevent old character's weapons from showing
-            this.weapons = [];
-            this.updateWeaponDisplay(); // Update UI immediately to clear equipped weapons
-            
-            // Create new character with default values
-            const defaultCharacter = {
-                name: sanitizedName,
-                level: 1,
-                currentHP: 100,
-                maxHP: 100,  
-                currentShield: 0,
-                maxShield: 0,
-                avatar: this.avatarGenerator.generateRandomAvatar()
+            // Click outside to close
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            };
+        }
+        if (nameInput) {
+            nameInput.focus();
+        }
+    }
+    
+    setupNewCharacterModalButtons() {
+        console.log('Setting up new character modal buttons. Current character:', this.currentCharacterId);
+        const modal = document.getElementById('new-character-modal');
+        const nameInput = document.getElementById('new-character-name');
+        
+        // Wait a bit for the DOM to update, then find the buttons from character-portraits.js
+        const saveBtn = document.getElementById('save-character-selection');
+        const cancelBtn = document.getElementById('cancel-character-selection');
+        
+        if (saveBtn) {
+            saveBtn.onclick = async () => {
+                console.log('Save button clicked. Selected character:', this.selectedCharacterId);
+                const name = nameInput.value.trim();
+                if (name.length === 0) {
+                    this.uiManager.showMessage('Indtast et navn først!');
+                    return;
+                }
+                
+                const characterId = this.selectedCharacterId || 'amara';
+                if (await this.finalizeNewCharacter(name, characterId)) {
+                    modal.classList.remove('show');
+                }
             };
             
-            // Save new character
-            if (this.storageManager.saveCharacterByName(sanitizedName, defaultCharacter, [])) {
-                this.populateCharacterDropdown();
-                
-                // Set the new avatar as current before loading
-                this.currentAvatar = defaultCharacter.avatar;
-                
-                await this.loadCharacterByName(sanitizedName);
-                this.uiManager.showMessage(`Ny karakter "${sanitizedName}" oprettet! 🎭`);
-            } else {
-                this.uiManager.showMessage('Fejl ved oprettelse af karakter');
-            }
+            // Update button text
+            saveBtn.innerHTML = '✅ Opret Karakter';
+        } else {
+            console.error('Save button not found');
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.onclick = () => {
+                console.log('Cancel button clicked');
+                modal.classList.remove('show');
+            };
+        } else {
+            console.error('Cancel button not found');
+        }
+        
+        // Name input validation
+        if (nameInput) {
+            nameInput.oninput = () => {
+                console.log('Name input changed:', nameInput.value);
+                // Update save button state
+                setTimeout(() => {
+                    const saveBtn = document.getElementById('save-character-selection');
+                    if (saveBtn) {
+                        saveBtn.disabled = nameInput.value.trim().length === 0;
+                        if (saveBtn.disabled) {
+                            saveBtn.style.opacity = '0.5';
+                            saveBtn.style.cursor = 'not-allowed';
+                        } else {
+                            saveBtn.style.opacity = '1';
+                            saveBtn.style.cursor = 'pointer';
+                        }
+                    }
+                }, 10);
+            };
+            
+            // Trigger initial state
+            nameInput.oninput();
+        } else {
+            console.error('Name input not found in new character modal');
         }
     }
 
-    async deleteCurrentCharacter() {
-        const characterSelect = document.getElementById('character-select');
-        const currentCharacterName = characterSelect?.value;
+    setupNewCharacterSelectorEvents() {
+        console.log('Setting up new character selector events. Current character:', this.currentCharacterId);
+        const characterOptions = document.querySelectorAll('.character-option');
+        characterOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                const characterId = option.dataset.character;
+                this.selectedCharacterId = characterId;
+                
+                // Update selection visual - need to update inline styles like character-portraits.js does
+                characterOptions.forEach(opt => {
+                    const optId = opt.dataset.character;
+                    const char = this.characterPortraits.characters.find(c => c.id === optId);
+                    if (optId === characterId) {
+                        // Selected state
+                        opt.style.border = `3px solid ${char.color}`;
+                        opt.style.background = 'rgba(255,255,255,0.9)';
+                        opt.classList.add('selected');
+                    } else {
+                        // Unselected state
+                        opt.style.border = '3px solid rgba(0,0,0,0.1)';
+                        opt.style.background = 'rgba(255,255,255,0.5)';
+                        opt.classList.remove('selected');
+                    }
+                });
+                
+                // Update preview
+                const character = this.characterPortraits.characters.find(c => c.id === characterId);
+                const preview = document.getElementById('character-preview');
+                if (preview && character) {
+                    preview.innerHTML = this.characterPortraits.createPortraitPreview(character);
+                    const nameDiv = preview.nextElementSibling;
+                    if (nameDiv) {
+                        nameDiv.textContent = `${character.name} - ${character.class}`;
+                    }
+                }
+            });
+        });
+    }
+
+    async finalizeNewCharacter(name, characterId) {
+        const sanitizedName = name.trim();
         
-        if (!currentCharacterName) {
+        // Check if character already exists
+        const existingCharacters = this.storageManager.getCharacterList();
+        if (existingCharacters.includes(sanitizedName)) {
+            this.uiManager.showMessage('En karakter med det navn eksisterer allerede!');
+            return false;
+        }
+        
+        // Clear current weapons to prevent old character's weapons from showing
+        this.weapons = [];
+        this.updateWeaponDisplay();
+        
+        // Create new character with selected character portrait
+        const defaultCharacter = {
+            name: sanitizedName,
+            level: 1,
+            currentHP: 100,
+            maxHP: 100,
+            currentShield: 0,
+            maxShield: 0,
+            characterId: characterId
+        };
+        
+        // Save new character
+        if (this.storageManager.saveCharacterByName(sanitizedName, defaultCharacter, [])) {
+            this.populateCharacterDropdown();
+            
+            // Set the new character as current before loading
+            this.currentCharacterId = characterId;
+            
+            await this.loadCharacterByName(sanitizedName);
+            this.uiManager.showMessage(`Ny karakter "${sanitizedName}" oprettet!`);
+            return true;
+        } else {
+            this.uiManager.showMessage('Fejl ved oprettelse af karakter');
+            return false;
+        }
+    }
+
+    setupLoadModalHandlers() {
+        // Load modal handlers
+        const loadModal = document.getElementById('load-character-modal');
+        const closeLoadBtn = document.getElementById('close-load-modal');
+        
+        if (closeLoadBtn) {
+            closeLoadBtn.addEventListener('click', () => {
+                loadModal.classList.remove('show');
+            });
+        }
+        
+        // Click outside to close load modal
+        if (loadModal) {
+            loadModal.addEventListener('click', (e) => {
+                if (e.target === loadModal) {
+                    loadModal.classList.remove('show');
+                }
+            });
+        }
+    }
+
+    showLoadCharacterDialog() {
+        const characters = this.storageManager.getCharacterList();
+        
+        if (characters.length === 0) {
+            this.uiManager.showMessage('Ingen gemte karakterer fundet!');
+            return;
+        }
+        
+        const modal = document.getElementById('load-character-modal');
+        const characterListDiv = document.getElementById('character-list');
+        
+        // Build character list HTML
+        const listHTML = characters.map(name => {
+            const data = this.storageManager.loadCharacterByName(name);
+            const avatar = data.avatar || data.characterId || '👤';
+            const displayAvatar = data.avatar ? data.avatar : this.characterPortraits.characters.find(c => c.id === data.characterId)?.emoji || '👤';
+            
+            return `
+                <div class="character-list-item" data-name="${name}">
+                    <div class="character-avatar">${displayAvatar}</div>
+                    <div class="character-info">
+                        <div class="character-name">${name}</div>
+                        <div class="character-level">Level ${data.level} • ${data.currentHP}/${data.maxHP} HP</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        characterListDiv.innerHTML = listHTML;
+        
+        // Add click handlers
+        characterListDiv.querySelectorAll('.character-list-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.dataset.name;
+                this.loadCharacterByName(name);
+                modal.classList.remove('show');
+            });
+        });
+        
+        // Show modal
+        modal.classList.add('show');
+    }
+
+    async deleteCurrentCharacter() {
+        const currentName = document.getElementById('character-name')?.textContent;
+        
+        if (!currentName || currentName === 'Ingen karakter valgt') {
             this.uiManager.showMessage('Ingen karakter valgt til sletning!');
             return;
         }
+        
+        const currentCharacterName = currentName;
         
         const characterList = this.storageManager.getCharacterList();
         
@@ -1386,16 +1597,12 @@ class CharacterManager {
         
         // Delete the character
         if (this.storageManager.deleteCharacter(currentCharacterName)) {
-            this.uiManager.showMessage(`Karakter "${currentCharacterName}" slettet! 🗑️`);
-            
-            // Update dropdown
-            this.populateCharacterDropdown();
+            this.uiManager.showMessage(`Karakter "${currentCharacterName}" slettet!`);
             
             // Load first available character
             const remainingCharacters = this.storageManager.getCharacterList();
             if (remainingCharacters.length > 0) {
                 const nextCharacter = remainingCharacters[0];
-                characterSelect.value = nextCharacter;
                 await this.loadCharacterByName(nextCharacter);
             } else {
                 // Clear UI if no characters left (shouldn't happen due to prevention above)
@@ -1409,17 +1616,19 @@ class CharacterManager {
     }
 
     updateDeleteButtonState() {
-        const deleteBtn = document.getElementById('delete-character');
-        const characterSelect = document.getElementById('character-select');
+        const deleteBtn = document.getElementById('delete-character-icon');
+        const currentName = document.getElementById('character-name');
         
         if (!deleteBtn) return;
         
-        const hasSelectedCharacter = characterSelect?.value;
         const characterList = this.storageManager.getCharacterList();
-        const isLastCharacter = characterList.length <= 1;
         
-        // Disable if no character selected or if it's the last character
-        const shouldDisable = !hasSelectedCharacter || isLastCharacter;
+        // Disable delete button if:
+        // 1. No character is loaded
+        // 2. Only one character exists (can't delete the last one)
+        const noCharacterLoaded = !currentName || currentName.textContent === 'Ingen karakter valgt';
+        const isLastCharacter = characterList.length <= 1;
+        const shouldDisable = noCharacterLoaded || isLastCharacter;
         
         deleteBtn.disabled = shouldDisable;
         deleteBtn.title = shouldDisable 
@@ -1457,6 +1666,12 @@ class CharacterManager {
             this.weapons = [];
             this.updateWeaponDisplay();
             
+            // Update character name display
+            const nameDisplay = document.getElementById('character-name');
+            if (nameDisplay) {
+                nameDisplay.textContent = characterName;
+            }
+            
             // Update UI with character data
             document.getElementById('character-level').value = characterData.level;
             document.getElementById('current-hp').value = characterData.currentHP;
@@ -1467,9 +1682,23 @@ class CharacterManager {
             this.skills = characterData.skills || {};
             this.availableSkillPoints = characterData.availableSkillPoints || 0;
             
-            // Load character portrait
-            this.currentCharacterId = characterData.characterId || 'amara';
-            await this.updatePortraitDisplay(this.currentCharacterId);
+            // Load character portrait/avatar
+            if (characterData.characterId) {
+                // New system with character portraits
+                this.currentCharacterId = characterData.characterId;
+                await this.updatePortraitDisplay(this.currentCharacterId);
+            } else if (characterData.avatar) {
+                // Old system with emoji avatars
+                this.currentAvatar = characterData.avatar;
+                const avatarDisplay = document.getElementById('character-avatar-display');
+                if (avatarDisplay) {
+                    avatarDisplay.innerHTML = `<div class="avatar-display">${characterData.avatar}</div>`;
+                }
+            } else {
+                // Fallback to default
+                this.currentCharacterId = 'amara';
+                await this.updatePortraitDisplay(this.currentCharacterId);
+            }
             
             // Load weapons
             this.weapons = characterData.weapons || [];
@@ -1481,21 +1710,23 @@ class CharacterManager {
             this.updateHealthBar();
             this.updateShieldBar();
             this.updateKillDisplay();
-            this.updateAvailableSkillPoints(); // Update skill points
+            this.updateAvailableSkillPoints();
             this.updateWeaponDisplay();
+            this.updateDeleteButtonState();
             
             // Set as active character
             this.storageManager.setActiveCharacter(characterName);
             
-            this.uiManager.showMessage(`Karakter "${characterName}" indlæst! 🎭`);
+            this.uiManager.showMessage(`Karakter "${characterName}" indlæst!`);
         } else {
             this.uiManager.showMessage('Kunne ikke indlæse karakter');
         }
     }
 
     getCurrentCharacterName() {
-        const characterSelect = document.getElementById('character-select');
-        return characterSelect?.value || '';
+        const nameDisplay = document.getElementById('character-name');
+        const name = nameDisplay?.textContent;
+        return (name && name !== 'Ingen karakter valgt') ? name : '';
     }
 
     // Override auto-save methods to use character names

@@ -26,10 +26,14 @@
             <section id="tab-character" class="tab-content active">
                 <div class="character-info">
                     <div class="character-header">
+                        <button id="load-character" class="icon-btn load-btn" title="Load karakter">📂</button>
                         <div id="character-avatar-display" class="character-avatar-container">
                             <!-- Avatar will be inserted here -->
                         </div>
-                        <button id="customize-avatar" class="customize-avatar-btn" title="Tilpas avatar">🎭</button>
+                        <div class="character-controls">
+                            <button id="new-character-icon" class="icon-btn new-btn" title="Opret ny karakter">➕</button>
+                            <button id="delete-character-icon" class="icon-btn delete-btn" title="Slet valgte karakter">🗑️</button>
+                        </div>
                     </div>
 
                     <!-- Equipped Weapon Display -->
@@ -48,13 +52,9 @@
 
                     <div class="basic-stats">
                         <div class="stat-row">
-                            <label for="character-select">Karakter:</label>
-                            <div class="character-selector">
-                                <select id="character-select" class="character-dropdown">
-                                    <option value="">Vælg karakter...</option>
-                                </select>
-                                <button id="new-character" class="new-character-btn" title="Opret ny karakter">+</button>
-                                <button id="delete-character" class="delete-character-btn" title="Slet valgte karakter">🗑️</button>
+                            <label>Karakter:</label>
+                            <div class="character-name-display" id="character-name-display">
+                                <span id="character-name">Ingen karakter valgt</span>
                             </div>
                         </div>
                         <div class="stat-row">
@@ -357,6 +357,39 @@
             </section>
         </main>
         
+        <!-- New Character Modal -->
+        <div id="new-character-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Opret Ny Karakter</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="name-input">
+                        <label for="new-character-name">Karakter Navn:</label>
+                        <input type="text" id="new-character-name" placeholder="Indtast navn..." maxlength="30">
+                    </div>
+                    <div id="avatar-selector-container">
+                        <!-- Avatar selector will be inserted here with its own buttons -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load Character Modal -->
+        <div id="load-character-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Load Karakter</h2>
+                    <button class="modal-close" id="close-load-modal">✖️</button>
+                </div>
+                <div class="modal-body">
+                    <div id="character-list" class="character-list">
+                        <!-- Character list will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Version Info -->
         <footer class="version-info">
             <small>v<span id="app-version">1.6.1</span> • Build: <span id="build-date">2025-08-10</span> • <a href="https://github.com/johnjuuljensen/pandora" target="_blank">GitHub</a></small>
