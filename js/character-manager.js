@@ -75,11 +75,10 @@ class CharacterManager {
             maxHP: parseInt(document.getElementById('max-hp')?.value) || 100,
             currentShield: parseInt(document.getElementById('current-shield')?.value) || 0,
             maxShield: parseInt(document.getElementById('max-shield')?.value) || 50,
-            characterId: this.currentCharacterId || 'amara',
+            avatar: this.currentAvatar || this.currentCharacterId || 'amara',
             currentKills: this.currentKills || 0,
             skills: this.skills || {},
-            availableSkillPoints: this.availableSkillPoints || 0,
-            avatar: this.currentAvatar // Keep for backwards compatibility
+            availableSkillPoints: this.availableSkillPoints || 0
         };
     }
 
@@ -1153,16 +1152,28 @@ class CharacterManager {
     }
 
     async updatePortraitDisplay(characterId = null) {
-        const container = document.getElementById('character-avatar-display');
-        if (!container) return;
+        // Update both header and character tab avatars
+        const headerContainer = document.getElementById('header-avatar-display');
+        const characterContainer = document.getElementById('character-avatar-display');
         
         const currentId = characterId || this.currentCharacterId || 'amara';
-        const portraitHTML = await this.characterPortraits.createPortraitHTML(currentId);
-        container.innerHTML = portraitHTML;
+        console.log('Updating portrait display with character:', currentId);
         
-        // Save current character ID
-        if (!this.currentCharacterId) {
-            this.currentCharacterId = currentId;
+        const portraitHTML = await this.characterPortraits.createPortraitHTML(currentId);
+        
+        // Update header avatar
+        if (headerContainer) {
+            headerContainer.innerHTML = portraitHTML;
+        }
+        
+        // Update character tab avatar if it exists
+        if (characterContainer) {
+            characterContainer.innerHTML = portraitHTML;
+        }
+        
+        // Update current character ID
+        if (characterId) {
+            this.currentCharacterId = characterId;
         }
     }
 
@@ -1317,7 +1328,10 @@ class CharacterManager {
     }
 
     showNewCharacterModal() {
-        console.log('Showing new character modal. Current character:', this.currentCharacterId);
+        // Set default character FIRST
+        this.selectedCharacterId = 'amara';
+        console.log('Showing new character modal. Default selected:', this.selectedCharacterId);
+        
         const modal = document.getElementById('new-character-modal');
         const nameInput = document.getElementById('new-character-name');
         const createBtn = document.getElementById('create-character');
@@ -1330,9 +1344,6 @@ class CharacterManager {
         if (createBtn) {
             createBtn.disabled = true;
         }
-        
-        // Set default character
-        this.selectedCharacterId = 'amara';
         
         // Insert character selector
         if (selectorContainer) {
@@ -1434,6 +1445,7 @@ class CharacterManager {
             option.addEventListener('click', (e) => {
                 const characterId = option.dataset.character;
                 this.selectedCharacterId = characterId;
+                console.log('Character selected:', characterId);
                 
                 // Update selection visual - need to update inline styles like character-portraits.js does
                 characterOptions.forEach(opt => {
@@ -1468,6 +1480,7 @@ class CharacterManager {
 
     async finalizeNewCharacter(name, characterId) {
         const sanitizedName = name.trim();
+        console.log('Finalizing new character:', sanitizedName, 'with characterId:', characterId);
         
         // Check if character already exists
         const existingCharacters = this.storageManager.getCharacterList();
@@ -1480,7 +1493,7 @@ class CharacterManager {
         this.weapons = [];
         this.updateWeaponDisplay();
         
-        // Create new character with selected character portrait
+        // Create new character with selected avatar
         const defaultCharacter = {
             name: sanitizedName,
             level: 1,
@@ -1488,15 +1501,17 @@ class CharacterManager {
             maxHP: 100,
             currentShield: 0,
             maxShield: 0,
-            characterId: characterId
+            avatar: characterId  // Use avatar field for character selection
         };
+        
+        console.log('Saving character with data:', defaultCharacter);
         
         // Save new character
         if (this.storageManager.saveCharacterByName(sanitizedName, defaultCharacter, [])) {
             this.populateCharacterDropdown();
             
-            // Set the new character as current before loading
-            this.currentCharacterId = characterId;
+            // Set the new avatar as current before loading
+            this.currentAvatar = characterId;
             
             await this.loadCharacterByName(sanitizedName);
             this.uiManager.showMessage(`Ny karakter "${sanitizedName}" oprettet!`);
@@ -1539,31 +1554,52 @@ class CharacterManager {
         const modal = document.getElementById('load-character-modal');
         const characterListDiv = document.getElementById('character-list');
         
-        // Build character list HTML
-        const listHTML = characters.map(name => {
+        // Build character list HTML with proper avatars
+        const listHTMLPromises = characters.map(async name => {
             const data = this.storageManager.loadCharacterByName(name);
-            const avatar = data.avatar || data.characterId || '👤';
-            const displayAvatar = data.avatar ? data.avatar : this.characterPortraits.characters.find(c => c.id === data.characterId)?.emoji || '👤';
+            const avatar = data.avatar || '👤';
+            
+            // Check if avatar is a character ID
+            const isCharacterId = ['amara', 'fl4k', 'moze', 'zane'].includes(avatar);
+            let avatarHTML;
+            
+            if (isCharacterId) {
+                // Use character portrait
+                avatarHTML = await this.characterPortraits.createPortraitHTML(avatar);
+                // Extract just the image part for the list
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = avatarHTML;
+                const portrait = tempDiv.querySelector('.character-portrait');
+                avatarHTML = portrait ? portrait.outerHTML : `<div class="avatar-emoji">${this.characterPortraits.characters.find(c => c.id === avatar)?.emoji || '👤'}</div>`;
+            } else {
+                // Use emoji avatar
+                avatarHTML = `<div class="avatar-emoji">${avatar}</div>`;
+            }
             
             return `
                 <div class="character-list-item" data-name="${name}">
-                    <div class="character-avatar">${displayAvatar}</div>
+                    <div class="character-avatar">
+                        ${avatarHTML}
+                    </div>
                     <div class="character-info">
                         <div class="character-name">${name}</div>
                         <div class="character-level">Level ${data.level} • ${data.currentHP}/${data.maxHP} HP</div>
                     </div>
                 </div>
             `;
-        }).join('');
+        });
         
-        characterListDiv.innerHTML = listHTML;
-        
-        // Add click handlers
-        characterListDiv.querySelectorAll('.character-list-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const name = item.dataset.name;
-                this.loadCharacterByName(name);
-                modal.classList.remove('show');
+        // Wait for all portraits to load
+        Promise.all(listHTMLPromises).then(htmlArray => {
+            characterListDiv.innerHTML = htmlArray.join('');
+            
+            // Add click handlers
+            characterListDiv.querySelectorAll('.character-list-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const name = item.dataset.name;
+                    this.loadCharacterByName(name);
+                    modal.classList.remove('show');
+                });
             });
         });
         
@@ -1682,22 +1718,44 @@ class CharacterManager {
             this.skills = characterData.skills || {};
             this.availableSkillPoints = characterData.availableSkillPoints || 0;
             
-            // Load character portrait/avatar
-            if (characterData.characterId) {
-                // New system with character portraits
-                this.currentCharacterId = characterData.characterId;
-                await this.updatePortraitDisplay(this.currentCharacterId);
-            } else if (characterData.avatar) {
-                // Old system with emoji avatars
+            // Load avatar (can be either character ID or emoji)
+            console.log('Loading avatar. Data:', {
+                avatar: characterData.avatar,
+                name: characterName
+            });
+            
+            if (characterData.avatar) {
                 this.currentAvatar = characterData.avatar;
-                const avatarDisplay = document.getElementById('character-avatar-display');
-                if (avatarDisplay) {
-                    avatarDisplay.innerHTML = `<div class="avatar-display">${characterData.avatar}</div>`;
+                
+                // Check if it's a character ID (amara, fl4k, moze, zane) or emoji
+                const isCharacterId = ['amara', 'fl4k', 'moze', 'zane'].includes(characterData.avatar);
+                
+                if (isCharacterId) {
+                    // Use portrait system
+                    console.log('Using character portrait:', characterData.avatar);
+                    this.currentCharacterId = characterData.avatar;
+                    await this.updatePortraitDisplay(characterData.avatar);
+                } else {
+                    // Old emoji system
+                    console.log('Using emoji avatar:', characterData.avatar);
+                    const headerAvatar = document.getElementById('header-avatar-display');
+                    const characterAvatar = document.getElementById('character-avatar-display');
+                    
+                    const avatarHTML = `<div class="avatar-display">${characterData.avatar}</div>`;
+                    
+                    if (headerAvatar) {
+                        headerAvatar.innerHTML = avatarHTML;
+                    }
+                    if (characterAvatar) {
+                        characterAvatar.innerHTML = avatarHTML;
+                    }
                 }
             } else {
                 // Fallback to default
+                console.log('No avatar data found, using default');
+                this.currentAvatar = 'amara';
                 this.currentCharacterId = 'amara';
-                await this.updatePortraitDisplay(this.currentCharacterId);
+                await this.updatePortraitDisplay('amara');
             }
             
             // Load weapons

@@ -9,7 +9,22 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎲 Pandora RPG</h1>
+            <div class="header-layout">
+                <div id="header-avatar-display" class="header-avatar">
+                    <!-- Avatar will be shown here -->
+                </div>
+                <div class="header-content">
+                    <h1>🎲 Pandora RPG</h1>
+                    <div class="header-controls">
+                        <div id="character-name-display" class="character-name-display">
+                            <span id="character-name">Ingen karakter valgt</span>
+                        </div>
+                        <button id="load-character" class="icon-btn load-btn" title="Load karakter">📂</button>
+                        <button id="new-character-icon" class="icon-btn new-btn" title="Opret ny karakter">➕</button>
+                        <button id="delete-character-icon" class="icon-btn delete-btn" title="Slet valgte karakter">🗑️</button>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <!-- Tab Navigation -->
@@ -25,16 +40,6 @@
             <!-- Character Tab -->
             <section id="tab-character" class="tab-content active">
                 <div class="character-info">
-                    <div class="character-header">
-                        <button id="load-character" class="icon-btn load-btn" title="Load karakter">📂</button>
-                        <div id="character-avatar-display" class="character-avatar-container">
-                            <!-- Avatar will be inserted here -->
-                        </div>
-                        <div class="character-controls">
-                            <button id="new-character-icon" class="icon-btn new-btn" title="Opret ny karakter">➕</button>
-                            <button id="delete-character-icon" class="icon-btn delete-btn" title="Slet valgte karakter">🗑️</button>
-                        </div>
-                    </div>
 
                     <!-- Equipped Weapon Display -->
                     <div class="equipped-weapon-section">
@@ -51,12 +56,6 @@
                     </div>
 
                     <div class="basic-stats">
-                        <div class="stat-row">
-                            <label>Karakter:</label>
-                            <div class="character-name-display" id="character-name-display">
-                                <span id="character-name">Ingen karakter valgt</span>
-                            </div>
-                        </div>
                         <div class="stat-row">
                             <label for="character-level">Level:</label>
                             <input type="number" id="character-level" min="1" max="20" value="1">

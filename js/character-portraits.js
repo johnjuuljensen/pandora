@@ -107,7 +107,6 @@ class CharacterPortraits {
                 align-items: center;
                 justify-content: center;
                 position: relative;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
                 overflow: hidden;
             " title="${character.name} - ${character.class}">
                 <img src="${imageData.url}" alt="${character.name}" style="
@@ -142,7 +141,6 @@ class CharacterPortraits {
                 align-items: center;
                 justify-content: center;
                 position: relative;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
                 overflow: hidden;
             " title="${character.name} - ${character.class}">
                 <div style="
